@@ -185,6 +185,19 @@ public class TableManagement {
 
     // 展示各自table的课预定时间段
     public void showReservationTable() {
+        String showReservationTableMsg = "Table for reservation and available time slots: \n";
+        for (Table t : availableTables) {
+            showReservationTableMsg += String.format("%d-Seats Table with ID of %d: ", t.getTableId(),
+                    t.getTableCapacity());
+            ArrayList<Boolean> timeslot = t.getTimeSlot();
+            for (Boolean time : timeslot) {
+                if (time == false) {
+                    showReservationTableMsg += String.format(" %d ", timeslot.indexOf(time));
+                }
+            }
+            showReservationTableMsg += "\n";
+        }
+        System.out.println(showReservationTableMsg);
 
     }
 

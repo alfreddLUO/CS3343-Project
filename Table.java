@@ -43,4 +43,8 @@ public class Table {// 所有的桌子放在一起
         reservedForCustomer.add(reservedTime, c);
     }
 
+    public ArrayList<Boolean> getTimeSlot() {
+        return this.timeslot;
+    }
+
 }

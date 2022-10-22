@@ -55,6 +55,7 @@ public class Customer {
     }
 
     public void occupyTable(Table t) {
+
     }
 
     public void addWaitingTable(Integer tableCapacity, int i) {
