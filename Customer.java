@@ -8,7 +8,7 @@ public class Customer {
     private CustomerState customerState;
 
     private PaymentMethod paymentMethod;
-    private Tables reservedtable;
+    private Table reservedtable;
     private ArrayList<Dish> orders = new ArrayList<>();
 
     // constructor
@@ -52,5 +52,11 @@ public class Customer {
 
     public void setState(CustomerState state) {
         this.customerState = state;
+    }
+
+    public void occupyTable(Table t) {
+    }
+
+    public void addWaitingTable(Integer tableCapacity, int i) {
     }
 }

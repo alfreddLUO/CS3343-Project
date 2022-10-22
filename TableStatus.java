@@ -1,3 +1,3 @@
 public interface TableStatus {
-    public void tablestatus(Tables table);
+    public void tablestatus(Table table);
 }
