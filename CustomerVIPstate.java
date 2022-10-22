@@ -3,7 +3,7 @@ public class CustomerVIPstate implements CustomerState {
     private double discount;
 
     @Override
-    public void customerstate(Customers customer) {
+    public void customerstate(Customer customer) {
         customer.setState(this);
 
     }

@@ -2,7 +2,7 @@
 import java.util.ArrayList;
 import java.util.List;
 
-public class Customers {
+public class Customer {
     private String username;
     private int userid;
     private CustomerState customerState;
@@ -12,7 +12,7 @@ public class Customers {
     private ArrayList<Dish> orders = new ArrayList<>();
 
     // constructor
-    public Customers(String username, int userid) {
+    public Customer(String username, int userid) {
         this.username = username;
         this.userid = userid;
         this.customerState = null;

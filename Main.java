@@ -16,7 +16,7 @@ class Main {
         String name = scanner.nextLine(); // 读取一行输入并获取字符串
 
         
-        Customers customers=new Customers("username", 0);
+        Customer customers=new Customer("username", 0);
         
         for(int i=0;i<menu.size();i++){
             if(((Dish)menu.get(i)).getdishname().equals(name)){

@@ -6,7 +6,7 @@ public class CustomerSuperVIPstate implements CustomerState {
     }
 
     @Override
-    public void customerstate(Customers customer) {
+    public void customerstate(Customer customer) {
 
         customer.setState(this);
 
