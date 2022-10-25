@@ -1,7 +1,6 @@
 import java.util.ArrayList;
 import java.util.Collections;
 
-//singleton pattern
 public class TableManagement {
 
     private ArrayList<Table> reservedTables;
