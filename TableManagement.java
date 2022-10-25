@@ -1,7 +1,36 @@
+import java.time.*;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class TableManagement {
+//singleton pattern
+public class TableManagement implements TimeOvserver {
+    private static ManualClock clock = ManualClock.getInstance();
+    private static LocalDate currDate = clock.getDate();
+    private static LocalTime currTime = clock.getTime();
+
+    @Override
+    public void timeUpdate(LocalTime newTime) {
+        currTime = newTime;
+        updateStatus();
+    }
+
+    @Override
+    public void dateUpdate(LocalDate newDate) {
+        currDate = newDate;
+        updateStatus();
+    }
+
+    private void updateStatus() {
+        // TODO-loop tables and change status
+    }
+
+    public void reserve(int customerID, int tableID, LocalDate date, TimeSlot ts) {
+
+    }
+
+    public void cancelReservation(int customerID) {
+
+    }
 
     private ArrayList<Table> reservedTables;
     private ArrayList<Table> availableTables;
@@ -43,19 +72,30 @@ public class TableManagement {
     }
 
     // 根据输入的人数判断安排对应桌型的数量
-    public void arrangeTableAccordingToNumOfPeople(Customer c, int peopleNum) {
+    //
+    public ArrayList<Integer> arrangeTableAccordingToNumOfPeople(Customer c, int peopleNum) {
         int tmpPeopleNum = peopleNum;
         String arrangementResultMessage = "Your arranged tables are: ";
         // 按顺序储存的对应的桌型安排的数量
         ArrayList<Integer> tableArrangementResults = new ArrayList<Integer>();
         for (Integer tableCapacity : tableCapacityTypeList) {
             int tmpResults = 0;
-            if (tableCapacity == tableCapacityTypeList.get(tableCapacityTypeList.size() - 1)) {
+            int capacityIndex = tableCapacityTypeList.indexOf(tableCapacity);
+            // 这一步是指当执行到最后一步时，即最小桌型时，若人数为0则0，若大于0则1
+            if (capacityIndex == tableCapacityTypeList.size() - 1) {
                 tmpResults = (tmpPeopleNum % tableCapacity == 0) ? (tmpPeopleNum / tableCapacity)
                         : ((tmpPeopleNum / tableCapacity) + 1);
             } else {
-                tmpResults = tmpPeopleNum / tableCapacity;
-                tmpPeopleNum = tmpPeopleNum % tableCapacity;
+                // 最佳的是把人放置于能装下他们的最小桌子， e.g. 假设有2，4，8人桌； 7人来放8人桌
+                if (tableCapacity > peopleNum
+                        && peopleNum > tableCapacityTypeList.get(capacityIndex)) {
+                    tmpResults = 1;
+                }
+                // 若第一种情况无法满足；即尽可能让他们坐在大的桌子上
+                else {
+                    tmpResults = tmpPeopleNum / tableCapacity;
+                    tmpPeopleNum = tmpPeopleNum % tableCapacity;
+                }
             }
             if (tmpResults > 0) {
                 arrangementResultMessage += String.format("%d %d-Seats Tables ", tmpResults, tableCapacity);
@@ -63,18 +103,64 @@ public class TableManagement {
             tableArrangementResults.add(tmpResults);
         }
         System.out.println(arrangementResultMessage);
-        setWalkInStatus(c, tableArrangementResults, canDirectlyDineIn(tableArrangementResults));
+        // 通过canDirectlyIn来确定等待/推荐/直接默认入座
+        setWalkInStatus(c, tableArrangementResults, canDirectlyDineIn(peopleNum, tableArrangementResults));
+        return tableArrangementResults;
+    }
+
+    /**
+     * @param peopleNum
+     */
+    public ArrayList<Integer> recommendedArrangementAccordingToWaitingTime(int peopleNum) {
+        // 如果之前自动的安排不能直接入座则启用该算法
+        // 这算法：
+        // 1. 把available的table list按降序排列，然后从第一个小于当前桌子人数的桌子开始，依次放入，若能放完则output出结果
+        // 2. 若不能放完，则output没有优化结果
+        Collections.sort(availableTables, Collections.reverseOrder());
+        int tmpPeopleNum = peopleNum;
+        ArrayList<Integer> tableArrangementResults = new ArrayList<Integer>();
+        for (int i = 0; i < tableCapacityTypeList.size(); i++) {
+            tableArrangementResults.set(i, 0);
+        }
+
+        for (Table t : availableTables) {
+            if (t.getTableCapacity() < peopleNum) {
+                int tCapacity = t.getTableCapacity();
+                int capacityIndex = tableCapacityTypeList.indexOf(tCapacity);
+                int num = tableArrangementResults.get(capacityIndex);
+                tableArrangementResults.set(tableCapacityTypeList.indexOf(tCapacity), num + 1);
+                tmpPeopleNum = tmpPeopleNum - tCapacity;
+                if (tmpPeopleNum <= 0) {
+                    break;
+                }
+            }
+
+        }
+        if (tmpPeopleNum > 0) {
+            System.out.println("No Optimized Recommended Arrangements!");
+            return null;
+        } else {
+            String recommendedArrangementMsg = "The Optimized Recommended Arrangements are: ";
+            for (Integer i : tableArrangementResults) {
+                int index = tableArrangementResults.indexOf(i);
+                int tCapacity = tableCapacityTypeList.get(index);
+                recommendedArrangementMsg += String.format(" %d %d seats ", i, tCapacity);
+            }
+            System.out.println(recommendedArrangementMsg);
+            return tableArrangementResults;
+        }
+
     }
 
     // 根据安排的桌子结果判断顾客能否直接进店吃： 1.可以 2.不可以， 显示需要等待的桌子数量
-    private boolean canDirectlyDineIn(ArrayList<Integer> tableArrangementResults) {
+    public boolean canDirectlyDineIn(int peopleNum, ArrayList<Integer> tableArrangementResults) {
         boolean canDirectlyWalkIn = true;
-        String waitingTablesListMessage = "You still need to wait for: ";
+        String waitingTablesListMessage = "For default arrangements, you still need to wait for: ";
         for (Integer num : tableArrangementResults) {
             int availableNumOfThisTableType = 0;
             int tableCapacityType = tableCapacityTypeList.get(tableArrangementResults.indexOf(num));
             for (Table t : availableTables) {
-                if (t.getTableCapacity() == tableCapacityType) {
+                if (t.getTableCapacity == tableCapacityType) {
                     availableNumOfThisTableType++;
                 }
             }
@@ -85,14 +171,22 @@ public class TableManagement {
             }
         }
         if (canDirectlyWalkIn) {
+            dineInWithTableCapacity(tableArrangementResults);
             System.out.printf("You can now directly dine in. Please indicate your option: Dine In Or Leave");
             return true;
+        } else {
+            ArrayList<Integer> recommendedArrangements = recommendedArrangementAccordingToWaitingTime(peopleNum);
+            System.out.println(waitingTablesListMessage);
+            if (recommendedArrangements != null) {
+                return false;
+            } else {
+                return true;
+            }
         }
-        waitingTablesListMessage += ". Please indicate your option: Wait Or Leave";
-        System.out.println(waitingTablesListMessage);
-        return false;
+
     }
 
+    // 会call customer里的checkWhetherThisIsNeeded(int tableCapacity, int tableId)
     public void addWaitingCustomer(Customer c) {
         waitingCustomers.add(c);
     }
@@ -109,7 +203,7 @@ public class TableManagement {
                 int needOfThisTableCapcity = tableArrangement.get(tableCapacityTypeList.indexOf(tableCapacity));
                 int tmpCount = 0;
                 for (Table t : availableTables) {
-                    if (t.getTableCapacity() == tableCapacity) {
+                    if (t.getTableId() == tableCapacity) {
                         tmpCount++;
                         // 把这个table放进customer占用的arraylist里去
                         c.occupyTable(t);
@@ -127,7 +221,7 @@ public class TableManagement {
                 // 以下这一个for loop是把能occupt的table先occupy掉
                 int tmpCount = 0;
                 for (Table t : availableTables) {
-                    if (t.getTableCapacity() == tableCapacity) {
+                    if (t.getTableId() == tableCapacity) {
                         tmpCount++;
                         // 把这个table放进customer占用的arraylist里去
                         c.occupyTable(t);
@@ -149,7 +243,7 @@ public class TableManagement {
     }
 
     // 预定桌子
-    public void reserveTable(Customer c, int tableId, int reservedTime) {
+    public void reserveTable(Customer c, int tableId, TimeSlot reservedTime) {
         for (Table t : availableTables) {
             if (t.getTableId() == tableId) {
                 if (t.reservedTimeIsAllowed(reservedTime) == true) {
@@ -166,6 +260,16 @@ public class TableManagement {
         }
     }
 
+    // 把table从available变为reserved
+    public void setTableToReservedStatus(int tableId) {
+        for (Table t : availableTables) {
+            if (t.getTableId() == tableId) {
+                availableTables.remove(t);
+                reservedTables.add(t);
+            }
+        }
+    }
+
     // 表示该桌买单离开桌子
     public void checkOutFromTable(int tableId) {
         for (Table t : occupiedTables) {
@@ -176,6 +280,12 @@ public class TableManagement {
         }
     }
 
+    public void dineInWithTableCapacity(ArrayList<Integer> tableIdList) {
+        for (Table t : availableTables) {
+        }
+
+    }
+
     // 用于对对应reserved的桌子进行check in
     public void reservedCusomerCheckIn(Customer c, int tableId) {
         // 这里会有一个时间的check，是否到了预定的时间，
@@ -184,16 +294,12 @@ public class TableManagement {
 
     // 展示各自table的课预定时间段
     public void showReservationTable() {
-        String showReservationTableMsg = "Table for reservation and available time slots: \n";
+        String showReservationTableMsg = "Table for tommorrow reservation and available time slots: \n";
         for (Table t : availableTables) {
             showReservationTableMsg += String.format("%d-Seats Table with ID of %d: ", t.getTableId(),
-                    t.getTableCapacity());
-            ArrayList<Boolean> timeslot = t.getTimeSlot();
-            for (Boolean time : timeslot) {
-                if (time == false) {
-                    showReservationTableMsg += String.format(" %d ", timeslot.indexOf(time));
-                }
-            }
+                    t.getTableId());
+            TimeSlots timeslots = t.getTmrReservationTimeSlot();
+            System.out.println(timeslots);
             showReservationTableMsg += "\n";
         }
         System.out.println(showReservationTableMsg);
@@ -206,7 +312,7 @@ public class TableManagement {
         for (Integer tableCapacity : tableCapacityTypeList) {
             int numOfAvailableForCurrentTableCapacity = 0;
             for (Table t : availableTables) {
-                if (t.getTableCapacity() == tableCapacity) {
+                if (t.getTableId() == tableCapacity) {
                     numOfAvailableForCurrentTableCapacity++;
                 }
             }

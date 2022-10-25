@@ -4,17 +4,18 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class Table {// 所有的桌子放在一起
-//-------------------------------------------------------------------------------------------------------------------------------------------------------
+    // -------------------------------------------------------------------------------------------------------------------------------------------------------
     private int tableID;
     private int capacity;
-    private TimeSlots reservationsTmr; //for tomorror
-    private TimeSlots reservationsTdy; //for today
+    private TimeSlots reservationsTmr; // for tomorror
+    private TimeSlots reservationsTdy; // for today
     private ManualClock clock = ManualClock.getInstance();
 
     private Boolean reserved = false;
     private Boolean seated = false;
     private int customerID;
-    
+    public int getTableCapacity;
+
     public Table(int tableID, int capacity) {
         this.tableID = tableID;
         this.capacity = capacity;
@@ -29,7 +30,7 @@ public class Table {// 所有的桌子放在一起
     public Boolean sit(int customerID) {
         if (reserved) {
             if (customerID == reservationsTdy.checkReserver(ManualClock.getTime())) {
-                
+
             }
             System.out.println("This table is being reserved.");
             return false;
@@ -42,10 +43,15 @@ public class Table {// 所有的桌子放在一起
         return true;
     }
 
+    public int getTableId() {
+        return 0;
+    }
 
+    public int getTableCapacity() {
+        return 0;
+    }
 
-
-//-------------------------------------------------------------------------------------------------------------------------------------------------------
+    // -------------------------------------------------------------------------------------------------------------------------------------------------------
     // private int tableId;
     // private int tableCapacity;// include how many people
     // //private TableState tableState;
@@ -56,33 +62,33 @@ public class Table {// 所有的桌子放在一起
     // private ArrayList<Customer> reservedForCustomer;
 
     // public Table(int tableId, int tableCapacity) {
-    //     this.tableCapacity = tableCapacity;
-    //     this.tableId = tableId;
-    //     // 初始化，在每天更新时将营业时间改为false
-    //     this.timeslot = new ArrayList<Boolean>();
-    //     this.reservedForCustomer = new ArrayList<Customer>();
-    //     // this.tableState=false;
+    // this.tableCapacity = tableCapacity;
+    // this.tableId = tableId;
+    // // 初始化，在每天更新时将营业时间改为false
+    // this.timeslot = new ArrayList<Boolean>();
+    // this.reservedForCustomer = new ArrayList<Customer>();
+    // // this.tableState=false;
     // }
 
     // public int getTableCapacity() {
-    //     return this.tableCapacity;
+    // return this.tableCapacity;
     // }
 
     // public int getTableId() {
-    //     return this.tableId;
+    // return this.tableId;
     // }
 
     // // 用于check该时间点是否被reserved
     // public boolean reservedTimeIsAllowed(int reservedTime) {
-    //     if (timeslot.get(reservedTime)) {
-    //         return false;
-    //     }
-    //     return true;
+    // if (timeslot.get(reservedTime)) {
+    // return false;
+    // }
+    // return true;
     // }
 
     // public void makeReservation(Customer c, int reservedTime) {
-    //     timeslot.add(reservedTime, true);
-    //     reservedForCustomer.add(reservedTime, c);
+    // timeslot.add(reservedTime, true);
+    // reservedForCustomer.add(reservedTime, c);
     // }
 
 }
