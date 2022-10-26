@@ -46,6 +46,11 @@ public class TableManagement implements TimeOvserver {
     // 存放桌型的列表，按从大到小的顺序排列 e.g. 10, 8, 4,2
     private ArrayList<Integer> tableCapacityTypeList;
 
+    // !!!!!!!!!!!!!!!!!!!!!
+    // 注意以下的table Arrangement results之类的list全部是按桌型的大小顺序存放的
+    // 比如现在有两张八人桌， 七张四人桌， 九张二人桌
+    // 则arraylist的数字应该是 2，7，9（index 从0到2）
+
     // sigleton pattern
     private static TableManagement instance = new TableManagement();
 
@@ -438,6 +443,7 @@ public class TableManagement implements TimeOvserver {
 
     }
 
+    // 以下两个不测
     // 会call customer里的checkWhetherThisIsNeeded(int tableCapacity, int tableId)
     public void addWaitingCustomer(Customer c) {
         waitingCustomers.add(c);
