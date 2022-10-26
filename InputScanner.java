@@ -60,17 +60,4 @@ class InputScanner {
     public void close() {
         scannerInput.close();
     }
-
-    public static void main(String[] args) {
-        InputScanner scanner = InputScanner.getInstance();
-        TableManagement tm = TableManagement.getInstance();
-        ManualClock.addObserver(tm);
-        while (true) {
-            System.out.print("Please make your choice: ");
-            String input = scanner.nextLine("input: ");
-            System.out.println("output: " + input);
-            //System.out.println("date in tm: " + tm.getDate());
-            System.out.println();
-        }
-    }
 }
