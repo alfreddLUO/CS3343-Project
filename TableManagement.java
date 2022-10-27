@@ -63,12 +63,7 @@ public class TableManagement implements TimeOvserver {
         reservedTables = new ArrayList<Table>();
         availableTables = new ArrayList<Table>();
         occupiedTables = new ArrayList<Table>();
-        // Just set three default table capacity: 2, 4, 8. May add according to
-        // restaurant's needs
         tableCapacityTypeList = new ArrayList<Integer>();
-        tableCapacityTypeList.add(2);
-        tableCapacityTypeList.add(4);
-        tableCapacityTypeList.add(8);
         Collections.sort(tableCapacityTypeList, Collections.reverseOrder());
     }
 
@@ -410,6 +405,26 @@ public class TableManagement implements TimeOvserver {
                 availableTables.add(t);
             }
         }
+    }
+
+    public ArrayList<Table> getAvailableTables() {
+        return availableTables;
+    }
+
+    public ArrayList<Table> getReservedTables() {
+        return reservedTables;
+    }
+
+    public ArrayList<Table> getOccupiedTables() {
+        return occupiedTables;
+    }
+
+    public ArrayList<Integer> getAllTableIds() {
+        return allTableIds;
+    }
+
+    public ArrayList<Integer> getTableCapcityTypList() {
+        return tableCapacityTypeList;
     }
 
     // 把table从occupied变为reserved

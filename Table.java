@@ -51,6 +51,21 @@ public class Table {// 所有的桌子放在一起
         return 0;
     }
 
+    public boolean reservedTimeIsAllowed(TimeSlot reservedTime) {
+        return false;
+    }
+
+    public void makeReservation(Customer c, TimeSlot reservedTime) {
+    }
+
+    public TimeSlots getTmrReservationTimeSlot() {
+        return reservationsTmr;
+    }
+
+    public TimeSlots getTodayReservationTimeSlot() {
+        return reservationsTdy;
+    }
+
     // -------------------------------------------------------------------------------------------------------------------------------------------------------
     // private int tableId;
     // private int tableCapacity;// include how many people
