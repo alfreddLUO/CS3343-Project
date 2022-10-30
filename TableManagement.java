@@ -274,11 +274,14 @@ public class TableManagement implements TimeOvserver {
                 waitingTablesNumList.set(index, 0);
             }
         }
+        // 15, 8,4,2
+        // waitingTablesNumList.(1)=1
         System.out.println(waitingTablesListMessage);
         return waitingTablesNumList;
     }
 
     // 预定桌子
+    // 不用测
     public void reserveTable(Customer c, int tableId, TimeSlot reservedTime) {
         for (Table t : availableTables) {
             if (t.getTableId() == tableId) {
@@ -318,7 +321,7 @@ public class TableManagement implements TimeOvserver {
     }
 
     // 展示所有桌型的available的数量
-    public void showAvailableTables() {
+    public String showAvailableTables() {
         String showAvailableTableMsg = "Below is the available tables: \n";
         for (Integer tableCapacity : tableCapacityTypeList) {
             int numOfAvailableForCurrentTableCapacity = 0;
@@ -331,10 +334,13 @@ public class TableManagement implements TimeOvserver {
                     numOfAvailableForCurrentTableCapacity);
         }
         System.out.println(showAvailableTableMsg);
+        return showAvailableTableMsg;
     }
 
     // admin可以添加新的桌子：1.该桌型之前就存在直接加桌子 2.该桌型之前不存在，加桌型和桌子
     // 测试
+    // 15,12,8,4,2
+    // 16
     public void addNewTable(int tableId, int tableCapacity) {
         if (checkTableIdIsAreadyInUsed(tableId) == false) {
             allTableIds.add(tableId);
