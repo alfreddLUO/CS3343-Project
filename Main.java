@@ -17,6 +17,12 @@ class Main {
         tm.canDirectlyDineIn(tm.recommendedArrangementAccordingToWaitingTime(23));
         tm.setWalkInStatus(tm.recommendedArrangementAccordingToWaitingTime(23));
         tm.showAvailableTables();
+        tm.setWaitingTables(tm.arrangeTableAccordingToNumOfPeople(8));
+        tm.showAvailableTables();
+        tm.setWaitingTables(tm.arrangeTableAccordingToNumOfPeople(2));
+        tm.showAvailableTables();
+        tm.setWaitingTables(tm.recommendedArrangementAccordingToWaitingTime(8));
+        tm.showAvailableTables();
         // System.out.println(tm.returnAvailableTableNumWithCapacity(8));
         // Restaurants res = new Restaurants();
         // Dish dish = new Dish("beijingkaoya", 20);

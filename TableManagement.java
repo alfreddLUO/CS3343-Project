@@ -108,6 +108,9 @@ public class TableManagement implements TimeOvserver {
         String arrangementResultMessage = "Your arranged tables are: ";
         // 按顺序储存的对应的桌型安排的数量
         ArrayList<Integer> tableArrangementResults = new ArrayList<Integer>();
+        for (int i = 0; i < tableCapacityTypeList.size(); i++) {
+            tableArrangementResults.add(i, 0);
+        }
         for (Integer tableCapacity : tableCapacityTypeList) {
             int tmpResults = 0;
             int capacityIndex = tableCapacityTypeList.indexOf(tableCapacity);
@@ -131,7 +134,7 @@ public class TableManagement implements TimeOvserver {
             if (tmpResults > 0) {
                 arrangementResultMessage += String.format("%d %d-Seats Tables ", tmpResults, tableCapacity);
             }
-            tableArrangementResults.add(tmpResults);
+            tableArrangementResults.set(capacityIndex, tmpResults);
             if (tmpPeopleNum == 0) {
                 break;
             }
@@ -241,17 +244,19 @@ public class TableManagement implements TimeOvserver {
         if (canDirectlyDineIn) {
             for (Integer tableCapacity : tableCapacityTypeList) {
                 int needOfThisTableCapcity = tableArrangement.get(tableCapacityTypeList.indexOf(tableCapacity));
-                int tmpCount = 0;
-                ArrayList<Table> copyOfAvailableTables = new ArrayList<>();
-                copyOfAvailableTables.addAll(availableTables);
-                for (Table t : copyOfAvailableTables) {
-                    if (t.getTableCapacity() == tableCapacity) {
-                        tmpCount++;
-                        // 把这个table放进customer占用的arraylist里去
-                        // c.occupyTable(t);
-                        setTableFromAvailableToOccupiedStatus(t.getTableId());
-                        if (tmpCount == needOfThisTableCapcity) {
-                            break;
+                if (needOfThisTableCapcity > 0) {
+                    int tmpCount = 0;
+                    ArrayList<Table> copyOfAvailableTables = new ArrayList<Table>();
+                    copyOfAvailableTables.addAll(availableTables);
+                    for (Table t : copyOfAvailableTables) {
+                        if (t.getTableCapacity() == tableCapacity) {
+                            tmpCount++;
+                            // 把这个table放进customer占用的arraylist里去
+                            // c.occupyTable(t);
+                            setTableFromAvailableToOccupiedStatus(t.getTableId());
+                            if (tmpCount == needOfThisTableCapcity) {
+                                break;
+                            }
                         }
                     }
                 }
@@ -267,32 +272,40 @@ public class TableManagement implements TimeOvserver {
     // 用于根据安排结果，返回顾客需要等待的对应桌型的数量的list
     public ArrayList<Integer> setWaitingTables(ArrayList<Integer> tableArrangement) {
         ArrayList<Integer> waitingTablesNumList = new ArrayList<Integer>();
+        for (int i = 0; i < tableCapacityTypeList.size(); i++) {
+            waitingTablesNumList.add(i, 0);
+        }
         String waitingTablesListMessage = "For selected arrangements, you still need to wait for: ";
         for (Integer tableCapacityType : tableCapacityTypeList) {
             int index = tableCapacityTypeList.indexOf(tableCapacityType);
             int needOfThisTableCapcity = tableArrangement.get(index);
             // 以下这一个for loop是把能occupt的table先occupy掉
-            int tmpCount = 0;
-            for (Table t : availableTables) {
-                if (t.getTableCapacity() == tableCapacityType) {
-                    tmpCount++;
-                    // 把这个table放进customer占用的arraylist里去
-                    // c.occupyTable(t);
-                    setTableFromAvailableToOccupiedStatus(t.getTableId());
-                    if (tmpCount == needOfThisTableCapcity) {
-                        break;
+            if (needOfThisTableCapcity > 0) {
+                int tmpCount = 0;
+                ArrayList<Table> copyOfAvailableTables = new ArrayList<Table>();
+                copyOfAvailableTables.addAll(availableTables);
+                for (Table t : copyOfAvailableTables) {
+                    if (t.getTableCapacity() == tableCapacityType) {
+                        tmpCount++;
+                        // 把这个table放进customer占用的arraylist里去
+                        // c.occupyTable(t);
+                        setTableFromAvailableToOccupiedStatus(t.getTableId());
+                        if (tmpCount == needOfThisTableCapcity) {
+                            break;
+                        }
                     }
                 }
+                // 如果该桌型当前的还没够，那么就将待等桌型及等待的数量传递给customer
+                if (tmpCount < needOfThisTableCapcity) {
+                    int waitingCount = needOfThisTableCapcity - tmpCount;
+                    waitingTablesNumList.set(index, waitingCount);
+                    waitingTablesListMessage += String.format(" %d %d-Seats Table ", waitingCount, tableCapacityType);
+                    // c.addWaitingTable(tableCapacity, needOfThisTableCapcity - tmpCount);
+                } else {
+                    waitingTablesNumList.set(index, 0);
+                }
             }
-            // 如果该桌型当前的还没够，那么就将待等桌型及等待的数量传递给customer
-            if (tmpCount < needOfThisTableCapcity) {
-                int waitingCount = needOfThisTableCapcity - tmpCount;
-                waitingTablesNumList.set(index, waitingCount);
-                waitingTablesListMessage += String.format(" %d %d-Seats Table ", tableCapacityType, waitingCount);
-                // c.addWaitingTable(tableCapacity, needOfThisTableCapcity - tmpCount);
-            } else {
-                waitingTablesNumList.set(index, 0);
-            }
+
         }
         // 15, 8,4,2
         // waitingTablesNumList.(1)=1
