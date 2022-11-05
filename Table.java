@@ -1,9 +1,10 @@
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.time.LocalTime;
 import java.util.ArrayList;
 
-public class Table {// 所有的桌子放在一起
+public class Table implements Comparable<Table> {// 所有的桌子放在一起
     // -------------------------------------------------------------------------------------------------------------------------------------------------------
     private int tableID;
     private int capacity;
@@ -16,6 +17,15 @@ public class Table {// 所有的桌子放在一起
     private int customerID;
     public int getTableCapacity;
 
+    @Override
+    public int compareTo(Table t) {
+        if (t.capacity >= 1) {
+            return 1;
+        }
+        return -1;
+
+    }
+
     public Table(int tableID, int capacity) {
         this.tableID = tableID;
         this.capacity = capacity;
@@ -27,28 +37,38 @@ public class Table {// 所有的桌子放在一起
         reservationsTmr = new TimeSlots();
     }
 
-    public Boolean sit(int customerID) {
-        if (reserved) {
-            if (customerID == reservationsTdy.checkReserver(ManualClock.getTime())) {
+    // public void sit(int customerID) {
+    // this.customerID=customerID;
+    // // if (reserved) {
+    // // if (customerID == reservationsTdy.checkReserver(ManualClock.getTime())) {
 
-            }
-            System.out.println("This table is being reserved.");
-            return false;
-        }
-        if (seated) {
-            System.out.println("This table is being occupied.");
-            return false;
-        }
-        System.out.println("You are seated in table " + tableID);
-        return true;
-    }
+    // // }
+    // // System.out.println("This table is being reserved.");
+    // // return false;
+    // // }
+    // // if (seated) {
+    // // System.out.println("This table is being occupied.");
+    // // return false;
+    // // }
+    // // System.out.println("You are seated in table " + tableID);
+    // // return true;
+    // }
 
     public int getTableId() {
-        return 0;
+        return tableID;
     }
 
     public int getTableCapacity() {
-        return 0;
+        return capacity;
+    }
+
+    public int toBeReserved(LocalTime now) {
+        if (reservationsTdy.checkReservedStatus(now) == 1) {
+            return 1;
+        } else if (reservationsTdy.checkReservedStatus(now) == 0) {
+            return 0;
+        }
+        return -1;
     }
 
     public boolean reservedTimeIsAllowed(TimeSlot reservedTime) {

@@ -11,24 +11,44 @@ public class TableManagement implements TimeOvserver {
     @Override
     public void timeUpdate(LocalTime newTime) {
         currTime = newTime;
-        updateStatus();
+        updateStatusAccordingToTime();
     }
 
     @Override
     public void dateUpdate(LocalDate newDate) {
         currDate = newDate;
-        updateStatus();
+        updateStatusAccordingToDate();
     }
 
-    private void updateStatus() {
+    private void updateStatusAccordingToTime() {
+
+        for (Table t : availableTables) {
+            if (t.toBeReserved(currTime) != -1) {
+                availableTables.remove(t);
+                reservedTables.add(t);
+            }
+        }
+        for (Table t : occupiedTables) {
+            if (t.toBeReserved(currTime) == 0) {
+                // (unsolved) notify customers to check out
+                occupiedTables.remove(t);
+                reservedTables.add(t);
+            }
+        }
+
+    }
+
+    private void updateStatusAccordingToDate() {
         // TODO-loop tables and change status
-    }
-
-    public void reserve(int customerID, int tableID, LocalDate date, TimeSlot ts) {
-
-    }
-
-    public void cancelReservation(int customerID) {
+        for (Table t : reservedTables) {
+            setTableFromReservedToAvailable(t.getTableId());
+        }
+        for (Table t : occupiedTables) {
+            setTableFromOccupiedToAvailable(t.getTableId());
+        }
+        for (Table t : returnAllTablesList()) {
+            t.startNewDay();
+        }
 
     }
 
@@ -98,8 +118,9 @@ public class TableManagement implements TimeOvserver {
             } else {
                 // 最佳的是把人放置于能装下他们的最小桌子， e.g. 假设有2，4，8人桌； 7人来放8人桌
                 if (tableCapacity >= peopleNum
-                        && peopleNum > tableCapacityTypeList.get(capacityIndex)) {
-                    tmpResults = 1;
+                        && peopleNum > tableCapacityTypeList.get(capacityIndex + 1)) {
+                    tmpResults += 1;
+                    tmpPeopleNum = 0;
                 }
                 // 若第一种情况无法满足；即尽可能让他们坐在大的桌子上
                 else {
@@ -111,6 +132,9 @@ public class TableManagement implements TimeOvserver {
                 arrangementResultMessage += String.format("%d %d-Seats Tables ", tmpResults, tableCapacity);
             }
             tableArrangementResults.add(tmpResults);
+            if (tmpPeopleNum == 0) {
+                break;
+            }
         }
         System.out.println(arrangementResultMessage);
         // 通过canDirectlyIn来确定等待/推荐/直接默认入座
@@ -136,7 +160,7 @@ public class TableManagement implements TimeOvserver {
         int tmpPeopleNum = peopleNum;
         ArrayList<Integer> tableArrangementResults = new ArrayList<Integer>();
         for (int i = 0; i < tableCapacityTypeList.size(); i++) {
-            tableArrangementResults.set(i, 0);
+            tableArrangementResults.add(i, 0);
         }
 
         for (Table t : availableTables) {
@@ -179,17 +203,12 @@ public class TableManagement implements TimeOvserver {
         boolean canDirectlyWalkIn = true;
         String waitingTablesListMessage = "For default arrangements, you still need to wait for: ";
         for (Integer num : tableArrangementResults) {
-            int availableNumOfThisTableType = 0;
             int tableCapacityType = tableCapacityTypeList.get(tableArrangementResults.indexOf(num));
-            for (Table t : availableTables) {
-                if (t.getTableCapacity == tableCapacityType) {
-                    availableNumOfThisTableType++;
-                }
-            }
+            int availableNumOfThisTableType = returnAvailableTableNumWithCapacity(tableCapacityType);
             if (num > availableNumOfThisTableType) {
                 int numOfWaitingTables = num - availableNumOfThisTableType;
                 canDirectlyWalkIn = false;
-                waitingTablesListMessage += String.format(" %d %d-Seats Table ", tableCapacityType, numOfWaitingTables);
+                waitingTablesListMessage += String.format(" %d %d-Seats Table ", numOfWaitingTables, tableCapacityType);
             }
         }
         if (canDirectlyWalkIn) {
@@ -223,13 +242,14 @@ public class TableManagement implements TimeOvserver {
             for (Integer tableCapacity : tableCapacityTypeList) {
                 int needOfThisTableCapcity = tableArrangement.get(tableCapacityTypeList.indexOf(tableCapacity));
                 int tmpCount = 0;
-                for (Table t : availableTables) {
-                    if (t.getTableId() == tableCapacity) {
+                ArrayList<Table> copyOfAvailableTables = new ArrayList<>();
+                copyOfAvailableTables.addAll(availableTables);
+                for (Table t : copyOfAvailableTables) {
+                    if (t.getTableCapacity() == tableCapacity) {
                         tmpCount++;
                         // 把这个table放进customer占用的arraylist里去
                         // c.occupyTable(t);
-                        availableTables.remove(t);
-                        occupiedTables.add(t);
+                        setTableFromAvailableToOccupiedStatus(t.getTableId());
                         if (tmpCount == needOfThisTableCapcity) {
                             break;
                         }
@@ -280,25 +300,6 @@ public class TableManagement implements TimeOvserver {
         return waitingTablesNumList;
     }
 
-    // 预定桌子
-    // 不用测
-    public void reserveTable(Customer c, int tableId, TimeSlot reservedTime) {
-        for (Table t : availableTables) {
-            if (t.getTableId() == tableId) {
-                if (t.reservedTimeIsAllowed(reservedTime) == true) {
-                    t.makeReservation(c, reservedTime);
-                    System.out.printf("Successfully reserved Two-Seats table of id: %d at time of %d", tableId,
-                            reservedTime);
-                } else {
-                    System.out.printf(
-                            "Selected Two-Seats table of id: %d is not available at time of %d. Please input a valid timeslot",
-                            tableId, reservedTime);
-                }
-            }
-            // 加一个exception没找到该table
-        }
-    }
-
     // 用于对对应reserved的桌子进行check in
     public void reservedCusomerCheckIn(Customer c, int tableId) {
         // 这里会有一个时间的check，是否到了预定的时间，
@@ -310,10 +311,10 @@ public class TableManagement implements TimeOvserver {
     public void showReservationTable() {
         String showReservationTableMsg = "Table for tommorrow reservation and available time slots: \n";
         for (Table t : availableTables) {
-            showReservationTableMsg += String.format("%d-Seats Table with ID of %d: ", t.getTableId(),
-                    t.getTableId());
-            TimeSlots timeslots = t.getTmrReservationTimeSlot();
-            System.out.println(timeslots);
+            TimeSlots tmrReservationTimeslots = t.getTmrReservationTimeSlot();
+            showReservationTableMsg += String.format(
+                    "%d-Seats Table with ID of %d is available tmr for the timeslots: %s \n", t.getTableCapacity(),
+                    t.getTableId(), tmrReservationTimeslots.getAvailiableSlots());
             showReservationTableMsg += "\n";
         }
         System.out.println(showReservationTableMsg);
@@ -324,14 +325,8 @@ public class TableManagement implements TimeOvserver {
     public String showAvailableTables() {
         String showAvailableTableMsg = "Below is the available tables: \n";
         for (Integer tableCapacity : tableCapacityTypeList) {
-            int numOfAvailableForCurrentTableCapacity = 0;
-            for (Table t : availableTables) {
-                if (t.getTableId() == tableCapacity) {
-                    numOfAvailableForCurrentTableCapacity++;
-                }
-            }
             showAvailableTableMsg += String.format("Num of Available %d-Seats Table: %d \n", tableCapacity,
-                    numOfAvailableForCurrentTableCapacity);
+                    returnAvailableTableNumWithCapacity(tableCapacity));
         }
         System.out.println(showAvailableTableMsg);
         return showAvailableTableMsg;
@@ -351,66 +346,62 @@ public class TableManagement implements TimeOvserver {
                 Collections.sort(tableCapacityTypeList, Collections.reverseOrder());
                 availableTables.add(new Table(tableId, tableCapacity));
             }
-            System.out.printf("Successfully  add table with ID of %d, capacity of %d", tableId, tableCapacity);
+            System.out.printf("Successfully  add table with ID of %d, capacity of %d \n", tableId, tableCapacity);
         } else {
-            System.out.printf("Can't add such table because Table with ID of %d is already in used", tableId);
+            System.out.printf("Can't add such table because Table with ID of %d is already in used \n", tableId);
         }
+    }
+
+    public void removeTableCapacity(int tableCapacity) {
+        tableCapacityTypeList.remove(tableCapacity);
+        Collections.sort(tableCapacityTypeList, Collections.reverseOrder());
     }
 
     // admin删除旧桌子: 1.桌子是available的直接delete就ok 2.桌子不在available
     // list里可能是因为根本不available或根本没有这张桌子，统一print不能删除
     // 测试：1.桌子本身available 2.桌子不available 3.桌子根本就没有
     public void removeTable(int tableId) {
-        for (Table t : availableTables) {
-            if (t.getTableId() == tableId) {
-                allTableIds.remove(tableId);
-                availableTables.remove(t);
-                System.out.printf("Successfully delete the table with id of %d", tableId);
-                return;
+        Table t = returnTableAccordingToTableId(tableId);
+        if (t != null) {
+            allTableIds.remove(tableId);
+            availableTables.remove(t);
+            if (returnTableNumWithTableCapacity(t.getTableCapacity()) == 0) {
+                removeTableCapacity(t.getTableCapacity());
             }
+            System.out.printf("Successfully delete the table with id of %d \n", tableId);
+            return;
         }
-        System.out.printf("Can't delete the table with id of %d. Maybe due to it's unavailable or it doesn't exist.",
+        System.out.printf("Can't delete the table with id of %d. Maybe due to it's unavailable or it doesn't exist.\n",
                 tableId);
+
     }
 
     // 把table从available变为reserved
     public void setTableFromAvailableToReservedStatus(int tableId) {
-        for (Table t : availableTables) {
-            if (t.getTableId() == tableId) {
-                availableTables.remove(t);
-                reservedTables.add(t);
-            }
-        }
+        Table t = returnTableAccordingToTableId(tableId);
+        availableTables.remove(t);
+        reservedTables.add(t);
     }
 
     // 把table从available变为occupied
     public void setTableFromAvailableToOccupiedStatus(int tableId) {
-        for (Table t : availableTables) {
-            if (t.getTableId() == tableId) {
-                availableTables.remove(t);
-                occupiedTables.add(t);
-            }
-        }
+        Table t = returnTableAccordingToTableId(tableId);
+        availableTables.remove(t);
+        occupiedTables.add(t);
     }
 
     // 把table从reserved变为occupied
     public void setTableFromReservedToOccupiedStatus(int tableId) {
-        for (Table t : reservedTables) {
-            if (t.getTableId() == tableId) {
-                reservedTables.remove(t);
-                occupiedTables.add(t);
-            }
-        }
+        Table t = returnTableAccordingToTableId(tableId);
+        reservedTables.remove(t);
+        occupiedTables.add(t);
     }
 
     // 把table从occupied变为available
     public void setTableFromOccupiedToAvailable(int tableId) {
-        for (Table t : occupiedTables) {
-            if (t.getTableId() == tableId) {
-                occupiedTables.remove(t);
-                availableTables.add(t);
-            }
-        }
+        Table t = returnTableAccordingToTableId(tableId);
+        occupiedTables.remove(t);
+        availableTables.add(t);
     }
 
     public ArrayList<Table> getAvailableTables() {
@@ -435,22 +426,16 @@ public class TableManagement implements TimeOvserver {
 
     // 把table从occupied变为reserved
     public void setTableFromOccupiedToReserved(int tableId) {
-        for (Table t : occupiedTables) {
-            if (t.getTableId() == tableId) {
-                occupiedTables.remove(t);
-                reservedTables.add(t);
-            }
-        }
+        Table t = returnTableAccordingToTableId(tableId);
+        occupiedTables.remove(t);
+        reservedTables.add(t);
     }
 
     // 把table从reserved变成available
     public void setTableFromReservedToAvailable(int tableId) {
-        for (Table t : reservedTables) {
-            if (t.getTableId() == tableId) {
-                reservedTables.remove(t);
-                availableTables.add(t);
-            }
-        }
+        Table t = returnTableAccordingToTableId(tableId);
+        reservedTables.remove(t);
+        availableTables.add(t);
     }
 
     // check 该table ID是否已经加进去了
@@ -473,6 +458,71 @@ public class TableManagement implements TimeOvserver {
 
     public void removeWaitingCustomer(Customer c) {
         waitingCustomers.remove(c);
+    }
+
+    public Table returnTableAccordingToTableId(int tableId) {
+        ArrayList<Table> allTablesList = new ArrayList<>();
+        allTablesList.addAll(availableTables);
+        allTablesList.addAll(reservedTables);
+        allTablesList.addAll(occupiedTables);
+        for (Table t : allTablesList) {
+            if (t.getTableId() == tableId) {
+                return t;
+            }
+        }
+        return null;
+    }
+
+    public ArrayList<Table> returnAllTablesList() {
+        ArrayList<Table> allTablesList = new ArrayList<>();
+        allTablesList.addAll(availableTables);
+        allTablesList.addAll(reservedTables);
+        allTablesList.addAll(occupiedTables);
+        return allTablesList;
+    }
+
+    // 返回对应capacity的table数量
+    public int returnTableNumWithTableCapacity(int tableCapacity) {
+        ArrayList<Table> allTablesList = returnAllTablesList();
+        int num = 0;
+        for (Table t : allTablesList) {
+            if (t.getTableCapacity() == tableCapacity) {
+                num++;
+            }
+        }
+        return num;
+    }
+
+    // 预定桌子；把预定时间添加到对应桌子的明日timeslots里
+    public Boolean reserveTableAccordingToTimeslot(int tableId, TimeSlot timeslot) {
+        Table table = returnTableAccordingToTableId(tableId);
+        TimeSlots tmrReservationTimeslots = table.getTmrReservationTimeSlot();
+        Boolean reserved = tmrReservationTimeslots.add(timeslot);
+        if (reserved == false) {
+            System.out.printf("Table with id of %d can't be reserved between %d!\n", tableId, timeslot.toString());
+            return false;
+        }
+        System.out.printf("Table with id of %d is succesfully reserved between %d!\n", tableId,
+                timeslot.toString());
+        return true;
+    }
+
+    // 如名字所写,取消对应桌子的预定时间段子
+    public void cancelReservationAccordingToTimeslot(int tableId, TimeSlot timeslot) {
+        Table t = returnTableAccordingToTableId(tableId);
+        TimeSlots tmrTimeSlots = t.getTmrReservationTimeSlot();
+        tmrTimeSlots.remove(timeslot);
+
+    }
+
+    public int returnAvailableTableNumWithCapacity(int tableCapacityType) {
+        int numOfAvailableForCurrentTableCapacity = 0;
+        for (Table t : availableTables) {
+            if (t.getTableCapacity() == tableCapacityType) {
+                numOfAvailableForCurrentTableCapacity++;
+            }
+        }
+        return numOfAvailableForCurrentTableCapacity++;
     }
 
 }
