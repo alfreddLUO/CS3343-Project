@@ -42,38 +42,267 @@ public class CustomerModule {
 
         customer = c;
         String input = "";
-        int temp = 0;
+        int select = 0;
 
         // 如果customerState根據消費總額算，就disable以下一行：
         clearOrderNPrice();
 
-        do {
-            // Get Customer's choice to dine or reserve
-            System.out.print("\nPlease choose your option: [1 Dine-in | 2 Reserve]: ");
-            input = Main.in.next("Input: ");
-            temp = Integer.parseInt(input);
+        while (select != 5) {
+            do {
+                // check if customer is sit-down
+                if (customer.getOccupiedTableId().isEmpty()) {
+                    if (customer.checkisReserved()) {
+                        System.out.println(customer.getReserveInfo());
 
-        } while (temp != 1 && temp != 2);
+                        System.out.println("\nCommands: ");
+                        System.out.println("[1] Dine in");
+                        System.out.println("[3] Cancel Reservation");
+                        System.out.println("[5] Logout");
 
-        // Choosed Dine-in or Reserve -> Goto each function to do own things...
-        DineReserve(temp);
+                    } else {
+                        // Get Customer's choice to dine or reserve
+                        System.out.println("\nCommands: ");
+                        System.out.println("[1] Dine in");
+                        System.out.println("[2] Reserve");
+                        System.out.println("[5] Logout");
+                    }
 
-        // After Dine-in(get ticket and sit down) or Reserve -> 下單流程
-        Ordering();
+                } else {
+                    System.out.println("\nCommands: ");
+                    System.out.println("[2] Reserve");
+                    System.out.println("[4] Check Out");
+                    System.out.println("[5] Logout");
+                }
 
-        // display official-confirmed-ordered dish
-        customer.printOrders();
+                System.out.print("\nPlease select your operation: ");
+                input = Main.in.next("\nInput: ");
+                select = Integer.parseInt(input);
 
-        // 付款流程
-        Payment pay = new Payment(customer);
-        pay.payProcess();
+                if (select == 5) {
+                    break;
+                } else if (select == 1 || select == 2 || select == 3) {
+
+                    if (select == 1) {
+
+                        if (dineInOperation()) {
+                            // After Dine-in(get ticket and sit down) -> About Ordering
+                            ordering();
+
+                            // display official-confirmed-ordered dish
+                            customer.printOrders();
+
+                            // About Payment
+                            Payment pay = new Payment(customer);
+                            pay.payProcess();
+                            // tm.checkOutByCustomer(customer.getOccupiedTableId());
+                        }
+                    } else if (select == 2) {
+                        if (customer.checkisReserved()) {
+                            System.out.println("\nError! You already has a reservation.");
+                            break;
+                        } else {
+                            reservationOperation();
+                        }
+                    } else if (select == 3) {
+                        if (!customer.checkisReserved()) {
+                            System.out.println("\nError! You have not yet make a reservation.");
+                            break;
+                        } else {
+                            if (cancelReservation()) {
+                                System.out.println("\nCancel Success!");
+                            } else {
+                                System.out.println("\nError! Cancellation unsuccessful.");
+                            }
+                        }
+                    }
+
+                } else if (select == 4) {
+                    tm.checkOutByCustomer(customer.getOccupiedTableId());
+                    System.out.println("\nYou have successfully check out.");
+                    select = 0;
+                }
+
+                if (select == 5) {
+                    break;
+                }
+            } while (select != 1 && select != 2 && select != 3);
+        }
     }
 
-    /*
-     * 1. Choose Restaurant to order
-     * 2. Choose Food to order from the menu of the chosen restaurant
-     */
-    public static void Ordering() {
+    public static boolean reservationOperation() {
+
+        ArrayList<Integer> chosedTableIds = new ArrayList<>();
+        String reserveTime = null, chosedTable = null;
+        int chosedTableId = 0;
+
+        do {
+            // Show available time slot for booking
+            tm.showReservationTable();
+
+            // Input the time slot you want to reserve, format: 11:23-12:22
+            System.out.print("\nPlease input time slot to reserve (Format: xx:xx-xx:xx): ");
+            reserveTime = Main.in.next("Input: ");
+
+            // choose table by tableId
+            System.out.print("Please input the table ids you want to reserve: (separate by comma): ");
+            chosedTable = Main.in.next("Input: ");
+            String[] idx = chosedTable.split(",");
+
+            for (int i = 0; i < idx.length; i++) {
+                chosedTableId = Integer.parseInt(idx[i]);
+                chosedTableIds.add(chosedTableId);
+            }
+
+        } while (chosedTableId == 0);
+
+        // set reserve in customer.java
+        customer.setReserve(reserveTime, chosedTableIds);
+
+        // indicator for successful booking
+        if (customer.getReserve() != null) {
+            return true;
+        } else {
+            return false;
+        }
+
+    }
+
+    public static boolean dineInOperation() {
+        tm.showAvailableTables();
+        String str;
+
+        // Input number of people to dine in
+        System.out.print("Please input the number of people: ");
+        int numOfPeople;
+        str = Main.in.next("Input: ");
+        numOfPeople = Integer.parseInt(str);
+
+        ArrayList<Integer> result = new ArrayList<>();
+        // result = tm.makeTableArrangements(numOfPeople);
+        result = tm.arrangeTableAccordingToNumOfPeople(numOfPeople);
+
+        if (tm.canDirectlyDineIn(result)) { // 彈message dine-in或者leave
+
+            int select = 0;
+
+            do {
+                System.out.println("You can now directly walk in.");
+
+                System.out.println("\nCommands: ");
+                System.out.println("[1] Walk in");
+                System.out.println("[2] Leave");
+
+                System.out.print("\nPlease choose your operation: ");
+                str = Main.in.next("Input: ");
+                select = Integer.parseInt(str);
+
+                if (select == 2) {
+                    return false;
+                } else if (select == 1) {
+                    ArrayList<Integer> checkinTableId = tm.setWalkInStatus(result);
+
+                    // TODO: 拆成两个
+                    addCheckInAndWaitingInfo(str, checkinTableId, null);
+
+                    return true;
+                } else {
+
+                }
+            } while (select != 1 && select != 2);
+
+        } else {
+            ArrayList<Integer> recommendedResult = tm.recommendedArrangementAccordingToWaitingTime(numOfPeople);
+
+            if (recommendedResult == null) {
+
+                int select = 0;
+
+                do {
+                    System.out.println("");
+
+                    System.out.println("\nCommands: ");
+                    System.out.println("[1] Queue");
+                    System.out.println("[2] Leave");
+
+                    System.out.print("\nPlease choose your operation: ");
+                    str = Main.in.next("Input: ");
+                    select = Integer.parseInt(str);
+
+                    if (select == 1) {
+                        tm.setWaitingTables(Main.getCustomerCid(customer), result);
+                    } else if (select == 2) {
+
+                    }
+
+                } while (select != 1 && select != 2);
+            } else {
+
+                int select = 0;
+                do {
+                    System.out.println("");
+
+                    System.out.println("\nCommands: ");
+                    System.out.println("[1] Queue");
+                    System.out.println("[2] Walk in with recommended arrangement");
+                    System.out.println("[3] Leave");
+                    System.out.print("\nPlease choose your operation: ");
+                    str = Main.in.next("Input: ");
+                    select = Integer.parseInt(str);
+
+                    if (select == 1) {
+                        tm.setWaitingTables(Main.getCustomerCid(customer), result);
+
+                    } else if (select == 2) {
+                        ArrayList<Integer> checkinTableId = tm.setWalkInStatus(result);
+
+                        // TODO: 拆成两个
+                        addCheckInAndWaitingInfo(str, checkinTableId, null);
+
+                    } else if (select == 3) {
+                        break;
+                    }
+
+                } while (select != 1 && select != 2);
+            }
+        }
+        return false;
+    }
+
+    public static boolean cancelReservation() {
+        customer.cancelReservation();
+        customer.clearReservation();
+
+        if (customer.getReserve() == null) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static void addCheckInAndWaitingInfo(String CId, ArrayList<Integer> checkInTable,
+            ArrayList<Integer> waitingTableNumList) {
+        // 找Customer Instance
+        // checkInTable加到customer occupiedtable
+        // 把waitingtableNumList 加到customer 相同的arrayList裡面
+        // Customers customer = Main.matchCId(CId);
+
+        for (int i : checkInTable) {
+            customer.addTableId(i);
+        }
+        if (waitingTableNumList != null) {
+            for (int i : waitingTableNumList) {
+                customer.addTableNumList(i);
+            }
+        }
+
+    }
+
+    public static void ordering() {
+        /*
+         * 1. Choose Restaurant to order
+         * 2. Choose Food to order from the menu of the chosen restaurant
+         */
+
         // CHOOSE RESTAURANTS
         outputRestaurant();
 
@@ -81,7 +310,7 @@ public class CustomerModule {
 
         // Match string input with arraylist to find the restaurant in list
         do {
-            System.out.println("\nPlease choose the restaurant to order:");
+            System.out.print("\nPlease choose the restaurant to order: ");
             input = Main.in.next("Input: ");
             int idx = Integer.parseInt(input);
 
@@ -98,7 +327,7 @@ public class CustomerModule {
         outputMenu();
 
         // customer ordering
-        System.out.println(
+        System.out.print(
                 "\nPlease choose from the menu of restaurant " + restaurant.toString() + " (separate by a COMMA): ");
         addDishtoPending();
 
@@ -107,7 +336,7 @@ public class CustomerModule {
     }
 
     public static void confirmOrder() {
-        int confirmOrder = 2;
+        boolean confirmOrder = false;
         int addDel = 0;
         String input = "";
 
@@ -115,27 +344,49 @@ public class CustomerModule {
             // Check ordered dish
             outputPendingDish();
 
-            System.out.print("\nDo you want to add or delete order? [1 ADD | 2 DELETE | 3 Continue]: ");
-            input = Main.in.next("Input: ");
-            addDel = Integer.parseInt(input);
+            System.out.println("\nDo you want to confirm order?");
+            System.out.println("\nCommands: ");
+            System.out.println("[1] Yes: Please input 'True'/'true'/'TRUE'");
+            System.out.println("[2] No: Please input 'False'/'false'/'FALSE'");
 
-            if (addDel == 1) {
-                outputMenu();
-                System.out.print("\nInput the dish number to add: (separate by a COMMA): ");
-                addDishtoPending();
-            } else if (addDel == 2) {
-                removeDishfromPending();
-            } else {
+            System.out.print("\nYour option: ");
+            input = Main.in.next("Input: ");
+            confirmOrder = Boolean.parseBoolean(input);
+
+            if (confirmOrder) {
                 break;
+            } else {
+                outputPendingDish();
+
+                System.out.print("\nDo you want to add or delete order?");
+
+                System.out.println("\nCommands: ");
+                System.out.println("[1] Add Order");
+                System.out.println("[2] Delete Order");
+                System.out.println("[3] Confirm Order");
+
+                input = Main.in.next("Input: ");
+                addDel = Integer.parseInt(input);
+
+                if (addDel == 3) {
+                    confirmOrder = true;
+                    break;
+                } else if (addDel == 1) {
+                    outputMenu();
+
+                    System.out.print("\nInput the dish number to add: (separate by a COMMA): ");
+                    addDishtoPending();
+
+                    outputPendingDish();
+                } else if (addDel == 2) {
+                    removeDishfromPending();
+
+                    outputPendingDish();
+                } else {
+
+                }
             }
-
-            outputPendingDish();
-
-            System.out.print("\nDo you confirm to order? [1 YES | 2 NO]: ");
-            input = Main.in.next("Input: ");
-            confirmOrder = Integer.parseInt(input);
-
-        } while (confirmOrder != 1);
+        } while (!confirmOrder);
 
         // confirm to order (OFFICIAL ORDER)
         for (int i = 0; i < pendingOrder.size(); i++) {
@@ -144,7 +395,7 @@ public class CustomerModule {
     }
 
     /*
-     * 真的要用到的Function
+     * Tool Functions
      */
 
     public static void addPendingOrder(Dish dish) {
@@ -185,108 +436,7 @@ public class CustomerModule {
         customer.getMembership().clearState();
     }
 
-    public static void DineReserve(int temp) {
-
-        if (temp == 1) {
-
-            dineInOperation();
-
-        } else if (temp == 2) {
-            ArrayList<Integer> chosedTableIds = new ArrayList<>();
-            String reserveTime = null, chosedTable = null;
-            int chosedTableId = 0;
-
-            // TODO: Reserve
-            do {
-                // 展示可預約桌子的時間段
-                tm.showReservationTable();
-
-                // 輸入想要預訂的時間段, format: 11:23-12:22
-                System.out.print("\nPlease input time slot to reserve (Format: xx:xx-xx:xx): ");
-                reserveTime = Main.in.next("Input: ");
-
-                // 選table
-                System.out.print("\nPlease input the table ids you want to reserve: (separate by comma): ");
-                chosedTable = Main.in.next("Input: ");
-                String[] idx = chosedTable.split(",");
-                for (int i = 0; i < idx.length; i++) {
-                    chosedTableId = Integer.parseInt(idx[i]);
-                    chosedTableIds.add(chosedTableId);
-                }
-
-                // 設置customer的reserve
-
-            } while (chosedTableId == 0);
-
-            reserveOperation(reserveTime, chosedTableIds);
-
-        } else {
-            // Do nothing & Keep inputing
-        }
-    }
-
-    public static void dineInOperation() {
-        tm.showAvailableTables();
-
-        // 輸入人數
-        String str;
-        System.out.println("\nPlease input the number of people: ");
-        int numOfPeople;
-        str = Main.in.next("Input: ");
-        numOfPeople = Integer.parseInt(str);
-
-        ArrayList<Integer> result = new ArrayList<>();
-        result = tm.makeTableArrangements(numOfPeople);
-
-        if (tm.canDirectlyDineIn(result)) { // 彈message dine-in或者leave
-
-            boolean dineIn = false;
-            int select = 0;
-
-            do {
-                System.out.printf("\nYou can now directly dine in. Please indicate your option: [1 Dine In | 2 Leave]");
-                str = Main.in.next("Input: ");
-                select = Integer.parseInt(str);
-                if (select == 1) {
-                    dineIn = true;
-                }
-            } while (select != 1 && select != 2);
-
-            if (dineIn) {
-                tm.setWalkInStatus(result);
-            }
-
-        } else {
-            // 等待Queue
-
-            // 顾客需要等待的对应桌型的数量的list
-            tm.setWaitingTables(Main.getCustomerCid(customer), result);
-        }
-    }
-
-    // TODO:
-    public static void reserveOperation(String reserveTime, ArrayList<Integer> chosedTableIds) {
-
-        // input
-        customer.setReserve(reserveTime, chosedTableIds);
-    }
-
-    public static void addCheckInAndWaitingInfo(String CId, ArrayList<Integer> checkInTable,
-            ArrayList<Integer> waitingTableNumList) {
-        // 找Customer Instance
-        // checkInTable加到customer occupiedtable
-        // 把waitingtableNumList 加到customer 相同的arrayList裡面
-        Customers customer = Main.matchUserName(CId);
-        for (int i : checkInTable) {
-            customer.addTableId(i);
-        }
-        for (int i : waitingTableNumList) {
-            customer.addTableNumList(i);
-        }
-
-    }
-
-    // 把菜加到Pending Order裡面
+    // Add dish into Pending Order
     public static void addDishtoPending() {
         String strDish;
         String[] tokens;
@@ -305,7 +455,7 @@ public class CustomerModule {
         }
     }
 
-    // 把菜從Pending Order裡面刪除
+    // Delete dish from Pending Order
     public static void removeDishfromPending() {
 
         outputPendingDish();

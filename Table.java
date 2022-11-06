@@ -10,7 +10,7 @@ public class Table implements Comparable<Table> {// 所有的桌子放在一起
     private int capacity;
     private TimeSlots reservationsTmr; // for tomorror
     private TimeSlots reservationsTdy; // for today
-    private ManualClock clock = ManualClock.getInstance();
+    private ManualClock1 clock = ManualClock1.getInstance();
 
     private Boolean reserved = false;
     private Boolean seated = false;
@@ -84,6 +84,14 @@ public class Table implements Comparable<Table> {// 所有的桌子放在一起
 
     public TimeSlots getTodayReservationTimeSlot() {
         return reservationsTdy;
+    }
+
+    public void updatetmrTimeslots(TimeSlots tmrTimeSlots) {
+        reservationsTmr = tmrTimeSlots;
+    }
+
+    public void removeTimeslot(TimeSlot timeslot) {
+        reservationsTmr.remove(timeslot);
     }
 
     // -------------------------------------------------------------------------------------------------------------------------------------------------------

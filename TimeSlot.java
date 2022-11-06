@@ -45,10 +45,30 @@ public class TimeSlot {
         return (end.toSecondOfDay() - start.toSecondOfDay()) / 60;
     }
 
-    public Boolean equals(TimeSlot ts) {
-        if (this.start.equals(ts.getStart()) && this.end.equals(ts.getEnd())) {
+    @Override
+    public boolean equals(Object ts) {
+        if (ts == this)
             return true;
-        }
-        return false;
+        if (!(ts instanceof TimeSlot))
+            return false;
+        TimeSlot other = (TimeSlot) ts;
+        boolean startEquals = (this.getStart() == null && other.getStart() == null)
+                || (this.getStart() != null && this.getStart().equals(other.getStart()));
+        boolean endEquals = (this.getEnd() == null && other.getEnd() == null)
+                || (this.getEnd() != null && this.getEnd().equals(other.getEnd()));
+        return startEquals && endEquals;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = hash * 31 + (start == null ? 0 : start.hashCode());
+        hash = hash * 31 + (end == null ? 0 : end.hashCode());
+        hash = hash * 31 + (customerID == null ? 0 : customerID.hashCode());
+        return hash;
+    }
+
+    public TimeSlot makeDummyCopy() {
+        return new TimeSlot(this.getStart(), this.getEnd(), null);
     }
 }

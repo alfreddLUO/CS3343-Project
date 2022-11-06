@@ -19,6 +19,10 @@ public class CustomerMembership {
         customer.customerState = customerState;
     }
 
+    public void setdiscount(double discount) {
+        customer.customerState.setdiscount(discount);
+    }
+
     // Update to check state everytime when checkout
     public void updateState(double price) {
         if (price >= 88) {

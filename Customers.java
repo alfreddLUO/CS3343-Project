@@ -12,8 +12,8 @@ public class Customers implements UserType {
     private CustomerMembership membership; // State
 
     private Reservation reserve;
-    private ArrayList<Integer> occupiedTableId;
-    private ArrayList<Integer> waitingtableNumList;
+    private ArrayList<Integer> occupiedTableId = new ArrayList<>();
+    private ArrayList<Integer> waitingtableNumList = new ArrayList<>();
     // private Table occupiedtable;
 
     private Restaurants restaurantChosed;
@@ -37,8 +37,17 @@ public class Customers implements UserType {
         return CId;
     }
 
+    public void clearReservation() {
+        this.reserve = null;
+    }
+
+    public ArrayList<Integer> getOccupiedTableId() {
+        return occupiedTableId;
+    }
+
     // Reserve
     public void setReserve(String timeslotString, ArrayList<Integer> desiredTableIds) {
+
         this.reserve = new Reservation(CId, timeslotString, desiredTableIds);
     }
 
@@ -63,6 +72,23 @@ public class Customers implements UserType {
 
     public void addOccupiedTable(int tableId) {
         occupiedTableId.add(tableId);
+    }
+
+    // TODO: check reserveinfo
+    public String getReserveInfo() {
+        return reserve.toString();
+    }
+
+    public boolean checkisReserved() {
+        return (reserve != null);
+    }
+
+    public Reservation getReserve() {
+        return reserve;
+    }
+
+    public void cancelReservation() {
+        this.reserve.cancel();
     }
 
     public String getID() {
@@ -120,7 +146,7 @@ public class Customers implements UserType {
 
     // print official customer's orders
     public void printOrders() {
-        System.out.println("Official Orders: ");
+        System.out.println("\nOfficial Orders: ");
         for (int i = 0; i < orders.size(); i++) {
             System.out.println("[" + (i + 1) + "] " + orders.get(i).toString());
         }

@@ -23,33 +23,34 @@ public class TimeSlots {
         closeTime = LocalTime.parse(close);
     }
 
-    public Boolean add(String startString, String endString, String customerID) { // format example: 12:00 非整点时间
-        LocalTime start = LocalTime.parse(startString);
-        LocalTime end = LocalTime.parse(endString);
-        // check if before openTime or after closeTime
-        if (start.compareTo(openTime) < 0 || end.compareTo(closeTime) > 0) {
-            return false;
-        }
-        TimeSlot slot = new TimeSlot(start, end, customerID);
-        if (!checkAvailable(slot)) {
-            return false;
-        }
-        timeSlots.add(slot);
-        Collections.sort(timeSlots, (a, b) -> a.getStart().compareTo(b.getStart()));
-        return true;
-    }
+    // public Boolean addSlot(String startString, String endString, String
+    // customerID) { // format example: 12:00 非整点时间
+    // LocalTime start = LocalTime.parse(startString);
+    // LocalTime end = LocalTime.parse(endString);
+    // // check if before openTime or after closeTime
+    // if (start.compareTo(openTime) < 0 || end.compareTo(closeTime) > 0) {
+    // return false;
+    // }
+    // TimeSlot slot = new TimeSlot(start, end, customerID);
+    // if (!checkAvailable(slot)) {
+    // return false;
+    // }
+    // timeSlots.add(slot);
+    // Collections.sort(timeSlots, (a, b) -> a.getStart().compareTo(b.getStart()));
+    // return true;
+    // }
 
-    public Boolean add(TimeSlot ts) { // format example: 12:00 非整点时间
+    public Boolean addSlot(TimeSlot ts) { // format example: 12:00 非整点时间
         // check if before openTime or after closeTime
         if (ts.getStart().compareTo(openTime) < 0 || ts.getEnd().compareTo(closeTime) > 0) {
             return false;
-        }
-        if (!checkAvailable(ts)) {
+        } else if (!this.checkAvailable(ts)) {
             return false;
+        } else {
+            timeSlots.add(ts);
+            Collections.sort(timeSlots, (a, b) -> a.getStart().compareTo(b.getStart()));
+            return true;
         }
-        timeSlots.add(ts);
-        Collections.sort(timeSlots, (a, b) -> a.getStart().compareTo(b.getStart()));
-        return true;
     }
 
     // public Boolean add(String index, int customerID) { // 整点时间
@@ -68,12 +69,19 @@ public class TimeSlots {
 
     // check if the timeslot is able to be added in the timeSlots. true -> can,
     // false -> cannot
-    private Boolean checkAvailable(TimeSlot slot) {
-        ArrayList<TimeSlot> timeSlotsCopy = timeSlots;
+    private boolean checkAvailable(TimeSlot slot) {
+
+        ArrayList<TimeSlot> timeSlotsCopy = new ArrayList<TimeSlot>();
+
+        for (TimeSlot ts : timeSlots) {
+            timeSlotsCopy.add(ts.makeDummyCopy());
+        }
+        // ArrayList<TimeSlot> timeSlotsCopy = (ArrayList<TimeSlot>)
+        // this.timeSlots.clone();
         timeSlotsCopy.add(slot);
         Collections.sort(timeSlotsCopy, (a, b) -> a.getStart().compareTo(b.getStart()));
         for (int i = 1; i < timeSlotsCopy.size(); i++) {
-            if (timeSlotsCopy.get(i - 1).getEnd().compareTo(timeSlotsCopy.get(i).getStart()) >= 0) {
+            if (timeSlotsCopy.get(i - 1).getEnd().compareTo(timeSlotsCopy.get(i).getStart()) > 0) {
                 return false;
             }
         }
@@ -115,19 +123,41 @@ public class TimeSlots {
         for (TimeSlot a : avaliable) {
             if (cnt > 0) {
                 respond += ", " + a.toString();
+            } else {
+                respond += a.toString();
             }
             cnt++;
         }
+        temp.clear();
+        avaliable.clear();
         return respond;
     }
 
     public void remove(TimeSlot ts) {
+        // for (TimeSlot t : timeSlots) {
+        // if (ts.equals(t)) {
+        // timeSlots.remove(t);
+        // break;
+        // }
+        // }
+        System.out.println("before remove:");
         for (TimeSlot t : timeSlots) {
-            if (ts.equals(t)) {
-                timeSlots.remove(t);
+            System.out.printf(t.toString() + ", ");
+        }
+
+        System.out.println();
+
+        for (int i = 0; i < timeSlots.size(); i++) {
+            if (timeSlots.get(i).equals(ts)) {
+                timeSlots.remove(i);
                 break;
             }
         }
+        System.out.println("after remove:");
+        for (TimeSlot t : timeSlots) {
+            System.out.printf(t.toString() + ", ");
+        }
+        System.out.println();
     }
 
     public Boolean hasReserved(LocalTime now) {

@@ -24,10 +24,10 @@ public class Reservation {
         String tsString[] = timeSlotString.split("-");
         timeSlot = new TimeSlot(tsString[0], tsString[1], customerID);
         this.active = true;
-        reserve(desiredTableIDs);
+        reserve(desiredTableIDs, timeSlot);
     }
 
-    private void reserve(ArrayList<Integer> desiredTableIDs) {
+    private void reserve(ArrayList<Integer> desiredTableIDs, TimeSlot timeslot) {
         for (int id : desiredTableIDs) {
             if (tm.reserveTableAccordingToTimeslot(id, timeSlot)) {
                 tableIDs.add(id);
@@ -39,7 +39,9 @@ public class Reservation {
     // timeSlot.toString()"
     @Override
     public String toString() {
-        String s = "This reservation was made by " + customerID + ", reserved tables: ";
+        String s = "\n\n[" + customerID + "] Reservation made.";
+        s += "\nReserved tables: ";
+
         String ids = "";
         for (int id : tableIDs) {
             ids += String.valueOf(id) + ", ";
@@ -51,7 +53,7 @@ public class Reservation {
     public void cancel() {
         for (Integer id : tableIDs) {
             tm.cancelReservationAccordingToTimeslot(id, timeSlot);
-            ;
         }
+        active = false;
     }
 }

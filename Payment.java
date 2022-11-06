@@ -38,7 +38,12 @@ public class Payment {
                 do {
                     System.out.printf("\nYour bill number is: %s\n", customer.printBillNo());
 
-                    System.out.print("\nPlease choose a payment method [1 Alipay | 2 WeChat Pay | 3 Cash]: ");
+                    System.out.println("\nCommands: ");
+                    System.out.println("[1] Alipay");
+                    System.out.println("[2] WeChat Pay");
+                    System.out.println("[3] Cash");
+
+                    System.out.print("\nPlease select your Payment Method: ");
                     String input = Main.in.next("Input: ");
                     choice = Integer.parseInt(input);
 
@@ -50,11 +55,14 @@ public class Payment {
 
                         System.out.println("\nPlease go to the counter to proceed payment.");
 
-                        System.out.print("\nInput staff username: ");
+                        AccountManagement am = AccountManagement.getInstance();
+                        am.printAllMerchantActiveAccounts();
+
+                        System.out.print("\nInput staff MId: ");
                         input = Main.in.next("\nInput: ");
                         String staffUserName = input;
 
-                        Merchants merchant = Main.matchStaffUserName(staffUserName);
+                        Merchants merchant = Main.matchMId(staffUserName);
                         merchant.checkOutbyMerchant(this, customer);
 
                     } else {
@@ -81,6 +89,5 @@ public class Payment {
         if (paymentStatus == true) {
             System.out.println("\nYou have completed payment with " + paymentMethod.toString() + ". Thank you!");
         }
-
     }
 }

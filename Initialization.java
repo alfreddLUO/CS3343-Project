@@ -1,6 +1,15 @@
 public class Initialization {
 
-    private static AccountManagement visitor = AccountManagement.getInstance();
+    private static Initialization instance = null;
+
+    public static Initialization getInstance() {
+        if (instance == null) {
+            instance = new Initialization();
+        }
+        return instance;
+    }
+
+    private static AccountManagement accManager = AccountManagement.getInstance();
     // 测试模拟代码
     static Restaurants PepperLunch = new Restaurants("Pepper-Lunch");
     static Restaurants TamJai = new Restaurants("Tam-Jai-Mi-Xian");
@@ -19,14 +28,14 @@ public class Initialization {
     static Dish PorkMixian = new Dish("Pork-Mixian", 34.9);
     static Dish LettuceMixian = new Dish("Lettuce-Mixian", 29.9);
 
-    public static void initiateRestaurants() {
+    public void initiateRestaurants() {
         Main.addTolistOfRestaurants(PepperLunch);
         Main.addTolistOfRestaurants(TamJai);
         Main.addTolistOfRestaurants(McDonalds);
         Main.addTolistOfRestaurants(KFC);
     }
 
-    public static void initiateDish() {
+    public void initiateDish() {
         McDonalds.adddishtoMenu(hotChoco);
         McDonalds.adddishtoMenu(latte);
         McDonalds.adddishtoMenu(Americano);
@@ -43,21 +52,25 @@ public class Initialization {
         TamJai.adddishtoMenu(PorkMixian);
     }
 
-    public static void initiateMerchants() {
-        visitor.registerMerchant("KFCWorker", "t123", KFC);
-        visitor.registerMerchant("McDonaldWorker", "t123", McDonalds);
-        visitor.registerMerchant("TamJaiWorker", "t123", TamJai);
-        visitor.registerMerchant("PepperLunchWorker", "t123", PepperLunch);
+    public void initiateMerchants() {
+        accManager.registerMerchant("KFCWorker", "t123", KFC);
+        accManager.registerMerchant("McDonaldWorker", "t123", McDonalds);
+        accManager.registerMerchant("TamJaiWorker", "t123", TamJai);
+        accManager.registerMerchant("PepperLunchWorker", "t123", PepperLunch);
     }
 
-    public static void initiateCustomers() {
-        visitor.registerCustomer("yinch33", "t123");
-        visitor.registerCustomer("ta123", "t123");
-        visitor.registerCustomer("wedu2", "t123");
+    public void initiateCustomers() {
+        accManager.registerCustomer("yinch33", "t123");
+        accManager.registerCustomer("ta123", "t123");
+        accManager.registerCustomer("wedu2", "t123");
+    }
+
+    public void initializeAdmin() {
+        accManager.registerAdmin("admin", "t123");
     }
 
     // TODO: Initialize Table
-    public static void initiateTables() {
+    public void initiateTables() {
         TableManagement tm = TableManagement.getInstance();
 
         tm.addNewTable(1, 2);

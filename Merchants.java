@@ -34,29 +34,34 @@ public class Merchants implements UserType {
 
         while (select != 1 && select != 2 && select != 3) {
 
-            System.out.print("\nAdd or Delete Dish from Menu? [1 Add | 2 Delete | 3 Edit | 4 Cancel]: ");
+            System.out.println("\nCommands: ");
+            System.out.println("[1] Add Dish");
+            System.out.println("[2] Delete Dish");
+            System.out.println("[3] Edit Dish");
+            System.out.println("[4] Cancel");
+
+            System.out.print("\nPlease select your operations: ");
             String input = Main.in.next("Input: ");
             select = Integer.parseInt(input);
 
-            if (select == 1 || select == 2 || select == 3) {
+            if (select == 4) {
+                break;
+            } else if (select == 1 || select == 2 || select == 3) {
                 getMenu();
-            }
-
-            if (select == 1) {
-                addDish();
-            } else if (select == 2) {
-                removeDish();
-            } else if (select == 3) {
-                editDish();
-            } else if (select == 4) {
-                MerchantModule.run(this);
+                if (select == 1) {
+                    addDish();
+                } else if (select == 2) {
+                    removeDish();
+                } else if (select == 3) {
+                    editDish();
+                }
             } else {
                 continue;
             }
         }
     }
 
-    // 修改菜品名字或價錢
+    // Edit Dish name or price
     public void editDish() {
 
         String dishName;
@@ -75,20 +80,27 @@ public class Merchants implements UserType {
             System.out.println("Dish Name not found! Please try again.");
 
         }
+        System.out.println("\nCommands: ");
+        System.out.println("[1] Edit Dish Name");
+        System.out.println("[2] Edit Dish Price");
+        System.out.println("[3] Cancel");
 
-        System.out.print("\nEdit dish name or dish price? [1 Name | 2 Price | 3 Cancel]: ");
+        System.out.print("\nPlease select your operations: ");
         input = Main.in.next("Input: ");
         temp = Integer.parseInt(input);
 
-        if (temp == 1) {
+        if (temp == 4) {
+            // nothing
+        } else if (temp == 1) {
             editDishName(dishToEdit);
         } else if (temp == 2) {
             editDishPrice(dishToEdit);
         } else {
+            // nothing
         }
     }
 
-    // 增加新菜品到餐廳餐單
+    // add dish to menu
     public void addDish() {
         String dishName;
         double dishPrice;
@@ -96,17 +108,17 @@ public class Merchants implements UserType {
 
         System.out.println("\nPlease input the name and price of the dish to add: ");
 
-        System.out.print("\nDish Name: ");
+        System.out.print("Dish Name: ");
         dishName = Main.in.nextLine("Input: ");
 
-        System.out.print("\nDish Price: ");
+        System.out.print("Dish Price: ");
         input = Main.in.next("Input: ");
         dishPrice = Double.parseDouble(input);
 
         restaurantOwned.getMenu().add(new Dish(dishName, dishPrice));
     }
 
-    // 從餐單刪除菜品
+    // delete dish from menu
     public void removeDish() {
         String dishName;
 
@@ -143,7 +155,7 @@ public class Merchants implements UserType {
         dishToEdit.setDishPrice(newPrice);
     }
 
-    // 從餐廳中提取菜單（用菜名尋找）
+    // Extract menu from restaurant by using dishName
     public Dish findDish(String dishName) {
         for (int i = 0; i < restaurantOwned.getMenu().size(); i++) {
             if (restaurantOwned.getMenu().get(i).toString().equals(dishName)) {
@@ -153,13 +165,14 @@ public class Merchants implements UserType {
         return null;
     }
 
+    // Print all dish from restaurant's menu
     public void getMenu() {
         for (int i = 0; i < restaurantOwned.getMenu().size(); i++) {
             System.out.println((i + 1) + " " + restaurantOwned.getMenu().get(i).toString());
         }
     }
 
-    // Payment
+    // Payment by merchant
     public void checkOutbyMerchant(Payment payment, Customers customer) {
 
         // Show customers' official order
@@ -168,7 +181,7 @@ public class Merchants implements UserType {
 
     }
 
-    // Payment
+    // Before Payment, check order by merchant
     public void checkOrder(Customers customer) {
 
         System.out.println("\nCustomer Name: " + customer.getUsername());

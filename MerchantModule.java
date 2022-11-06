@@ -23,30 +23,37 @@ public class MerchantModule {
         int select = 0;
         String input = "";
 
-        System.out.println("\n[1 Modify Menu | 2 Check Order | 3 Exit]");
+        while (select != 3) {
+            System.out.println("\nCommands: ");
+            System.out.println("[1] Modify Menu");
+            System.out.println("[2] Check Order");
+            System.out.println("[3] Logout");
 
-        System.out.print("\nPlease select your operations: ");
-        input = Main.in.next("\nInput: ");
-        select = Integer.parseInt(input);
+            System.out.print("\nPlease select your operations: ");
+            input = Main.in.next("\nInput: ");
+            select = Integer.parseInt(input);
 
-        String username = "";
-        if (select == 1) {
+            String CId = "";
+            if (select == 1) {
 
-            merchant.modifyMenu();
+                merchant.modifyMenu();
 
-        } else if (select == 2) {
+            } else if (select == 2) {
 
-            System.out.print("\nPlease input customer's username: ");
-            input = Main.in.next("Input: ");
-            username = input;
+                System.out.print("\nPlease input customer's id: ");
+                input = Main.in.next("Input: ");
+                CId = input;
 
-            // loop through the listOfCustomers in Main to find a match
-            customer = Main.matchUserName(username);
+                // loop through the listOfCustomers in Main to find a match
+                customer = Main.matchCId(CId);
 
-            merchant.checkOrder(customer);
-        } else {
-            // TODO: exit -> logout account -> Go back to Login Module
+                merchant.checkOrder(customer);
+            } else {
+
+            }
+
         }
+
     }
 
 }

@@ -5,7 +5,7 @@ import java.util.Map.Entry;
 
 class Main {
 
-    public static final InputScanner in = InputScanner.getInstance();
+    public static final InputScanner1 in = InputScanner1.getInstance();
 
     // Temporary Database
     protected static ArrayList<Restaurants> listOfRestaurants = new ArrayList<>();
@@ -19,6 +19,8 @@ class Main {
     // MerchantId, Restaurant
     protected static HashMap<String, Restaurants> listofMerchantsnRestaurant = new HashMap<>();
 
+    protected static Admin admin = null;
+
     private static AccountManagement accManager = AccountManagement.getInstance();
 
     /*
@@ -26,20 +28,19 @@ class Main {
      */
 
     public static void main(String[] args) {
+        Initialization initialization = Initialization.getInstance();
 
-        Initialization.initiateRestaurants();
-        Initialization.initiateDish();
-        Initialization.initiateMerchants();
-        Initialization.initiateCustomers();
-
-        Initialization.initiateTables();
-        // visitor.printAllActiveAccounts();
+        initialization.initiateRestaurants();
+        initialization.initiateDish();
+        initialization.initializeAdmin();
+        initialization.initiateMerchants();
+        initialization.initiateCustomers();
+        initialization.initiateTables();
 
         while (true) {
             accManager.printAllActiveAccounts();
             loginNRegisterNDelete();
         }
-
     }
 
     public static void loginNRegisterNDelete() {
@@ -50,9 +51,15 @@ class Main {
 
         do {
             try {
-                System.out.print("\nPlease choose your operation [1 Login | 2 Register | 3 Delete Account] : ");
+                System.out.println("\nCommands: ");
+                System.out.println("[1] Login");
+                System.out.println("[2] Register");
+                System.out.println("[3] Delete Account");
+
+                System.out.print("\nPlease select your operation: ");
                 input = Main.in.next("Input: ");
                 select = Integer.parseInt(input);
+
             } catch (NumberFormatException e) {
                 e.getStackTrace();
             }
@@ -66,7 +73,7 @@ class Main {
                     success = true; // 成功登入
                 }
 
-                // 註冊完進入module run()
+                // Enter module run() after successful login
                 if (success == true) {
 
                     // 分辨login的account是哪一個UserType, 再Module.run()
@@ -108,7 +115,7 @@ class Main {
         input = Main.in.next("Input: ");
         username = input;
 
-        System.out.print("\nPlease input the password: ");
+        System.out.print("Please input the password: ");
         input = Main.in.next("Input: ");
         password = input;
 
@@ -194,14 +201,14 @@ class Main {
         listOfRestaurants.add(restaurant);
     }
 
-    // in MerchantModule.run()
-    public static Customers matchUserName(String username) {
-        return listofCustomers.get(username);
+    // find customer instance by using customerId
+    public static Customers matchCId(String cid) {
+        return listofCustomers.get(cid);
     }
 
-    // in Payment paythebill()
-    public static Merchants matchStaffUserName(String username) {
-        return listofMerchants.get(username);
+    // find merchant instance by using merchantId
+    public static Merchants matchMId(String mid) {
+        return listofMerchants.get(mid);
     }
 
     // in AdminModule.removeRestaurant()
@@ -223,6 +230,7 @@ class Main {
         return null;
     }
 
+    // find customerId by using customer instance
     public static String getCustomerCid(Customers customer) {
         return getKeyByValue(listofCustomers, customer);
     }
