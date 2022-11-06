@@ -3,22 +3,31 @@ import java.util.ArrayList;
 
 public class Reservation {
     private Boolean active; // become false when cancel reservation or sit to reserved tables.
-    private int customerID;
+    private String customerID;
     private ArrayList<Integer> tableIDs = new ArrayList<>();
     private TableManagement tm = TableManagement.getInstance();
     private TimeSlot timeSlot;
-    private LocalDate date;
+    // private LocalDate date;
 
-    public Reservation(int customerID, String dateString, String timeSlotString, int[] desiredTableIDs) {
+    // public Reservation(int customerID, String dateString, String timeSlotString,
+    // int[] desiredTableIDs)
+
+    /*
+     * dateString: 預約第二天的，暫時用不上
+     * TimeslotString: 先顯示 後輸入
+     * desiredTableIds: 想要預訂的table的ID
+     */
+
+    public Reservation(String customerID, String timeSlotString, ArrayList<Integer> desiredTableIDs) {
         this.customerID = customerID;
-        date = LocalDate.parse(dateString);
+        // date = LocalDate.parse(dateString);
         String tsString[] = timeSlotString.split("-");
         timeSlot = new TimeSlot(tsString[0], tsString[1], customerID);
         this.active = true;
         reserve(desiredTableIDs);
     }
 
-    private void reserve(int[] desiredTableIDs) {
+    private void reserve(ArrayList<Integer> desiredTableIDs) {
         for (int id : desiredTableIDs) {
             if (tm.reserveTableAccordingToTimeslot(id, timeSlot)) {
                 tableIDs.add(id);

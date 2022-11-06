@@ -1,7 +1,5 @@
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+public interface PaymentMethod {
+    public boolean pay(double price);
 
-public interface PaymentMethod{
-    public void pay();
+    public String toString();
 }

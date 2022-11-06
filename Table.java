@@ -75,7 +75,7 @@ public class Table implements Comparable<Table> {// 所有的桌子放在一起
         return false;
     }
 
-    public void makeReservation(Customer c, TimeSlot reservedTime) {
+    public void makeReservation(Customers c, TimeSlot reservedTime) {
     }
 
     public TimeSlots getTmrReservationTimeSlot() {

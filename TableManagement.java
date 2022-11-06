@@ -3,7 +3,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 //singleton pattern
-public class TableManagement implements TimeOvserver {
+public class TableManagement implements TimeObserver {
     private static ManualClock clock = ManualClock.getInstance();
     private static LocalDate currDate = clock.getDate();
     private static LocalTime currTime = clock.getTime();
@@ -62,10 +62,39 @@ public class TableManagement implements TimeOvserver {
     // occupied是现在已经被占用的桌子
     private ArrayList<Table> occupiedTables;
     // 放正在等的桌子的customer； 注意customer里面应该有一个list存放起等待的桌子和occupy的桌子
-    private ArrayList<Customer> waitingCustomers;
+    private ArrayList<String> waitingCustomers;
     // 存放桌型的列表，按从大到小的顺序排列 e.g. 10, 8, 4,2
     private ArrayList<Integer> tableCapacityTypeList;
 
+    /*
+     * Testing
+     */
+
+    // public void printAllTableIds() {
+    // System.out.println("All Table Ids: ");
+    // for (int i : allTableIds) {
+    // System.out.println(i);
+    // }
+    // }
+
+    // public void printAvailableTables() {
+    // System.out.println("All available tables: ");
+    // for (Table t : availableTables) {
+    // System.out.println(t.toString());
+    // }
+    // }
+
+    /*
+     * For initialization
+     */
+
+    public void appendToAllTableIds(int id) {
+        allTableIds.add(id);
+    }
+
+    public void appendToAvailableTables(Table table) {
+        availableTables.add(table);
+    }
     // !!!!!!!!!!!!!!!!!!!!!
     // 注意以下的table Arrangement results之类的list全部是按桌型的大小顺序存放的
     // 比如现在有两张八人桌， 七张四人桌， 九张二人桌
@@ -84,6 +113,7 @@ public class TableManagement implements TimeOvserver {
         availableTables = new ArrayList<Table>();
         occupiedTables = new ArrayList<Table>();
         tableCapacityTypeList = new ArrayList<Integer>();
+        waitingCustomers = new ArrayList<String>();
         Collections.sort(tableCapacityTypeList, Collections.reverseOrder());
     }
 
@@ -215,63 +245,63 @@ public class TableManagement implements TimeOvserver {
             }
         }
         if (canDirectlyWalkIn) {
-            System.out.printf("You can now directly dine in. Please indicate your option: Dine In Or Leave");
             return true;
         }
         System.out.println(waitingTablesListMessage);
         return false;
-        // else {
-
-        // ArrayList<Integer> recommendedArrangements =
-        // recommendedArrangementAccordingToWaitingTime(peopleNum);
-        // System.out.println(waitingTablesListMessage);
-        // if (recommendedArrangements != null) {
-        // return false;
-        // } else {
-        // return true;
-        // }
-        // }
 
     }
 
-    // Again，Sorry，这部分我也没有测试过，所以可能会有不少bug (^-^)见谅^_^
+    public ArrayList<Integer> makeTableArrangements(int peopleNum) {
+        // ArrayList<Integer> tableArrangementResults = new ArrayList<>();
+        ArrayList<Integer> initailTableArrangementResults = arrangeTableAccordingToNumOfPeople(peopleNum);
+        if (canDirectlyDineIn(initailTableArrangementResults)) {
+            return initailTableArrangementResults;
+        }
+        ArrayList<Integer> recommendedtableArrangementResults = recommendedArrangementAccordingToWaitingTime(peopleNum);
+        if (recommendedtableArrangementResults == null) {
+            return initailTableArrangementResults;
+        }
+        return recommendedtableArrangementResults;
+    }
+
     // （测试不用管后面这一句话）用于当根据人数计算桌子或推荐算法中某一个可行时，且顾客选择入座，则用此函数入座
     // 测试：自己建一个arraylist存放对应桌型的安排数量 作为argument；
     // 1.首先看return的结果是不是对的：可以顺利入座true，不可以顺利入座false
     // 2.当可以顺利入座这种情况发生时，执行完该函数后，去get available tables list看对应的table是否变成了occupied
-    public boolean setWalkInStatus(ArrayList<Integer> tableArrangement) {
-        boolean canDirectlyDineIn = canDirectlyDineIn(tableArrangement);
-        if (canDirectlyDineIn) {
-            for (Integer tableCapacity : tableCapacityTypeList) {
-                int needOfThisTableCapcity = tableArrangement.get(tableCapacityTypeList.indexOf(tableCapacity));
-                if (needOfThisTableCapcity > 0) {
-                    int tmpCount = 0;
-                    ArrayList<Table> copyOfAvailableTables = new ArrayList<Table>();
-                    copyOfAvailableTables.addAll(availableTables);
-                    for (Table t : copyOfAvailableTables) {
-                        if (t.getTableCapacity() == tableCapacity) {
-                            tmpCount++;
-                            // 把这个table放进customer占用的arraylist里去
-                            // c.occupyTable(t);
-                            setTableFromAvailableToOccupiedStatus(t.getTableId());
-                            if (tmpCount == needOfThisTableCapcity) {
-                                break;
-                            }
+    public ArrayList<Integer> setWalkInStatus(ArrayList<Integer> tableArrangement) {
+        ArrayList<Integer> checkedInTableIds = new ArrayList<Integer>();
+        for (Integer tableCapacity : tableCapacityTypeList) {
+            int needOfThisTableCapcity = tableArrangement.get(tableCapacityTypeList.indexOf(tableCapacity));
+            if (needOfThisTableCapcity > 0) {
+                int tmpCount = 0;
+                ArrayList<Table> copyOfAvailableTables = new ArrayList<Table>();
+                copyOfAvailableTables.addAll(availableTables);
+                for (Table t : copyOfAvailableTables) {
+                    if (t.getTableCapacity() == tableCapacity) {
+                        tmpCount++;
+                        // 把这个table放进customer占用的arraylist里去
+                        // c.occupyTable(t);
+                        checkedInTableIds.add(t.getTableId());
+                        setTableFromAvailableToOccupiedStatus(t.getTableId());
+                        if (tmpCount == needOfThisTableCapcity) {
+                            break;
                         }
                     }
                 }
             }
-            System.out.println("Successfully Dine In!");
-            return true;
         }
-        return false;
+        System.out.println("Successfully Dine In!");
+        return checkedInTableIds;
 
     }
 
     // Again，Sorry，这部分我也没有测试过，所以可能会有不少bug (^-^)见谅^_^
     // 用于根据安排结果，返回顾客需要等待的对应桌型的数量的list
-    public ArrayList<Integer> setWaitingTables(ArrayList<Integer> tableArrangement) {
+    public ArrayList<Integer> setWaitingTables(String cId, ArrayList<Integer> tableArrangement) {
         ArrayList<Integer> waitingTablesNumList = new ArrayList<Integer>();
+        ArrayList<Integer> checkedInTableIds = new ArrayList<Integer>();
+        waitingCustomers.add(cId);
         for (int i = 0; i < tableCapacityTypeList.size(); i++) {
             waitingTablesNumList.add(i, 0);
         }
@@ -288,7 +318,8 @@ public class TableManagement implements TimeOvserver {
                     if (t.getTableCapacity() == tableCapacityType) {
                         tmpCount++;
                         // 把这个table放进customer占用的arraylist里去
-                        // c.occupyTable(t);
+                        // c.occupyTable(t)
+                        checkedInTableIds.add(t.getTableId());
                         setTableFromAvailableToOccupiedStatus(t.getTableId());
                         if (tmpCount == needOfThisTableCapcity) {
                             break;
@@ -309,17 +340,17 @@ public class TableManagement implements TimeOvserver {
         }
         // 15, 8,4,2
         // waitingTablesNumList.(1)=1
+        CustomerModule.addCheckInAndWaitingInfo(cId, checkedInTableIds, waitingTablesNumList);
         System.out.println(waitingTablesListMessage);
         return waitingTablesNumList;
     }
 
     // 用于对对应reserved的桌子进行check in
-    public void reservedCusomerCheckIn(Customer c, int tableId) {
+    public void reservedCusomerCheckIn(Customers c, int tableId) {
         // 这里会有一个时间的check，是否到了预定的时间，
 
     }
 
-    // 还没合并，暂时不用测这一个
     // 展示各自table的课预定时间段
     public void showReservationTable() {
         String showReservationTableMsg = "Table for tommorrow reservation and available time slots: \n";
@@ -327,7 +358,7 @@ public class TableManagement implements TimeOvserver {
             TimeSlots tmrReservationTimeslots = t.getTmrReservationTimeSlot();
             showReservationTableMsg += String.format(
                     "%d-Seats Table with ID of %d is available tmr for the timeslots: %s \n", t.getTableCapacity(),
-                    t.getTableId(), tmrReservationTimeslots.getAvailiableSlots());
+                    t.getTableId(), tmrReservationTimeslots.getAvailableSlots());
             showReservationTableMsg += "\n";
         }
         System.out.println(showReservationTableMsg);
@@ -464,12 +495,8 @@ public class TableManagement implements TimeOvserver {
 
     // 以下两个不测
     // 会call customer里的checkWhetherThisIsNeeded(int tableCapacity, int tableId)
-    public void addWaitingCustomer(Customer c) {
-        waitingCustomers.add(c);
 
-    }
-
-    public void removeWaitingCustomer(Customer c) {
+    public void removeWaitingCustomer(Customers c) {
         waitingCustomers.remove(c);
     }
 
@@ -515,7 +542,7 @@ public class TableManagement implements TimeOvserver {
             System.out.printf("Table with id of %d can't be reserved between %d!\n", tableId, timeslot.toString());
             return false;
         }
-        System.out.printf("Table with id of %d is succesfully reserved between %d!\n", tableId,
+        System.out.printf("Table with id of %d is succesfully reserved between %s!\n", tableId,
                 timeslot.toString());
         return true;
     }
@@ -536,6 +563,31 @@ public class TableManagement implements TimeOvserver {
             }
         }
         return numOfAvailableForCurrentTableCapacity++;
+    }
+
+    public void checkOutByCustomer(ArrayList<Integer> tableId) {
+        int numOfAvailableForCurrentTableCapacity = 0;
+        for (Integer tId : tableId) {
+            setTableFromOccupiedToAvailable(tId);
+            Table t = returnTableAccordingToTableId(tId);
+            int capacityIndex = t.getTableCapacity();
+            for (String id : waitingCustomers) {
+                // get waitingNumList中的第i個
+                Customers customer = Main.matchUserName(id);
+
+                // TODO:
+
+                if (customer.getithTableNumList(capacityIndex) > 0) {
+                    customer.minusOneTableNumList(capacityIndex);
+                    customer.addOccupiedTable(t.getTableId());
+                    setTableFromAvailableToOccupiedStatus(tId);
+                    System.out.printf("Customer with Id of %d now occupied a new table with id of %", id,
+                            t.getTableId());
+                    break;
+                }
+            }
+        }
+
     }
 
 }

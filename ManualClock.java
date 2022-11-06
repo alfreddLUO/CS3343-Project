@@ -6,13 +6,13 @@ import java.util.ArrayList;
 public class ManualClock {
     private static LocalDateTime currDateTime;
     private static ManualClock instance = new ManualClock();
-    private static ArrayList<TimeOvserver> observers = new ArrayList<>();
+    private static ArrayList<TimeObserver> observers = new ArrayList<>();
 
     private ManualClock() {
         currDateTime = LocalDateTime.now();
     }
 
-    public static void addObserver(TimeOvserver listener) {
+    public static void addObserver(TimeObserver listener) {
         observers.add(listener);
     }
 
@@ -24,7 +24,7 @@ public class ManualClock {
     }
 
     public static String getDateTimeString() {
-        return getDateTime().format(DateTimeFormatter.ofPattern( "yyyy-MM-dd HH:mm" ));
+        return getDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
     }
 
     public static LocalDateTime getDateTime() {
@@ -43,7 +43,7 @@ public class ManualClock {
         System.out.println("Starting new day!");
         currDateTime = currDateTime.plusDays(1);
         currDateTime = LocalDateTime.of(getDate(), LocalTime.of(0, 0));
-        for (TimeOvserver l: observers) {
+        for (TimeObserver l : observers) {
             l.dateUpdate(getDate());
         }
         System.out.println("Now is " + getDate().toString());
@@ -55,7 +55,7 @@ public class ManualClock {
             return;
         }
         currDateTime = LocalDateTime.of(getDate(), LocalTime.parse(newTime));
-        for (TimeOvserver l: observers) {
+        for (TimeObserver l : observers) {
             l.timeUpdate(getTime());
         }
         System.out.println("Now is " + ManualClock.getTime().toString());

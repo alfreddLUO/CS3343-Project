@@ -23,7 +23,7 @@ public class TimeSlots {
         closeTime = LocalTime.parse(close);
     }
 
-    public Boolean add(String startString, String endString, int customerID) { // format example: 12:00 非整点时间
+    public Boolean add(String startString, String endString, String customerID) { // format example: 12:00 非整点时间
         LocalTime start = LocalTime.parse(startString);
         LocalTime end = LocalTime.parse(endString);
         // check if before openTime or after closeTime
@@ -31,7 +31,7 @@ public class TimeSlots {
             return false;
         }
         TimeSlot slot = new TimeSlot(start, end, customerID);
-        if (!checkAvaliable(slot)) {
+        if (!checkAvailable(slot)) {
             return false;
         }
         timeSlots.add(slot);
@@ -44,7 +44,7 @@ public class TimeSlots {
         if (ts.getStart().compareTo(openTime) < 0 || ts.getEnd().compareTo(closeTime) > 0) {
             return false;
         }
-        if (!checkAvaliable(ts)) {
+        if (!checkAvailable(ts)) {
             return false;
         }
         timeSlots.add(ts);
@@ -68,7 +68,7 @@ public class TimeSlots {
 
     // check if the timeslot is able to be added in the timeSlots. true -> can,
     // false -> cannot
-    private Boolean checkAvaliable(TimeSlot slot) {
+    private Boolean checkAvailable(TimeSlot slot) {
         ArrayList<TimeSlot> timeSlotsCopy = timeSlots;
         timeSlotsCopy.add(slot);
         Collections.sort(timeSlotsCopy, (a, b) -> a.getStart().compareTo(b.getStart()));
@@ -84,16 +84,16 @@ public class TimeSlots {
         return date;
     }
 
-    public int checkReserver(LocalTime time) {
+    public String checkReserver(LocalTime time) {
         for (TimeSlot ts : timeSlots) {
             if (time.compareTo(ts.getStart()) > 0 && time.compareTo(ts.getEnd()) < 0) {
                 return ts.getCustomerID();
             }
         }
-        return -1;
+        return null;
     }
 
-    public String getAvailiableSlots() {
+    public String getAvailableSlots() {
         ArrayList<LocalTime> temp = new ArrayList<>();
         ArrayList<TimeSlot> avaliable = new ArrayList<>();
         String respond = "";
@@ -105,13 +105,18 @@ public class TimeSlots {
         temp.add(closeTime);
         for (int i = 0; i < temp.size(); i += 2) {
             if (temp.get(i + 1).toSecondOfDay() - temp.get(i).toSecondOfDay() >= 1800) { // if this slot is >= 30 mins
-                avaliable.add(new TimeSlot(temp.get(i), temp.get(i + 1), -1));
+                avaliable.add(new TimeSlot(temp.get(i), temp.get(i + 1), null));
             } else {
                 continue;
             }
         }
+        int cnt = 0;
+
         for (TimeSlot a : avaliable) {
-            respond += a.toString();
+            if (cnt > 0) {
+                respond += ", " + a.toString();
+            }
+            cnt++;
         }
         return respond;
     }
@@ -125,7 +130,17 @@ public class TimeSlots {
         }
     }
 
-    // 1:提前半小时-刚好到点 0:预定时间正式开始到结束 -1:不在预定时间范围内
+    public Boolean hasReserved(LocalTime now) {
+        for (TimeSlot ts : timeSlots) {
+            if (now.compareTo(ts.getStart().minusMinutes(30)) <= 0 || now.compareTo(ts.getEnd()) > 0) {
+                continue;
+            } else {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public int checkReservedStatus(LocalTime now) {
         for (TimeSlot ts : timeSlots) {
             if (now.compareTo(ts.getStart().minusMinutes(30)) <= 0 && now.compareTo(ts.getStart()) < 0) {
@@ -137,10 +152,10 @@ public class TimeSlots {
         return -1;
     }
 
-    public Boolean checkValidReserver(LocalTime now, int customerID) {
+    public Boolean checkValidReserver(LocalTime now, String customerID) {
         for (TimeSlot ts : timeSlots) {
             if (now.compareTo(ts.getStart()) >= 0 && now.compareTo(ts.getEnd()) <= 0) {
-                return ts.getCustomerID() == customerID;
+                return ts.getCustomerID().equals(customerID);
             }
         }
         return false;

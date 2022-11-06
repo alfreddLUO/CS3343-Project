@@ -1,27 +1,35 @@
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
 public class Dish {
     private String dishname;
-    private int dishprice;
+    private double dishprice;
 
-    public Dish(String dishname){
-        this.dishname=dishname;
-        
+    public Dish(String dishname) {
+        this.dishname = dishname;
+
     }
 
-    public Dish(String dishname,int dishprice){
-        this.dishname=dishname;
-        this.dishprice=dishprice;
+    public Dish(String dishname, double dishprice) {
+        this.dishname = dishname;
+        this.dishprice = dishprice;
     }
 
-    public int getdishPrice(){
-        return this.dishprice;
-    }
-    public String getdishname(){
+    @Override
+    public String toString() {
         return this.dishname;
     }
 
-}    
+    public double getdishPrice() {
+        return this.dishprice;
+    }
+
+    public String getdishname() {
+        return this.dishname;
+    }
+
+    public void setDishName(String dishname) {
+        this.dishname = dishname;
+    }
+
+    public void setDishPrice(double newPrice) {
+        this.dishprice = newPrice;
+    }
+}

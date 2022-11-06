@@ -1,27 +1,73 @@
-import java.util.ArrayList;
+public class Admin implements UserType {
 
-public class Admin {
-    private int adminid;
-    private String adminusername;
-    
-    private ArrayList allrestaurants=new ArrayList<>();
+    private String adminId = "A0001";
 
-    public Admin(int adminid,String adminusername){
-        this.adminid=adminid;
-        this.adminusername=adminusername;
+    private String adminUsername = "Admin";
+    protected String adminPassword = "admin1234";
+    private static Admin instance = new Admin();
+
+    public Admin() {
     }
 
-    public void addRestaurant(Restaurants res){
-        this.allrestaurants.add(res);
+    public static Admin getInstance() {
+        return instance;
     }
-    public void deleteRestaurant(Restaurants res){
-        this.allrestaurants.remove(res);
+
+    @Override
+    public String getUsername() {
+        return adminUsername;
     }
-    public ArrayList showallRestaurants(){
-        return this.allrestaurants;
+
+    @Override
+    public String getUserId() {
+        return adminId;
     }
-    //set the discount of the different kinds of customers
-    public void setstateanddiscount(CustomerState state,double discount){
+
+    // Admin force-add Restaurants into Main.listOfRestaurants
+    public static void addRestaurant(Restaurants res) {
+        Main.listOfRestaurants.add(res);
+    }
+
+    // Admin force-delete Restaurants into Main.listOfRestaurants
+    public static void deleteRestaurant(Restaurants res) {
+        Main.listOfRestaurants.remove(res);
+    }
+
+    /*
+     * For Customer Force Edit
+     */
+
+    // TODO: force set customer state
+    public void setCustomerState(Customers customers, CustomerState state) {
+        CustomerMembership customerMembership = new CustomerMembership(customers);
+        customerMembership.adminUpdateState(state);
+    }
+
+    // TODO: Force set customerState discount
+    public void setCustomerStateDiscount(CustomerState state, double discount) {
         state.setdiscount(discount);
+    }
+
+    // TODO: Output the order only
+    public void checkCustomerOrder(Customers customers) {
+        customers.printOrders();
+    }
+
+    /*
+     * For Payment - Force Refund
+     */
+
+    // Customer apply refund -> Force Refund
+    public void refund() {
+
+    }
+
+    /*
+     * For Table and Reservation Force Edit
+     */
+
+    // TODO: Force set status of the table
+    public void setTableStatus() {
+
     }
 }

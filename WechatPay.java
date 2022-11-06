@@ -1,8 +1,9 @@
-public class WechatPay implements PaymentMethod{
+public class WechatPay implements PaymentMethod {
 
     @Override
-    public void pay() {
-        System.out.println("You have completed payment with Wechat");      
+    public boolean pay(double price) {
+        System.out.println("You have completed payment with Wechat");
+        return false;
     }
-    
+
 }

@@ -18,18 +18,17 @@ class InputScanner {
     public String next(String previousPrintedMsg) {
         String in = scannerInput.next();
         if (in.equals("newDay")) {
-            ManualClock.newDay();
+            // TODO-call new day
+            System.out.println("Starting new day!");
+
+            // End of TODO
             System.out.print(previousPrintedMsg);
             in = next(previousPrintedMsg);
-        }
-        else if (in.equals("changeTime")) {
-            System.out.println("Please enter a new system time (hh:mm)");
-            ManualClock.changeTime(scannerInput.nextLine());
-            System.out.print(previousPrintedMsg);
-            in = next(previousPrintedMsg);
-        }
-        else if (in.equals("timeNow")) {
-            System.out.println(ManualClock.getDateTime().toString());
+        } else if (in.equals("changeTime")) {
+            // TODO-call changeTime
+            System.out.println("TimeChanged!");
+
+            // End of TODO
             System.out.print(previousPrintedMsg);
             in = next(previousPrintedMsg);
         }
@@ -37,20 +36,20 @@ class InputScanner {
     }
 
     public String nextLine(String previousPrintedMsg) {
+        scannerInput.nextLine();
         String in = scannerInput.nextLine();
         if (in.equals("newDay")) {
-            ManualClock.newDay();
+            // TODO-call new day
+            System.out.println("Starting new day!");
+
+            // End of TODO
             System.out.print(previousPrintedMsg);
             in = nextLine(previousPrintedMsg);
-        }
-        else if (in.equals("changeTime")) {
-            System.out.println("Please enter a new system time (hh:mm)");
-            ManualClock.changeTime(scannerInput.nextLine());
-            System.out.print(previousPrintedMsg);
-            in = nextLine(previousPrintedMsg);
-        }
-        else if (in.equals("timeNow")) {
-            System.out.println(ManualClock.getDateTimeString());
+        } else if (in.equals("changeTime")) {
+            // TODO-call changeTime
+            System.out.println("TimeChanged!");
+
+            // End of TODO
             System.out.print(previousPrintedMsg);
             in = nextLine(previousPrintedMsg);
         }

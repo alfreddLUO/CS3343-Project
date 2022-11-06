@@ -1,6 +1,3 @@
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.ArrayList;
 
 public class Restaurants {
@@ -12,6 +9,11 @@ public class Restaurants {
         this.name = name;
     }
 
+    @Override
+    public String toString() {
+        return this.name;
+    }
+
     // function
     public void adddishtoMenu(Dish dish) {
         this.menu.add(dish);
@@ -21,17 +23,16 @@ public class Restaurants {
         this.menu.remove(dish);
     }
 
-    public ArrayList<Dish> showMenutoCustomer() {
+    public ArrayList<Dish> getMenu() {
         return this.menu;
     }
 
     // count the price that a customer should pay
-    public int countPrice(ArrayList<Dish> orders) {
-        int sum = 0;
+    public double countPrice(ArrayList<Dish> orders) {
+        double sum = 0;
         for (int i = 0; i < orders.size(); i++) {
             sum += orders.get(i).getdishPrice();
         }
         return sum;
     }
-
 }
