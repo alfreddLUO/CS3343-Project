@@ -1,6 +1,7 @@
 import java.time.*;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 
 //singleton pattern
 public class TableManagement implements TimeObserver {
@@ -353,6 +354,9 @@ public class TableManagement implements TimeObserver {
     // 展示各自table的课预定时间段
     public void showReservationTable() {
         String showReservationTableMsg = "\nTable for tommorrow reservation and available time slots: \n";
+        ArrayList<Table> copyOfAvailableTables = new ArrayList<Table>();
+        copyOfAvailableTables.addAll(availableTables);
+        Collections.sort(copyOfAvailableTables);
         for (Table t : availableTables) {
             TimeSlots tmrReservationTimeslots = t.getTmrReservationTimeSlot();
             showReservationTableMsg += String.format(

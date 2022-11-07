@@ -19,7 +19,14 @@ public class Table implements Comparable<Table> {// 所有的桌子放在一起
 
     @Override
     public int compareTo(Table t) {
-        if (t.capacity >= 1) {
+        if (this.capacity <= t.capacity) {
+            if (this.capacity == t.capacity) {
+                if (this.tableID < t.tableID) {
+                    return 1;
+                } else {
+                    return -1;
+                }
+            }
             return 1;
         }
         return -1;
