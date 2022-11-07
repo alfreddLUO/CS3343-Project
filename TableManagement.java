@@ -152,17 +152,20 @@ public class TableManagement implements TimeObserver {
                         : ((tmpPeopleNum / tableCapacity) + 1);
             } else {
                 // 最佳的是把人放置于能装下他们的最小桌子， e.g. 假设有2，4，8人桌； 7人来放8人桌
-                if (tableCapacity >= peopleNum
+                if (tmpPeopleNum / tableCapacity < returnTableNumWithTableCapacity(tableCapacity)) {
+                    tmpResults += tmpPeopleNum / tableCapacity;
+                    tmpPeopleNum = tmpPeopleNum % tableCapacity;
+                } else {
+                    tmpResults += returnTableNumWithTableCapacity(tableCapacity);
+                    tmpPeopleNum = tmpPeopleNum - tableCapacity * returnTableNumWithTableCapacity(tableCapacity);
+                }
+                if (tableCapacity >= tmpPeopleNum
                         && tmpPeopleNum > tableCapacityTypeList.get(capacityIndex + 1)) {
                     tmpResults += 1;
                     tmpPeopleNum = 0;
                 }
-                // 若第一种情况无法满足；即尽可能让他们坐在大的桌子上
-                else {
-                    tmpResults += tmpPeopleNum / tableCapacity;
-                    tmpPeopleNum = tmpPeopleNum % tableCapacity;
-                }
             }
+            System.out.printf("%d %d-Seats Tables \n", tmpResults, tableCapacity);
             if (tmpResults > 0) {
                 arrangementResultMessage += String.format("%d %d-Seats Tables \n", tmpResults, tableCapacity);
             }
