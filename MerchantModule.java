@@ -1,7 +1,17 @@
 
 public class MerchantModule {
 
+    private static MerchantModule instance = null;
+
+    public static MerchantModule getInstance() {
+        if (instance == null) {
+            instance = new MerchantModule();
+        }
+        return instance;
+    }
+
     private static Customers customer;
+    private static Database database = Database.getInstance();
 
     /*
      * 流程：
@@ -18,7 +28,7 @@ public class MerchantModule {
      * 3. Exit -> 登出
      */
 
-    public static void run(Merchants merchant) {
+    public void run(Merchants merchant) {
 
         int select = 0;
         String input = "";
@@ -45,7 +55,7 @@ public class MerchantModule {
                 CId = input;
 
                 // loop through the listOfCustomers in Main to find a match
-                customer = Main.matchCId(CId);
+                customer = database.matchCId(CId);
 
                 merchant.checkOrder(customer);
             } else {

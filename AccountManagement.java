@@ -1,13 +1,3 @@
-// import java.io.File;
-// import java.io.FileInputStream;
-// import java.io.FileNotFoundException;
-// import java.io.FileOutputStream;
-// import java.io.IOException;
-
-// import java.io.ObjectInputStream;
-// import java.io.ObjectOutputStream;
-
-// import java.util.ArrayList;
 import java.util.HashMap;
 
 public class AccountManagement {
@@ -18,16 +8,9 @@ public class AccountManagement {
     protected static HashMap<String, String> allaccounts = new HashMap<>();// username-> userId
     protected static HashMap<String, String> usernamesandPasswords = new HashMap<>();// username->password
 
+    private Database database = Database.getInstance();
+
     protected AccountManagement() {
-        // try {
-
-        // initializationALLACCOUNTStxt();
-        // initializationUsernameandPasswordtxt();
-
-        // } catch (IOException e) {
-        // e.printStackTrace();
-        // }
-
     }
 
     private static final AccountManagement instance = new AccountManagement();
@@ -123,7 +106,8 @@ public class AccountManagement {
         AccountManagement.usernamesandPasswords.put(username, password);
 
         // 加到Main的customer hashmap中
-        Main.admin = Admin.getInstance();
+        database.setAdmin(Admin.getInstance());
+
         // System.out.println("\nRegistration completed. Please return to login.");
 
         return true;
@@ -145,7 +129,9 @@ public class AccountManagement {
             AccountManagement.usernamesandPasswords.put(username, password);
 
             // 加到Main的customer hashmap中
-            Main.listofCustomers.put(allaccounts.get(username), new Customers(username, allaccounts.get(username)));
+            database.addTolistofCustomers(allaccounts.get(username),
+                    new Customers(username, allaccounts.get(username)));
+
             // System.out.println("\nRegistration completed. Please return to login.");
 
             return true;
@@ -165,10 +151,10 @@ public class AccountManagement {
 
             AccountManagement.usernamesandPasswords.put(username, password);
 
-            // Add to customer hashmap in Main
-            Main.listofMerchants.put(allaccounts.get(username),
+            // Add to merchants hashmap in database
+            database.addTolistofMerchants(allaccounts.get(username),
                     new Merchants(username, allaccounts.get(username), restaurant));
-            Main.listofMerchantsnRestaurant.put(allaccounts.get(username), restaurant);
+            database.addTolistofMerchantsnRestaurant(allaccounts.get(username), restaurant);
 
             // System.out.println("\nRegistration completed. Please return to login.");
 
@@ -203,8 +189,6 @@ public class AccountManagement {
         allaccounts.entrySet().forEach(entry -> {
             System.out.printf("%20s | %4s\n", entry.getKey(), entry.getValue());
         });
-
-        System.out.printf("\n");
     }
 
     public void printAllMerchantActiveAccounts() {

@@ -8,9 +8,8 @@ public class Table implements Comparable<Table> {// 所有的桌子放在一起
     // -------------------------------------------------------------------------------------------------------------------------------------------------------
     private int tableID;
     private int capacity;
-    private TimeSlots reservationsTmr; // for tomorror
-    private TimeSlots reservationsTdy; // for today
-    private ManualClock1 clock = ManualClock1.getInstance();
+    private TimeSlots reservationsTmr = new TimeSlots(); // for tomorror
+    private TimeSlots reservationsTdy = new TimeSlots(); // for today
 
     private Boolean reserved = false;
     private Boolean seated = false;
@@ -36,12 +35,16 @@ public class Table implements Comparable<Table> {// 所有的桌子放在一起
     public Table(int tableID, int capacity) {
         this.tableID = tableID;
         this.capacity = capacity;
-        reservationsTmr = new TimeSlots();
+        // reservationsTmr = new TimeSlots();
+    }
+
+    public int getId() {
+        return this.tableID;
     }
 
     public void startNewDay() {
         reservationsTdy = reservationsTmr;
-        reservationsTmr = new TimeSlots();
+        // reservationsTmr = new TimeSlots();
     }
 
     // public void sit(int customerID) {

@@ -5,7 +5,7 @@ public class Reservation {
     private Boolean active; // become false when cancel reservation or sit to reserved tables.
     private String customerID;
     private ArrayList<Integer> tableIDs = new ArrayList<>();
-    private TableManagement tm = TableManagement.getInstance();
+    private TablesManagement tm = TablesManagement.getInstance();
     private TimeSlot timeSlot;
     // private LocalDate date;
 

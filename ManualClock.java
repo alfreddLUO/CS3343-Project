@@ -6,13 +6,18 @@ import java.util.ArrayList;
 public class ManualClock {
     private static LocalDateTime currDateTime;
     private static ManualClock instance = new ManualClock();
-    private static ArrayList<TimeObserver> observers = new ArrayList<>();
+    private ArrayList<TimeObserver> observers = new ArrayList<>();
 
     private ManualClock() {
         currDateTime = LocalDateTime.now();
+        observers.add(TablesManagement.getInstance());
+        for (TimeObserver l : observers) {
+            l.timeUpdate(getTime());
+            l.dateUpdate(getDate());
+        }
     }
 
-    public static void addObserver(TimeObserver listener) {
+    public void addObserver(TimeObserver listener) {
         observers.add(listener);
     }
 
@@ -23,7 +28,7 @@ public class ManualClock {
         return instance;
     }
 
-    public static String getDateTimeString() {
+    public String getDateTimeString() {
         return getDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
     }
 
@@ -39,7 +44,7 @@ public class ManualClock {
         return getDateTime().toLocalDate();
     }
 
-    public static void newDay() {
+    public void newDay() {
         System.out.println("Starting new day!");
         currDateTime = currDateTime.plusDays(1);
         currDateTime = LocalDateTime.of(getDate(), LocalTime.of(0, 0));
@@ -49,7 +54,7 @@ public class ManualClock {
         System.out.println("Now is " + getDate().toString());
     }
 
-    public static void changeTime(String newTime) {
+    public void changeTime(String newTime) {
         if (LocalTime.parse(newTime).compareTo(currDateTime.toLocalTime()) < 0) {
             System.out.println("Can not jump back to past! This is not how time travel works!");
             return;

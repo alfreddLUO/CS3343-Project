@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 public class Merchants implements UserType {
 
     private String username;
@@ -74,30 +76,30 @@ public class Merchants implements UserType {
         // TODO: try catch and reinput
         Dish dishToEdit = null;
 
-        try {
-            dishToEdit = findDish(dishName);
-        } catch (NullPointerException e) {
-            System.out.println("Dish Name not found! Please try again.");
-
-        }
-        System.out.println("\nCommands: ");
-        System.out.println("[1] Edit Dish Name");
-        System.out.println("[2] Edit Dish Price");
-        System.out.println("[3] Cancel");
-
-        System.out.print("\nPlease select your operations: ");
-        input = Main.in.next("Input: ");
-        temp = Integer.parseInt(input);
-
-        if (temp == 4) {
-            // nothing
-        } else if (temp == 1) {
-            editDishName(dishToEdit);
-        } else if (temp == 2) {
-            editDishPrice(dishToEdit);
+        dishToEdit = findDish(dishName);
+        if (dishToEdit == null) {
+            System.out.println("Wrong Dish Name! Please try again.");
         } else {
-            // nothing
+            System.out.println("\nCommands: ");
+            System.out.println("[1] Edit Dish Name");
+            System.out.println("[2] Edit Dish Price");
+            System.out.println("[3] Cancel");
+
+            System.out.print("\nPlease select your operations: ");
+            input = Main.in.next("Input: ");
+            temp = Integer.parseInt(input);
+
+            if (temp == 4) {
+                // nothing
+            } else if (temp == 1) {
+                editDishName(dishToEdit);
+            } else if (temp == 2) {
+                editDishPrice(dishToEdit);
+            } else {
+                // nothing
+            }
         }
+
     }
 
     // add dish to menu
@@ -116,6 +118,8 @@ public class Merchants implements UserType {
         dishPrice = Double.parseDouble(input);
 
         restaurantOwned.getMenu().add(new Dish(dishName, dishPrice));
+
+        System.out.println("Add Dish success.");
     }
 
     // delete dish from menu
@@ -125,11 +129,20 @@ public class Merchants implements UserType {
         System.out.print("\nPlease input the name of the dish to remove: ");
         dishName = Main.in.nextLine("Input: ");
 
+        boolean success = false;
+
         for (int i = 0; i < restaurantOwned.getMenu().size(); i++) {
             if (restaurantOwned.getMenu().get(i).toString().equals(dishName)) {
                 removefromMenu(restaurantOwned.getMenu().get(i));
+                success = true;
             }
         }
+        if (success) {
+            System.out.println("Add Dish success.");
+        } else {
+            System.out.println("Add dish FAILED!");
+        }
+
     }
 
     public void addtoMenu(String dishName, double dishPrice) {
@@ -138,13 +151,19 @@ public class Merchants implements UserType {
     }
 
     public void removefromMenu(Dish dish) {
-        restaurantOwned.deletedishfromMenu(dish);
+        boolean success = restaurantOwned.deletedishfromMenu(dish);
+        if (success) {
+            System.out.println("Delete dish success");
+        } else {
+            System.out.println("Delete FAILED");
+        }
     }
 
     public void editDishName(Dish dishToEdit) {
         System.out.print("\nInput the new name: ");
         String name = Main.in.nextLine("\nInput the new name: ");
         dishToEdit.setDishName(name);
+        System.out.println("Edit Dish Name success.");
     }
 
     public void editDishPrice(Dish dishToEdit) {
@@ -153,23 +172,17 @@ public class Merchants implements UserType {
         double newPrice = Double.parseDouble(input);
 
         dishToEdit.setDishPrice(newPrice);
+        System.out.println("Edit Dish Price success.");
     }
 
     // Extract menu from restaurant by using dishName
     public Dish findDish(String dishName) {
-        for (int i = 0; i < restaurantOwned.getMenu().size(); i++) {
-            if (restaurantOwned.getMenu().get(i).toString().equals(dishName)) {
-                return restaurantOwned.getMenu().get(i);
-            }
-        }
-        return null;
+        return restaurantOwned.getDishbyName(dishName);
     }
 
     // Print all dish from restaurant's menu
     public void getMenu() {
-        for (int i = 0; i < restaurantOwned.getMenu().size(); i++) {
-            System.out.println((i + 1) + " " + restaurantOwned.getMenu().get(i).toString());
-        }
+        restaurantOwned.printMenu();
     }
 
     // Payment by merchant
@@ -189,8 +202,14 @@ public class Merchants implements UserType {
         System.out.println("Bill no. is: " + customer.printBillNo());
 
         System.out.println("\nOrdered Dishes: ");
-        for (int i = 0; i < customer.customerOrders().size(); i++) {
-            System.out.println("[" + (i + 1) + "] " + customer.customerOrders().get(i).toString());
+        ArrayList<Dish> customerOrder = customer.customerOrders();
+
+        if (customerOrder.isEmpty()) {
+            System.out.println("This customer has no orders.");
+        } else {
+            for (int i = 0; i < customerOrder.size(); i++) {
+                System.out.println("[" + (i + 1) + "] " + customerOrder.get(i).toString());
+            }
         }
 
     }

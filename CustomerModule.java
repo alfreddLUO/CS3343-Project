@@ -1,12 +1,6 @@
 import java.util.ArrayList;
 
 public class CustomerModule {
-    private static Customers customer;
-    static ArrayList<Dish> pendingOrder = new ArrayList<>();
-    static ArrayList<Dish> menu = new ArrayList<>();
-    static Restaurants restaurant = null;
-    static ArrayList<Restaurants> availableRestaurants = Main.listOfRestaurants;
-    static TableManagement tm = TableManagement.getInstance();
     /*
      * 流程：
      * 登入在login module
@@ -34,11 +28,30 @@ public class CustomerModule {
      * 2.7 完成 - 退出
      */
 
+    private static CustomerModule instance = null;
+
+    public static CustomerModule getInstance() {
+        if (instance == null) {
+            instance = new CustomerModule();
+        }
+        return instance;
+    }
+
+    private static Customers customer;
+    static TablesManagement tm = TablesManagement.getInstance();
+    private static Database database = Database.getInstance();
+
+    static ArrayList<Dish> pendingOrder = new ArrayList<>();
+    static ArrayList<Dish> menu = new ArrayList<>();
+    static Restaurants restaurant = null;
+
+    // static ArrayList<Restaurants> availableRestaurants = Main.listOfRestaurants;
+
     // Constructor
     public CustomerModule() {
     }
 
-    public static void run(Customers c) {
+    public void run(Customers c) {
 
         customer = c;
         String input = "";
@@ -67,6 +80,7 @@ public class CustomerModule {
                         System.out.println("[5] Logout");
                     }
 
+                    // customer havent get up
                 } else {
                     System.out.println("\nCommands: ");
                     System.out.println("[2] Reserve");
@@ -118,13 +132,11 @@ public class CustomerModule {
 
                 } else if (select == 4) {
                     tm.checkOutByCustomer(customer.getOccupiedTableId());
+                    customer.clearOccupiedTableId();
                     System.out.println("\nYou have successfully check out.");
                     select = 0;
                 }
 
-                if (select == 5) {
-                    break;
-                }
             } while (select != 1 && select != 2 && select != 3);
         }
     }
@@ -152,6 +164,7 @@ public class CustomerModule {
                 chosedTableId = Integer.parseInt(idx[i]);
                 chosedTableIds.add(chosedTableId);
             }
+            customer.setReserveChosedTableIds(chosedTableIds);
 
         } while (chosedTableId == 0);
 
@@ -164,108 +177,159 @@ public class CustomerModule {
         } else {
             return false;
         }
-
     }
 
-    public static boolean dineInOperation() {
-        tm.showAvailableTables();
-        String str;
+    public boolean directWalkIn(ArrayList<Integer> result) {
+        int select = 0;
+        String str = "";
+        boolean success = false;
 
-        // Input number of people to dine in
-        System.out.print("Please input the number of people: ");
-        int numOfPeople;
-        str = Main.in.next("Input: ");
-        numOfPeople = Integer.parseInt(str);
+        do {
+            System.out.println("You can now directly walk in.");
 
-        ArrayList<Integer> result = new ArrayList<>();
-        // result = tm.makeTableArrangements(numOfPeople);
-        result = tm.arrangeTableAccordingToNumOfPeople(numOfPeople);
+            System.out.println("\nCommands: ");
+            System.out.println("[1] Walk in");
+            System.out.println("[2] Leave");
 
-        if (tm.canDirectlyDineIn(result)) { // 彈message dine-in或者leave
+            System.out.print("\nPlease choose your operation: ");
+            str = Main.in.next("Input: ");
+            select = Integer.parseInt(str);
 
-            int select = 0;
+            if (select == 1) {
+                ArrayList<Integer> checkinTableId = tm.setWalkInStatus(result);
 
-            do {
-                System.out.println("You can now directly walk in.");
+                // TODO: 拆成两个
+                addCheckInAndWaitingInfo(str, checkinTableId, null);
+                success = true;
 
-                System.out.println("\nCommands: ");
-                System.out.println("[1] Walk in");
-                System.out.println("[2] Leave");
-
-                System.out.print("\nPlease choose your operation: ");
-                str = Main.in.next("Input: ");
-                select = Integer.parseInt(str);
-
-                if (select == 2) {
-                    return false;
-                } else if (select == 1) {
-                    ArrayList<Integer> checkinTableId = tm.setWalkInStatus(result);
-
-                    // TODO: 拆成两个
-                    addCheckInAndWaitingInfo(str, checkinTableId, null);
-
-                    return true;
-                } else {
-
-                }
-            } while (select != 1 && select != 2);
-
-        } else {
-            ArrayList<Integer> recommendedResult = tm.recommendedArrangementAccordingToWaitingTime(numOfPeople);
-
-            if (recommendedResult == null) {
-
-                int select = 0;
-
-                do {
-                    System.out.println("");
-
-                    System.out.println("\nCommands: ");
-                    System.out.println("[1] Queue");
-                    System.out.println("[2] Leave");
-
-                    System.out.print("\nPlease choose your operation: ");
-                    str = Main.in.next("Input: ");
-                    select = Integer.parseInt(str);
-
-                    if (select == 1) {
-                        tm.setWaitingTables(Main.getCustomerCid(customer), result);
-                    } else if (select == 2) {
-
-                    }
-
-                } while (select != 1 && select != 2);
             } else {
 
-                int select = 0;
-                do {
-                    System.out.println("");
-
-                    System.out.println("\nCommands: ");
-                    System.out.println("[1] Queue");
-                    System.out.println("[2] Walk in with recommended arrangement");
-                    System.out.println("[3] Leave");
-                    System.out.print("\nPlease choose your operation: ");
-                    str = Main.in.next("Input: ");
-                    select = Integer.parseInt(str);
-
-                    if (select == 1) {
-                        tm.setWaitingTables(Main.getCustomerCid(customer), result);
-
-                    } else if (select == 2) {
-                        ArrayList<Integer> checkinTableId = tm.setWalkInStatus(result);
-
-                        // TODO: 拆成两个
-                        addCheckInAndWaitingInfo(str, checkinTableId, null);
-
-                    } else if (select == 3) {
-                        break;
-                    }
-
-                } while (select != 1 && select != 2);
             }
+        } while (select != 1 && select != 2);
+
+        return success;
+    }
+
+    public boolean reserveWalkIn(ArrayList<Integer> tableIds) {
+        int select = 0;
+        String str = "";
+        boolean success = false;
+
+        System.out.println("You can now walk in.");
+
+        for (Integer tableId : tableIds) {
+            tm.setTableFromAvailableToOccupiedStatus(tableId);
         }
-        return false;
+        success = true;
+
+        // if (select == 1) {
+        // ArrayList<Integer> checkinTableId = tm.setWalkInStatus(result);
+
+        // // TODO: break into 2 sub-functions
+        // addCheckInAndWaitingInfo(str, checkinTableId, null);
+        // success = true;
+        // }
+        return success;
+    }
+
+    public void noRecommendedResultAndQueue(ArrayList<Integer> result) {
+        int select = 0;
+        String str = "";
+        do {
+            System.out.println("");
+
+            System.out.println("\nCommands: ");
+            System.out.println("[1] Queue");
+            System.out.println("[2] Leave");
+
+            System.out.print("\nPlease choose your operation: ");
+            str = Main.in.next("Input: ");
+            select = Integer.parseInt(str);
+
+            if (select == 1) {
+                tm.setWaitingTables(database.getCustomerCid(customer), result);
+            }
+        } while (select != 1 && select != 2);
+    }
+
+    public boolean hasRecommendedResult(ArrayList<Integer> result) {
+        String str = "";
+        int select = 0;
+        boolean success = false;
+
+        do {
+            System.out.println("");
+
+            System.out.println("\nCommands: ");
+            System.out.println("[1] Queue");
+            System.out.println("[2] Walk in with recommended arrangement");
+            System.out.println("[3] Leave");
+            System.out.print("\nPlease choose your operation: ");
+            str = Main.in.next("Input: ");
+            select = Integer.parseInt(str);
+
+            if (select == 1) {
+                tm.setWaitingTables(database.getCustomerCid(customer), result);
+
+            } else if (select == 2) {
+                ArrayList<Integer> checkinTableId = tm.setWalkInStatus(result);
+
+                // TODO: break into two sub-functions
+                addCheckInAndWaitingInfo(str, checkinTableId, null);
+                success = true;
+            }
+        } while (select != 1 && select != 2);
+
+        return success;
+    }
+
+    public boolean waitQueue(int numOfPeople, ArrayList<Integer> result) {
+        ArrayList<Integer> recommendedResult = tm.recommendedArrangementAccordingToWaitingTime(numOfPeople);
+
+        boolean success = false;
+
+        if (recommendedResult == null) {
+            noRecommendedResultAndQueue(result);
+        } else {
+            success = hasRecommendedResult(result);
+        }
+        return success;
+    }
+
+    public boolean dineInOperation() {
+        boolean success = false;
+        String str;
+
+        // TODO: if no reservation or it is not time to dine(from reserve)
+        System.out.println(customer.getReserve() != null);
+        System.out.println(customer.isReserveTime());
+
+        if (customer.getReserve() == null || customer.getReserve() != null && !customer.isReserveTime()) {
+            tm.showAvailableTables();
+
+            // Input number of people to dine in
+            System.out.print("Please input the number of people: ");
+            int numOfPeople;
+            str = Main.in.next("Input: ");
+            numOfPeople = Integer.parseInt(str);
+
+            ArrayList<Integer> result = new ArrayList<>();
+            // result = tm.makeTableArrangements(numOfPeople);
+            result = tm.arrangeTableAccordingToNumOfPeople(numOfPeople);
+
+            if (tm.canDirectlyDineIn(result)) {
+                // 彈message dine-in或者leave
+                success = directWalkIn(result);
+            } else {
+                success = waitQueue(numOfPeople, result);
+            }
+
+        } else if (customer.getReserve() != null && customer.isReserveTime()) {
+            // Sit in
+            success = reserveWalkIn(customer.getReserveChosedTableIds());
+        }
+        return success;
+
     }
 
     public static boolean cancelReservation() {
@@ -294,7 +358,6 @@ public class CustomerModule {
                 customer.addTableNumList(i);
             }
         }
-
     }
 
     public static void ordering() {
@@ -304,12 +367,13 @@ public class CustomerModule {
          */
 
         // CHOOSE RESTAURANTS
-        outputRestaurant();
+        database.outputRestaurant();
 
         String input = "";
 
         // Match string input with arraylist to find the restaurant in list
         do {
+            ArrayList<Restaurants> availableRestaurants = database.getListofRestaurants();
             System.out.print("\nPlease choose the restaurant to order: ");
             input = Main.in.next("Input: ");
             int idx = Integer.parseInt(input);
@@ -406,18 +470,8 @@ public class CustomerModule {
         pendingOrder.remove(dish);
     }
 
-    public static void outputRestaurant() {
-        System.out.println("\nAvailable restaurants: ");
-        for (int i = 0; i < availableRestaurants.size(); i++) {
-            System.out.println("[" + (i + 1) + "] " + availableRestaurants.get(i).toString());
-        }
-    }
-
     public static void outputMenu() {
-        System.out.println("\nMenu: ");
-        for (int i = 0; i < menu.size(); i++) {
-            System.out.println("[" + (i + 1) + "] " + menu.get(i));
-        }
+        restaurant.printMenu();
     }
 
     public static void outputPendingDish() {

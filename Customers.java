@@ -1,6 +1,13 @@
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 
-public class Customers implements UserType {
+public class Customers implements UserType, TimeObserver {
+
+    private LocalTime now;
+    private static LocalDate currDate;
+    private static LocalTime currTime;
+    private static TablesManagement tm = TablesManagement.getInstance();
 
     private String username;
     protected String password;
@@ -14,6 +21,7 @@ public class Customers implements UserType {
     private Reservation reserve;
     private ArrayList<Integer> occupiedTableId = new ArrayList<>();
     private ArrayList<Integer> waitingtableNumList = new ArrayList<>();
+    private ArrayList<Integer> reserveChosedTableIds = new ArrayList<>();
     // private Table occupiedtable;
 
     private Restaurants restaurantChosed;
@@ -45,10 +53,22 @@ public class Customers implements UserType {
         return occupiedTableId;
     }
 
+    public void clearOccupiedTableId() {
+        this.occupiedTableId.clear();
+    }
+
     // Reserve
     public void setReserve(String timeslotString, ArrayList<Integer> desiredTableIds) {
 
         this.reserve = new Reservation(CId, timeslotString, desiredTableIds);
+    }
+
+    public void setReserveChosedTableIds(ArrayList<Integer> chosedTableIds) {
+        this.reserveChosedTableIds = chosedTableIds;
+    }
+
+    public ArrayList<Integer> getReserveChosedTableIds() {
+        return reserveChosedTableIds;
     }
 
     // Dine-in
@@ -74,9 +94,12 @@ public class Customers implements UserType {
         occupiedTableId.add(tableId);
     }
 
-    // TODO: check reserveinfo
     public String getReserveInfo() {
-        return reserve.toString();
+        if (reserve != null) {
+            return reserve.toString();
+        } else {
+            return null;
+        }
     }
 
     public boolean checkisReserved() {
@@ -89,6 +112,20 @@ public class Customers implements UserType {
 
     public void cancelReservation() {
         this.reserve.cancel();
+    }
+
+    public boolean isReserveTime() {
+        boolean isTime = false;
+
+        // TODO: check time now == reserve time
+        ArrayList<Table> tables = tm.getReservedTablesfromId(reserveChosedTableIds);
+
+        for (Table t : tables) {
+            if (t.getTodayReservationTimeSlot().checkReservedStatus(now) == 0) {
+                isTime = true;
+            }
+        }
+        return isTime;
     }
 
     public String getID() {
@@ -146,10 +183,28 @@ public class Customers implements UserType {
 
     // print official customer's orders
     public void printOrders() {
-        System.out.println("\nOfficial Orders: ");
-        for (int i = 0; i < orders.size(); i++) {
-            System.out.println("[" + (i + 1) + "] " + orders.get(i).toString());
+        if (orders.size() != 0) {
+            System.out.println("\nOfficial Orders: ");
+            for (int i = 0; i < orders.size(); i++) {
+                System.out.println("[" + (i + 1) + "] " + orders.get(i).toString());
+            }
+        } else {
+            System.out.println("There is no orders made by this customer.");
         }
+
+    }
+
+    @Override
+    public void timeUpdate(LocalTime newTime) {
+        currTime = newTime;
+        tm.updateStatusAccordingToTime();
+    }
+
+    @Override
+    public void dateUpdate(LocalDate newDate) {
+        currDate = newDate;
+        tm.updateStatusAccordingToDate();
+
     }
 
     // About table reservation

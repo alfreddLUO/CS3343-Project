@@ -6,6 +6,8 @@ public class Admin implements UserType {
     protected String adminPassword = "admin1234";
     private static Admin instance = new Admin();
 
+    private static Database database = Database.getInstance();
+
     public Admin() {
     }
 
@@ -25,12 +27,14 @@ public class Admin implements UserType {
 
     // Admin force-add Restaurants into Main.listOfRestaurants
     public void addRestaurant(Restaurants res) {
-        Main.listOfRestaurants.add(res);
+        database.addTolistOfRestaurants(res);
+        System.out.println("Add new restaurant success.");
     }
 
     // Admin force-delete Restaurants into Main.listOfRestaurants
     public void deleteRestaurant(Restaurants res) {
-        Main.listOfRestaurants.remove(res);
+        database.removeFromlistOfRestaurants(res);
+        System.out.println("Delete restaurant success.");
     }
 
     /*
@@ -55,7 +59,7 @@ public class Admin implements UserType {
 
     // Check reserve info
     public void checkReserveInfo(String cid) {
-        Customers customer = Main.matchCId(cid);
+        Customers customer = database.matchCId(cid);
         customer.getReserveInfo();
     }
 
@@ -65,21 +69,22 @@ public class Admin implements UserType {
 
     // Set food court open and close (start of reservation and end of reservation)
 
-    public void forceSetOpenAndClosingTime(String open, String close) {
+    // TODO: Check reservation exist before change open and close time
+    public boolean forceSetOpenAndClosingTime(String open, String close) {
         // open, close -> format: xx:xx
-        TimeSlots.setOpenAndCloseTime(open, close);
+        return TimeSlots.setOpenAndCloseTime(open, close);
     }
 
     // addTable
     public void forceAddTable(int tableId, int tableCapacity) {
-        TableManagement tm = TableManagement.getInstance();
+        TablesManagement tm = TablesManagement.getInstance();
         tm.addNewTable(tableId, tableCapacity);
     }
 
     // deleteTable
     // 只有桌子在available的情況下可以刪除
     public void forceDeleteTable(int tableId) {
-        TableManagement tm = TableManagement.getInstance();
+        TablesManagement tm = TablesManagement.getInstance();
         tm.removeTable(tableId);
     }
 

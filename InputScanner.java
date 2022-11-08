@@ -3,6 +3,7 @@ import java.util.Scanner;
 class InputScanner {
     private static Scanner scannerInput = new Scanner(System.in);
     private static InputScanner instance;
+    private static ManualClock clockInstance = ManualClock.getInstance();
 
     private InputScanner() {
 
@@ -17,18 +18,18 @@ class InputScanner {
 
     public String next(String previousPrintedMsg) {
         String in = scannerInput.next();
+        // scannerInput.nextLine();
         if (in.equals("newDay")) {
-            // TODO-call new day
-            System.out.println("Starting new day!");
-
-            // End of TODO
+            clockInstance.newDay();
             System.out.print(previousPrintedMsg);
             in = next(previousPrintedMsg);
         } else if (in.equals("changeTime")) {
-            // TODO-call changeTime
-            System.out.println("TimeChanged!");
-
-            // End of TODO
+            System.out.println("Please enter a new system time (hh:mm)");
+            clockInstance.changeTime(scannerInput.next());
+            System.out.print(previousPrintedMsg);
+            in = next(previousPrintedMsg);
+        } else if (in.equals("timeNow")) {
+            System.out.println(clockInstance.getDateTimeString());
             System.out.print(previousPrintedMsg);
             in = next(previousPrintedMsg);
         }
@@ -39,17 +40,16 @@ class InputScanner {
         scannerInput.nextLine();
         String in = scannerInput.nextLine();
         if (in.equals("newDay")) {
-            // TODO-call new day
-            System.out.println("Starting new day!");
-
-            // End of TODO
+            clockInstance.newDay();
             System.out.print(previousPrintedMsg);
             in = nextLine(previousPrintedMsg);
         } else if (in.equals("changeTime")) {
-            // TODO-call changeTime
-            System.out.println("TimeChanged!");
-
-            // End of TODO
+            System.out.println("Please enter a new system time (hh:mm)");
+            clockInstance.changeTime(scannerInput.nextLine());
+            System.out.print(previousPrintedMsg);
+            in = nextLine(previousPrintedMsg);
+        } else if (in.equals("timeNow")) {
+            System.out.println(clockInstance.getDateTimeString());
             System.out.print(previousPrintedMsg);
             in = nextLine(previousPrintedMsg);
         }

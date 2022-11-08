@@ -18,9 +18,15 @@ public class TimeSlots {
         timeSlots = new ArrayList<>();
     }
 
-    public static void setOpenAndCloseTime(String open, String close) {
-        openTime = LocalTime.parse(open);
-        closeTime = LocalTime.parse(close);
+    public static boolean setOpenAndCloseTime(String open, String close) {
+        boolean success = false;
+
+        while (success == false) {
+            openTime = LocalTime.parse(open);
+            closeTime = LocalTime.parse(close);
+            success = true;
+        }
+        return success;
     }
 
     // public Boolean addSlot(String startString, String endString, String
@@ -103,7 +109,7 @@ public class TimeSlots {
 
     public String getAvailableSlots() {
         ArrayList<LocalTime> temp = new ArrayList<>();
-        ArrayList<TimeSlot> avaliable = new ArrayList<>();
+        ArrayList<TimeSlot> available = new ArrayList<>();
         String respond = "";
         temp.add(openTime);
         for (TimeSlot ts : timeSlots) {
@@ -113,14 +119,14 @@ public class TimeSlots {
         temp.add(closeTime);
         for (int i = 0; i < temp.size(); i += 2) {
             if (temp.get(i + 1).toSecondOfDay() - temp.get(i).toSecondOfDay() >= 1800) { // if this slot is >= 30 mins
-                avaliable.add(new TimeSlot(temp.get(i), temp.get(i + 1), null));
+                available.add(new TimeSlot(temp.get(i), temp.get(i + 1), null));
             } else {
                 continue;
             }
         }
         int cnt = 0;
 
-        for (TimeSlot a : avaliable) {
+        for (TimeSlot a : available) {
             if (cnt > 0) {
                 respond += ", " + a.toString();
             } else {
@@ -129,7 +135,7 @@ public class TimeSlots {
             cnt++;
         }
         temp.clear();
-        avaliable.clear();
+        available.clear();
         return respond;
     }
 
@@ -140,12 +146,12 @@ public class TimeSlots {
         // break;
         // }
         // }
-        System.out.println("before remove:");
-        for (TimeSlot t : timeSlots) {
-            System.out.printf(t.toString() + ", ");
-        }
+        // System.out.println("before remove:");
+        // for (TimeSlot t : timeSlots) {
+        // System.out.printf(t.toString() + ", ");
+        // }
 
-        System.out.println();
+        // System.out.println();
 
         for (int i = 0; i < timeSlots.size(); i++) {
             if (timeSlots.get(i).equals(ts)) {
@@ -153,11 +159,11 @@ public class TimeSlots {
                 break;
             }
         }
-        System.out.println("after remove:");
-        for (TimeSlot t : timeSlots) {
-            System.out.printf(t.toString() + ", ");
-        }
-        System.out.println();
+        // System.out.println("after remove:");
+        // for (TimeSlot t : timeSlots) {
+        // System.out.printf(t.toString() + ", ");
+        // }
+        // System.out.println();
     }
 
     public Boolean hasReserved(LocalTime now) {
@@ -171,12 +177,19 @@ public class TimeSlots {
         return false;
     }
 
+    // 0 = reached reservation time slot
+    // 1 = 30 minutes before reservation time slot
+    // 2 =
     public int checkReservedStatus(LocalTime now) {
         for (TimeSlot ts : timeSlots) {
-            if (now.compareTo(ts.getStart().minusMinutes(30)) <= 0 && now.compareTo(ts.getStart()) < 0) {
-                return 1;
-            } else if (now.compareTo(ts.getStart()) <= 0 && now.compareTo(ts.getEnd()) >= 0) {
-                return 0;
+            if (now.compareTo(ts.getStart().minusMinutes(30)) >= 0 && now.compareTo(ts.getEnd()) <= 0) {
+                if (now.compareTo(ts.getStart().minusMinutes(30)) >= 0 && now.compareTo(ts.getStart()) < 0) {
+                    return 1;
+                } else if (now.compareTo(ts.getStart()) >= 0 && now.compareTo(ts.getEnd()) <= 0) {
+                    return 0;
+                }
+            } else {
+                continue;
             }
         }
         return -1;

@@ -19,8 +19,13 @@ public class Restaurants {
         this.menu.add(dish);
     }
 
-    public void deletedishfromMenu(Dish dish) {
-        this.menu.remove(dish);
+    public boolean deletedishfromMenu(Dish dish) {
+        if (this.menu.contains(dish)) {
+            this.menu.remove(dish);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public ArrayList<Dish> getMenu() {
@@ -34,5 +39,22 @@ public class Restaurants {
             sum += orders.get(i).getdishPrice();
         }
         return sum;
+    }
+
+    // Print all dish from restaurant's menu
+    public void printMenu() {
+        System.out.println("\nMenu: ");
+        for (int i = 0; i < menu.size(); i++) {
+            System.out.println((i + 1) + " " + menu.get(i).toString());
+        }
+    }
+
+    public Dish getDishbyName(String dName) {
+        for (Dish d : menu) {
+            if (d.getdishname().equals(dName)) {
+                return d;
+            }
+        }
+        return null;
     }
 }

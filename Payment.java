@@ -1,6 +1,7 @@
 public class Payment {
 
     private Customers customer;
+    private Database database = Database.getInstance();
     private PaymentMethod paymentMethod;
     private double originalPrice = 0;
     private double discountPrice = 0;
@@ -62,7 +63,7 @@ public class Payment {
                         input = Main.in.next("\nInput: ");
                         String staffUserName = input;
 
-                        Merchants merchant = Main.matchMId(staffUserName);
+                        Merchants merchant = database.matchMId(staffUserName);
                         merchant.checkOutbyMerchant(this, customer);
 
                     } else {

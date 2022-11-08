@@ -1,6 +1,17 @@
+import javax.xml.crypto.Data;
+
 public class Initialization {
 
     private static Initialization instance = null;
+
+    public void initialize() {
+        initiateRestaurants();
+        initiateDish();
+        initializeAdmin();
+        initiateMerchants();
+        initiateCustomers();
+        initiateTables();
+    }
 
     public static Initialization getInstance() {
         if (instance == null) {
@@ -10,7 +21,8 @@ public class Initialization {
     }
 
     private static AccountManagement accManager = AccountManagement.getInstance();
-    // 测试模拟代码
+    private static Database database = Database.getInstance();
+
     static Restaurants PepperLunch = new Restaurants("Pepper-Lunch");
     static Restaurants TamJai = new Restaurants("Tam-Jai-Mi-Xian");
     static Restaurants McDonalds = new Restaurants("McDonald's");
@@ -29,10 +41,10 @@ public class Initialization {
     static Dish LettuceMixian = new Dish("Lettuce-Mixian", 29.9);
 
     public void initiateRestaurants() {
-        Main.addTolistOfRestaurants(PepperLunch);
-        Main.addTolistOfRestaurants(TamJai);
-        Main.addTolistOfRestaurants(McDonalds);
-        Main.addTolistOfRestaurants(KFC);
+        database.addTolistOfRestaurants(PepperLunch);
+        database.addTolistOfRestaurants(TamJai);
+        database.addTolistOfRestaurants(McDonalds);
+        database.addTolistOfRestaurants(KFC);
     }
 
     public void initiateDish() {
@@ -69,9 +81,8 @@ public class Initialization {
         accManager.registerAdmin("admin", "t123");
     }
 
-    // TODO: Initialize Table
     public void initiateTables() {
-        TableManagement tm = TableManagement.getInstance();
+        TablesManagement tm = TablesManagement.getInstance();
 
         tm.addNewTable(1, 2);
         tm.addNewTable(2, 2);
@@ -83,6 +94,9 @@ public class Initialization {
         tm.addNewTable(8, 4);
         tm.addNewTable(9, 8);
         tm.addNewTable(10, 8);
+
+        // Testing
+        // tm.arrangeTableAccordingToNumOfPeople(11);
 
         for (int i = 1; i <= 10; i++) {
             tm.appendToAllTableIds(i);

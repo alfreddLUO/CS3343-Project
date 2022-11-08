@@ -4,10 +4,9 @@ import java.util.Collections;
 import java.util.Comparator;
 
 //singleton pattern
-public class TableManagement implements TimeObserver {
-    private static ManualClock1 clock = ManualClock1.getInstance();
-    private static LocalDate currDate = clock.getDate();
-    private static LocalTime currTime = clock.getTime();
+public class TablesManagement implements TimeObserver {
+    private static LocalDate currDate;
+    private static LocalTime currTime;
 
     @Override
     public void timeUpdate(LocalTime newTime) {
@@ -21,25 +20,31 @@ public class TableManagement implements TimeObserver {
         updateStatusAccordingToDate();
     }
 
-    private void updateStatusAccordingToTime() {
+    public void updateStatusAccordingToTime() {
+
+        ArrayList<Table> temp = new ArrayList<>();
 
         for (Table t : availableTables) {
             if (t.toBeReserved(currTime) != -1) {
-                availableTables.remove(t);
+                temp.add(t);
                 reservedTables.add(t);
             }
         }
+        availableTables.removeAll(temp);
+        temp.clear();
+
         for (Table t : occupiedTables) {
             if (t.toBeReserved(currTime) == 0) {
                 // (unsolved) notify customers to check out
-                occupiedTables.remove(t);
+                temp.add(t);
                 reservedTables.add(t);
             }
         }
+        occupiedTables.removeAll(temp);
 
     }
 
-    private void updateStatusAccordingToDate() {
+    public void updateStatusAccordingToDate() {
         // TODO-loop tables and change status
         for (Table t : reservedTables) {
             setTableFromReservedToAvailable(t.getTableId());
@@ -67,6 +72,18 @@ public class TableManagement implements TimeObserver {
     // 存放桌型的列表，按从大到小的顺序排列 e.g. 10, 8, 4,2
     private ArrayList<Integer> tableCapacityTypeList;
 
+    public ArrayList<Table> getReservedTablesfromId(ArrayList<Integer> ids) {
+        ArrayList<Table> tables = new ArrayList<>();
+
+        for (int i = 0; i < ids.size(); i++) {
+            for (Table t : reservedTables) {
+                if (t.getId() == ids.get(i)) {
+                    tables.add(t);
+                }
+            }
+        }
+        return tables;
+    }
     /*
      * Testing
      */
@@ -102,13 +119,13 @@ public class TableManagement implements TimeObserver {
     // 则arraylist的数字应该是 2，7，9（index 从0到2）
 
     // sigleton pattern
-    private static TableManagement instance = new TableManagement();
+    private static TablesManagement instance = new TablesManagement();
 
-    public static TableManagement getInstance() {
+    public static TablesManagement getInstance() {
         return instance;
     }
 
-    private TableManagement() {
+    private TablesManagement() {
         allTableIds = new ArrayList<Integer>();
         reservedTables = new ArrayList<Table>();
         availableTables = new ArrayList<Table>();
@@ -136,7 +153,7 @@ public class TableManagement implements TimeObserver {
     // index最大的那一个，返回的数字代表的是最小桌子的安排数量
     public ArrayList<Integer> arrangeTableAccordingToNumOfPeople(int peopleNum) {
         int tmpPeopleNum = peopleNum;
-        String arrangementResultMessage = "Your arranged tables are: \n";
+        String arrangementResultMessage = "\nYour arranged tables are: \n";
         // 按顺序储存的对应的桌型安排的数量
         ArrayList<Integer> tableArrangementResults = new ArrayList<Integer>();
         for (int i = 0; i < tableCapacityTypeList.size(); i++) {
@@ -165,9 +182,9 @@ public class TableManagement implements TimeObserver {
                     tmpPeopleNum = 0;
                 }
             }
-            System.out.printf("%d %d-Seats Tables \n", tmpResults, tableCapacity);
+            // System.out.printf("%d %d-Seats Tables \n", tmpResults, tableCapacity);
             if (tmpResults > 0) {
-                arrangementResultMessage += String.format("%d %d-Seats Tables \n", tmpResults, tableCapacity);
+                arrangementResultMessage += String.format("[%d] [%d-Seats] Tables \n", tmpResults, tableCapacity);
             }
             tableArrangementResults.set(capacityIndex, tmpResults);
             if (tmpPeopleNum == 0) {
@@ -421,7 +438,8 @@ public class TableManagement implements TimeObserver {
             System.out.printf("Successfully delete the table with id of %d \n", tableId);
             return;
         }
-        System.out.printf("Can't delete the table with id of %d. Maybe due to it's unavailable or it doesn't exist.\n",
+        System.out.printf(
+                "Can't delete the table with id of %d. Maybe due to it's unavailability or it doesn't exist.\n",
                 tableId);
 
     }
@@ -573,14 +591,16 @@ public class TableManagement implements TimeObserver {
     }
 
     public void checkOutByCustomer(ArrayList<Integer> tableId) {
-        int numOfAvailableForCurrentTableCapacity = 0;
+        final Database database = Database.getInstance();
+
+        final int numOfAvailableForCurrentTableCapacity = 0;
         for (Integer tId : tableId) {
             setTableFromOccupiedToAvailable(tId);
             Table t = returnTableAccordingToTableId(tId);
             int capacityIndex = t.getTableCapacity();
             for (String id : waitingCustomers) {
                 // get waitingNumList中的第i個
-                Customers customer = Main.matchCId(id);
+                Customers customer = database.matchCId(id);
 
                 // TODO:
 
