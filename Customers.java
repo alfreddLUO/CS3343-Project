@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 public class Customers implements UserType, TimeObserver {
 
-    private LocalTime now;
     private static LocalDate currDate;
     private static LocalTime currTime;
     private static TablesManagement tm = TablesManagement.getInstance();
@@ -32,6 +31,7 @@ public class Customers implements UserType, TimeObserver {
         this.username = username;
         this.CId = userid;
         this.membership = new CustomerMembership(this);
+        ManualClock.getInstance().addObserver(this);
         setBillNo();
     }
 
@@ -121,7 +121,7 @@ public class Customers implements UserType, TimeObserver {
         ArrayList<Table> tables = tm.getReservedTablesfromId(reserveChosedTableIds);
 
         for (Table t : tables) {
-            if (t.getTodayReservationTimeSlot().checkReservedStatus(now) == 0) {
+            if (t.getTodayReservationTimeSlot().checkReservedStatus(currTime) == 0) {
                 isTime = true;
             }
         }
@@ -197,14 +197,11 @@ public class Customers implements UserType, TimeObserver {
     @Override
     public void timeUpdate(LocalTime newTime) {
         currTime = newTime;
-        tm.updateStatusAccordingToTime();
     }
 
     @Override
     public void dateUpdate(LocalDate newDate) {
         currDate = newDate;
-        tm.updateStatusAccordingToDate();
-
     }
 
     // About table reservation

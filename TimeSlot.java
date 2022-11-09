@@ -71,4 +71,12 @@ public class TimeSlot {
     public TimeSlot makeDummyCopy() {
         return new TimeSlot(this.getStart(), this.getEnd(), null);
     }
+
+    public static boolean checkValid(String reserveTime) {
+        String[] times = reserveTime.split("-");
+        LocalTime start = LocalTime.parse(times[0]);
+        LocalTime end = LocalTime.parse(times[1]);
+        TimeSlot temp = new TimeSlot(start, end, "");
+        return temp.length() >= 30;
+    }
 }

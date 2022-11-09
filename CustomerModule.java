@@ -211,8 +211,7 @@ public class CustomerModule {
     }
 
     public boolean reserveWalkIn(ArrayList<Integer> tableIds) {
-        int select = 0;
-        String str = "";
+
         boolean success = false;
 
         System.out.println("You can now walk in.");
@@ -300,10 +299,7 @@ public class CustomerModule {
         boolean success = false;
         String str;
 
-        // TODO: if no reservation or it is not time to dine(from reserve)
-        System.out.println(customer.getReserve() != null);
-        System.out.println(customer.isReserveTime());
-
+        // if no reservation or it is not time to dine(from reserve)
         if (customer.getReserve() == null || customer.getReserve() != null && !customer.isReserveTime()) {
             tm.showAvailableTables();
 
@@ -422,13 +418,12 @@ public class CustomerModule {
             } else {
                 outputPendingDish();
 
-                System.out.print("\nDo you want to add or delete order?");
-
                 System.out.println("\nCommands: ");
                 System.out.println("[1] Add Order");
                 System.out.println("[2] Delete Order");
                 System.out.println("[3] Confirm Order");
 
+                System.out.print("\nDo you want to add or delete order? ");
                 input = Main.in.next("Input: ");
                 addDel = Integer.parseInt(input);
 

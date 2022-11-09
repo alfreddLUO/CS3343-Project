@@ -1,5 +1,3 @@
-import javax.xml.crypto.Data;
-
 public class Initialization {
 
     private static Initialization instance = null;

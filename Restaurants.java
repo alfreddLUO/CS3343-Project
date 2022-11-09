@@ -45,7 +45,7 @@ public class Restaurants {
     public void printMenu() {
         System.out.println("\nMenu: ");
         for (int i = 0; i < menu.size(); i++) {
-            System.out.println((i + 1) + " " + menu.get(i).toString());
+            System.out.println("[" + (i + 1) + "] " + menu.get(i).toString());
         }
     }
 
