@@ -99,8 +99,12 @@ public class Database {
     }
 
     // find customer instance by using customerId
-    public Customers matchCId(String cid) {
-        return listofCustomers.get(cid);
+    public Customers matchCId(String cid) throws ExCustomersIdNotFound {
+        Customers c = listofCustomers.get(cid);
+        if (c != null) {
+            return c;
+        }
+        throw new ExCustomersIdNotFound(cid);
     }
 
     public <T, E> T getKeyByValue(HashMap<T, E> map, E value) {

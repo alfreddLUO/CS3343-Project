@@ -60,10 +60,12 @@ public class Customers implements UserType, TimeObserver {
     }
 
     // Reserve
-    public void setReserve(String timeslotString, ArrayList<Integer> desiredTableIds)
-            throws ExTableNotExist, ExTimeSlotAlreadyBeReserved {
-
-        this.reserve = new Reservation(CId, timeslotString, desiredTableIds);
+    public void setReserve(String timeslotString, ArrayList<Integer> desiredTableIds) {
+        try {
+            this.reserve = new Reservation(CId, timeslotString, desiredTableIds);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     public void setReserveChosedTableIds(ArrayList<Integer> chosedTableIds) {

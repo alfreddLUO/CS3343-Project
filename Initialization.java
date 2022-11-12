@@ -73,26 +73,29 @@ public class Initialization {
         accManager.registerCustomer("yinch33", "t123");
         accManager.registerCustomer("ta123", "t123");
         accManager.registerCustomer("wedu2", "t123");
+        accManager.registerCustomer("lpy", "t123");
     }
 
     public void initializeAdmin() {
         accManager.registerAdmin("admin", "t123");
     }
 
-    public void initiateTables() throws ExTableIdAlreadyInUse {
+    public void initiateTables() {
         TablesManagement tm = TablesManagement.getInstance();
-
-        tm.addNewTable(1, 2);
-        tm.addNewTable(2, 2);
-        tm.addNewTable(3, 2);
-        tm.addNewTable(4, 2);
-        tm.addNewTable(5, 2);
-        tm.addNewTable(6, 4);
-        tm.addNewTable(7, 4);
-        tm.addNewTable(8, 4);
-        tm.addNewTable(9, 8);
-        tm.addNewTable(10, 8);
-
+        try {
+            tm.addNewTable(1, 2);
+            tm.addNewTable(2, 2);
+            tm.addNewTable(3, 2);
+            tm.addNewTable(4, 2);
+            tm.addNewTable(5, 2);
+            tm.addNewTable(6, 4);
+            tm.addNewTable(7, 4);
+            tm.addNewTable(8, 4);
+            tm.addNewTable(9, 8);
+            tm.addNewTable(10, 8);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
         // Testing
         // tm.arrangeTableAccordingToNumOfPeople(11);
 

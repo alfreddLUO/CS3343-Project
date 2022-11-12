@@ -125,69 +125,72 @@ public class CustomerModule implements UserModule {
     }
 
     @Override
-    public void run(String Id) throws ExTableNotExist, ExTimeSlotAlreadyBeReserved, ExTimeSlotNotReservedYet {
+    public void run(String Id) {
+        try {
+            customer = Database.getInstance().matchCId(Id);
+            String input = "";
+            int select = 0;
 
-        customer = Database.getInstance().matchCId(Id);
-        String input = "";
-        int select = 0;
+            // if customerState -> calculate total consumption -> disable below line：
+            clearOrderNPrice();
 
-        // if customerState -> calculate total consumption -> disable below line：
-        clearOrderNPrice();
+            while (select != 5) {
 
-        while (select != 5) {
+                promptOptionStart();
 
-            promptOptionStart();
+                System.out.print("\nPlease select your operation: ");
+                input = Main.in.next("\nInput: ");
+                select = Integer.parseInt(input);
 
-            System.out.print("\nPlease select your operation: ");
-            input = Main.in.next("\nInput: ");
-            select = Integer.parseInt(input);
+                switch (select) {
+                    case 1:
+                        if (dineInOperation()) {
+                            // After Dine-in(get ticket and sit down) -> Ordering
+                            ordering();
 
-            switch (select) {
-                case 1:
-                    if (dineInOperation()) {
-                        // After Dine-in(get ticket and sit down) -> Ordering
-                        ordering();
+                            // display official-confirmed-ordered dish
+                            customer.printOrders();
 
-                        // display official-confirmed-ordered dish
-                        customer.printOrders();
+                            // About Payment
 
-                        // About Payment
-
-                        Payment pay = new Payment(customer, restaurant);
-                        pay.payProcess();
-                        // tm.checkOutByCustomer(customer.getOccupiedTableId());
-                    }
-                    break;
-                case 2:
-                    if (customer.checkisReserved()) {
-                        System.out.println("\nError! You already has a reservation.");
-                        break;
-                    } else {
-                        if (!reservationOperation())
-                            System.out.println("Something is wrong in reservation!");
-                    }
-                    break;
-                case 3:
-                    if (!customer.checkisReserved()) {
-                        System.out.println("\nError! You have not yet make a reservation.");
-                        break;
-                    } else {
-                        if (cancelReservation()) {
-                            System.out.println("\nCancel Success!");
-                        } else {
-                            System.out.println("\nError! Cancellation unsuccessful.");
+                            Payment pay = new Payment(customer, restaurant);
+                            pay.payProcess();
+                            // tm.checkOutByCustomer(customer.getOccupiedTableId());
                         }
-                    }
-                    break;
-                case 4:
-                    tm.checkOutByCustomer(customer.getOccupiedTableId());
-                    customer.clearOccupiedTableId();
-                    System.out.println("\nYou have successfully check out.");
-                    select = 0;
-                    break;
-                case 5:
-                    break;
+                        break;
+                    case 2:
+                        if (customer.checkisReserved()) {
+                            System.out.println("\nError! You already has a reservation.");
+                            break;
+                        } else {
+                            if (!reservationOperation())
+                                System.out.println("Something is wrong in reservation!");
+                        }
+                        break;
+                    case 3:
+                        if (!customer.checkisReserved()) {
+                            System.out.println("\nError! You have not yet make a reservation.");
+                            break;
+                        } else {
+                            if (cancelReservation()) {
+                                System.out.println("\nCancel Success!");
+                            } else {
+                                System.out.println("\nError! Cancellation unsuccessful.");
+                            }
+                        }
+                        break;
+                    case 4:
+                        tm.checkOutByCustomer(customer.getOccupiedTableId());
+                        customer.clearOccupiedTableId();
+                        System.out.println("\nYou have successfully check out.");
+                        select = 0;
+                        break;
+                    case 5:
+                        break;
+                }
             }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
 
     }
@@ -200,23 +203,26 @@ public class CustomerModule implements UserModule {
 
         do {
             // Show available time slot for booking
-            tm.showReservationTable();
+            try {
+                tm.showReservationTable();
 
-            // Input the time slot you want to reserve, format: 11:23-12:22
-            System.out.print("\nPlease input time slot to reserve (Format: xx:xx-xx:xx): ");
-            reserveTime = Main.in.next("Input: ");
+                // Input the time slot you want to reserve, format: 11:23-12:22
+                System.out.print("\nPlease input time slot to reserve (Format: xx:xx-xx:xx): ");
+                reserveTime = Main.in.next("Input: ");
 
-            // choose table by tableId
-            System.out.print("Please input the table ids you want to reserve: (separate by comma): ");
-            chosedTable = Main.in.next("Input: ");
-            String[] idx = chosedTable.split(",");
+                // choose table by tableId
+                System.out.print("Please input the table ids you want to reserve: (separate by comma): ");
+                chosedTable = Main.in.next("Input: ");
+                String[] idx = chosedTable.split(",");
 
-            for (String s : idx) {
-                chosedTableId = Integer.parseInt(s);
-                chosedTableIds.add(chosedTableId);
+                for (String s : idx) {
+                    chosedTableId = Integer.parseInt(s);
+                    chosedTableIds.add(chosedTableId);
+                }
+                customer.setReserveChosedTableIds(chosedTableIds);
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
             }
-            customer.setReserveChosedTableIds(chosedTableIds);
-
         } while (chosedTableId == 0);
 
         // set reserve in customer.java
@@ -232,21 +238,25 @@ public class CustomerModule implements UserModule {
         boolean success = false;
 
         do {
-            System.out.println("You can now directly walk in.");
+            try {
+                System.out.println("You can now directly walk in.");
 
-            promptWalkInLeave();
+                promptWalkInLeave();
 
-            System.out.print("\nPlease choose your operation: ");
-            str = Main.in.next("Input: ");
-            select = Integer.parseInt(str);
+                System.out.print("\nPlease choose your operation: ");
+                str = Main.in.next("Input: ");
+                select = Integer.parseInt(str);
 
-            if (select == 1) {
-                ArrayList<Integer> checkinTableId = tm.setWalkInStatus(result);
+                if (select == 1) {
+                    ArrayList<Integer> checkinTableId = tm.setWalkInStatus(result);
 
-                // TODO: 拆成两个
-                addCheckInAndWaitingInfo(str, checkinTableId, null);
-                success = true;
+                    // TODO: 拆成两个
+                    addCheckInAndWaitingInfo(str, checkinTableId, null);
+                    success = true;
 
+                }
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
             }
         } while (select != 1 && select != 2);
 
@@ -339,13 +349,17 @@ public class CustomerModule implements UserModule {
 
             ArrayList<Integer> result = new ArrayList<>();
             // result = tm.makeTableArrangements(numOfPeople);
-            result = tm.arrangeTableAccordingToNumOfPeople(numOfPeople);
+            try {
+                result = tm.arrangeTableAccordingToNumOfPeople(numOfPeople);
 
-            if (tm.canDirectlyDineIn(result)) {
-                // 彈message dine-in或者leave
-                success = directWalkIn(result);
-            } else {
-                success = waitQueue(numOfPeople, result);
+                if (tm.canDirectlyDineIn(result)) {
+                    // 彈message dine-in或者leave
+                    success = directWalkIn(result);
+                } else {
+                    success = waitQueue(numOfPeople, result);
+                }
+            } catch (ExPeopleNumExceedTotalCapacity e) {
+                System.out.println(e.getMessage());
             }
 
         } else if (customer.getReserve() != null && customer.isReserveTime()) {
@@ -356,10 +370,13 @@ public class CustomerModule implements UserModule {
 
     }
 
-    public static boolean cancelReservation() throws ExTableNotExist, ExTimeSlotNotReservedYet {
-        customer.cancelReservation();
-        customer.clearReservation();
-
+    public static boolean cancelReservation() {
+        try {
+            customer.cancelReservation();
+            customer.clearReservation();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
         return customer.getReserve() == null;
     }
 

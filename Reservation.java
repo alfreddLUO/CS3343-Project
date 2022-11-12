@@ -25,12 +25,15 @@ public class Reservation {
         reserve(desiredTableIDs, timeSlot);
     }
 
-    private void reserve(ArrayList<Integer> desiredTableIDs, TimeSlot timeslot)
-            throws ExTableNotExist, ExTimeSlotAlreadyBeReserved {
-        for (int id : desiredTableIDs) {
-            if (tm.reserveTableAccordingToTimeslot(id, timeSlot)) {
-                tableIDs.add(id);
+    private void reserve(ArrayList<Integer> desiredTableIDs, TimeSlot timeslot) {
+        try {
+            for (int id : desiredTableIDs) {
+                if (tm.reserveTableAccordingToTimeslot(id, timeSlot)) {
+                    tableIDs.add(id);
+                }
             }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
     }
 
@@ -49,10 +52,14 @@ public class Reservation {
         return s;
     }
 
-    public void cancel() throws ExTableNotExist, ExTimeSlotNotReservedYet {
-        for (Integer id : tableIDs) {
-            tm.cancelReservationAccordingToTimeslot(id, timeSlot);
+    public void cancel() {
+        try {
+            for (Integer id : tableIDs) {
+                tm.cancelReservationAccordingToTimeslot(id, timeSlot);
+            }
+            active = false;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
-        active = false;
     }
 }

@@ -60,6 +60,8 @@ public class MerchantModule implements UserModule {
                     merchant.checkOrder(customer, merchant.getRestaurantOwned());
                 } catch (NullPointerException ex) {
                     System.out.println("No Customer instance found!");
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
                 }
             }
         }

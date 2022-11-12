@@ -46,6 +46,8 @@ class Main {
 
             } catch (NumberFormatException e) {
                 System.out.println("\nError! Please input an integer!");
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
             }
 
             if (select == 1) {

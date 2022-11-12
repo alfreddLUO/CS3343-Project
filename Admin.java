@@ -57,8 +57,14 @@ public class Admin implements UserType {
 
     // Check reserve info
     public void checkReserveInfo(String cid) {
-        Customers customer = database.matchCId(cid);
-        customer.getReserveInfo();
+        Customers customer;
+        try {
+            customer = database.matchCId(cid);
+            customer.getReserveInfo();
+        } catch (ExCustomersIdNotFound e) {
+            System.out.println(e.getMessage());
+        }
+
     }
 
     /*
@@ -67,23 +73,37 @@ public class Admin implements UserType {
 
     // Set food court open and close (start of reservation and end of reservation)
 
-    public boolean forceSetOpenAndClosingTime(String open, String close) throws ExUnableToSetOpenCloseTime {
+    public boolean forceSetOpenAndClosingTime(String open, String close) {
         // open, close -> format: xx:xx
-        TablesManagement tm = TablesManagement.getInstance();
-        return tm.setOpenAndCloseTime(open, close);
+        Boolean setOpenCloseTime = false;
+        try {
+            TablesManagement tm = TablesManagement.getInstance();
+            setOpenCloseTime = tm.setOpenAndCloseTime(open, close);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return setOpenCloseTime;
     }
 
     // addTable
     public void forceAddTable(int tableId, int tableCapacity) throws ExTableIdAlreadyInUse {
-        TablesManagement tm = TablesManagement.getInstance();
-        tm.addNewTable(tableId, tableCapacity);
+        try {
+            TablesManagement tm = TablesManagement.getInstance();
+            tm.addNewTable(tableId, tableCapacity);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     // deleteTable
     // 只有桌子在available的情況下可以刪除
     public void forceDeleteTable(int tableId) throws ExTableNotExist {
-        TablesManagement tm = TablesManagement.getInstance();
-        tm.removeTable(tableId);
+        try {
+            TablesManagement tm = TablesManagement.getInstance();
+            tm.removeTable(tableId);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 
 }

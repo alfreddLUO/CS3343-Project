@@ -140,42 +140,47 @@ public class TablesManagement implements TimeObserver {
     // 最后返回的是一个array list存放不同桌型安排的数量
     // index为0时，那个返回数字代表的是最大的桌子的安排数量
     // index最大的那一个，返回的数字代表的是最小桌子的安排数量
-    public ArrayList<Integer> arrangeTableAccordingToNumOfPeople(int peopleNum) {
-        int tmpPeopleNum = peopleNum;
-        StringBuilder arrangementResultMessage = new StringBuilder("\nYour arranged tables are: \n");
-        // 按顺序储存的对应的桌型安排的数量
-        ArrayList<Integer> tableArrangementResults = new ArrayList<Integer>();
-        tableArrangementResults.addAll(initializeTableArrangementList());
-        for (int i = 0; i < tableCapacityTypeList.size(); i++) {
-            int tmpResults = 0;
-            int tableCapacity = tableCapacityTypeList.get(i);
-            // 这一步是指当执行到最后一步时，即最小桌型时，若人数为0则0，若大于0则1
-            if (i == tableCapacityTypeList.size() - 1) {
-                tmpResults = (tmpPeopleNum % tableCapacity == 0) ? (tmpPeopleNum / tableCapacity)
-                        : ((tmpPeopleNum / tableCapacity) + 1);
-            } else {
-                // 最佳的是把人放置于能装下他们的最小桌子， e.g. 假设有2，4，8人桌； 7人来放8人桌
-                int addingTableNum = (tmpPeopleNum / tableCapacity <= returnTableNumWithTableCapacity(tableCapacity))
-                        ? (tmpPeopleNum / tableCapacity)
-                        : returnTableNumWithTableCapacity(tableCapacity);
-                tmpResults += addingTableNum;
-                tmpPeopleNum = tmpPeopleNum - tableCapacity * addingTableNum;
-                if (tableCapacity >= tmpPeopleNum
-                        && tmpPeopleNum > tableCapacityTypeList.get(i + 1)) {
-                    tmpResults += 1;
-                    tmpPeopleNum = 0;
+    public ArrayList<Integer> arrangeTableAccordingToNumOfPeople(int peopleNum) throws ExPeopleNumExceedTotalCapacity {
+        if (peopleNum <= returnTotalCapcityOfTables()) {
+            int tmpPeopleNum = peopleNum;
+            StringBuilder arrangementResultMessage = new StringBuilder("\nYour arranged tables are: \n");
+            // 按顺序储存的对应的桌型安排的数量
+            ArrayList<Integer> tableArrangementResults = new ArrayList<Integer>();
+            tableArrangementResults.addAll(initializeTableArrangementList());
+            for (int i = 0; i < tableCapacityTypeList.size(); i++) {
+                int tmpResults = 0;
+                int tableCapacity = tableCapacityTypeList.get(i);
+                // 这一步是指当执行到最后一步时，即最小桌型时，若人数为0则0，若大于0则1
+                if (i == tableCapacityTypeList.size() - 1) {
+                    tmpResults = (tmpPeopleNum % tableCapacity == 0) ? (tmpPeopleNum / tableCapacity)
+                            : ((tmpPeopleNum / tableCapacity) + 1);
+                } else {
+                    // 最佳的是把人放置于能装下他们的最小桌子， e.g. 假设有2，4，8人桌； 7人来放8人桌
+                    int addingTableNum = (tmpPeopleNum
+                            / tableCapacity <= returnTableNumWithTableCapacity(tableCapacity))
+                                    ? (tmpPeopleNum / tableCapacity)
+                                    : returnTableNumWithTableCapacity(tableCapacity);
+                    tmpResults += addingTableNum;
+                    tmpPeopleNum = tmpPeopleNum - tableCapacity * addingTableNum;
+                    if (tableCapacity >= tmpPeopleNum
+                            && tmpPeopleNum > tableCapacityTypeList.get(i + 1)) {
+                        tmpResults += 1;
+                        tmpPeopleNum = 0;
+                    }
+                }
+                if (tmpResults > 0) {
+                    arrangementResultMessage
+                            .append(String.format("[%d] [%d-Seats] Tables \n", tmpResults, tableCapacity));
+                }
+                tableArrangementResults.set(i, tmpResults);
+                if (tmpPeopleNum == 0) {
+                    break;
                 }
             }
-            if (tmpResults > 0) {
-                arrangementResultMessage.append(String.format("[%d] [%d-Seats] Tables \n", tmpResults, tableCapacity));
-            }
-            tableArrangementResults.set(i, tmpResults);
-            if (tmpPeopleNum == 0) {
-                break;
-            }
+            System.out.println(arrangementResultMessage);
+            return tableArrangementResults;
         }
-        System.out.println(arrangementResultMessage);
-        return tableArrangementResults;
+        throw new ExPeopleNumExceedTotalCapacity(returnTotalCapcityOfTables());
     }
 
     // （测试不用管后面这一句话）前提上一种结果不可用，即没有比人数更大的桌型available
@@ -324,9 +329,9 @@ public class TablesManagement implements TimeObserver {
     }
 
     // 展示各自table的课预定时间段
-    public void showReservationTable() {
+    public String showReservationTable() {
         StringBuilder showReservationTableMsg = new StringBuilder(
-                "\nTable for tomorrow reservation and available time slots: \n");
+                "\nTable(s) for tomorrow reservation and available time slots: \n");
         ArrayList<Table> copyOfAvailableTables = new ArrayList<Table>();
         copyOfAvailableTables.addAll(availableTables);
         Collections.sort(copyOfAvailableTables);
@@ -337,6 +342,7 @@ public class TablesManagement implements TimeObserver {
                     t.getTableId(), tmrReservationTimeslots.getAvailableSlots()));
         }
         System.out.println(showReservationTableMsg);
+        return new String(showReservationTableMsg);
     }
 
     // 展示所有桌型的available的数量
@@ -555,17 +561,30 @@ public class TablesManagement implements TimeObserver {
             int capacityIndex = t.getTableCapacity();
             for (String id : waitingCustomers) {
                 // get waitingNumList中的第i個
-                Customers customer = database.matchCId(id);
-                if (customer.getithTableNumList(capacityIndex) > 0) {
-                    customer.minusOneTableNumList(capacityIndex);
-                    customer.addOccupiedTable(t.getTableId());
-                    setTableFromAvailableToOccupiedStatus(tId);
-                    System.out.printf("Customer with Id of %s now occupied a new table with id of %d", id,
-                            t.getTableId());
-                    break;
+                Customers customer;
+                try {
+                    customer = database.matchCId(id);
+                    if (customer.getithTableNumList(capacityIndex) > 0) {
+                        customer.minusOneTableNumList(capacityIndex);
+                        customer.addOccupiedTable(t.getTableId());
+                        setTableFromAvailableToOccupiedStatus(tId);
+                        System.out.printf("Customer with Id of %s now occupied a new table with id of %d", id,
+                                t.getTableId());
+                        break;
+                    }
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
                 }
             }
         }
+    }
+
+    public int returnTotalCapcityOfTables() {
+        int total = 0;
+        for (Table t : returnAllTablesList()) {
+            total += t.getTableCapacity();
+        }
+        return total;
     }
 
     public LocalTime[] getReservationStartEndInDayOfTables(ArrayList<Table> tables, LocalTime start, LocalTime end) {
