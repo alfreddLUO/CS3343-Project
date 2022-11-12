@@ -1,3 +1,5 @@
+import java.util.InputMismatchException;
+
 class Main {
 
     public static final InputScanner in = InputScanner.getInstance();
@@ -8,7 +10,8 @@ class Main {
      * Main Function
      */
 
-    public static void main(String[] args) throws ExTableIdAlreadyInUse {
+    public static void main(String[] args) throws ExTableIdAlreadyInUse, ExTableNotExist, ExTimeSlotAlreadyBeReserved,
+            ExTimeSlotNotReservedYet, ExUnableToSetOpenCloseTime {
         Initialization initialization = Initialization.getInstance();
         initialization.initialize();
 
@@ -24,11 +27,12 @@ class Main {
         System.out.println("[3] Delete Account");
     }
 
-    public static void loginNRegisterNDelete() {
+    public static void loginNRegisterNDelete() throws ExTableNotExist, ExTimeSlotAlreadyBeReserved,
+            ExTimeSlotNotReservedYet, ExUnableToSetOpenCloseTime, ExTableIdAlreadyInUse {
         int select = 0;
         boolean success = false;
 
-        String ID = null, input = null;
+        String input = null;
 
         do {
             accManager.printAllActiveAccounts();
@@ -41,42 +45,17 @@ class Main {
                 select = Integer.parseInt(input);
 
             } catch (NumberFormatException e) {
-                e.getStackTrace();
+                System.out.println("\nError! Please input an integer!");
             }
 
             if (select == 1) {
-
-                success = false;
-                // Login, return UserId
-                ID = login();
-                if (ID != null) {
-                    success = true; // 成功登入
-                }
-
-                // Enter module run() after successful login
-                if (success) {
-
-                    // Identify which userType belong to the login account, then run Module
-                    UserModule module = accManager.distinguishMerchantandCustomer(ID);
-                    if (module != null) {
-                        module.run(ID);
-                    } else {
-                        System.out.println("There is some error in running corresponding module.");
-                    }
-
-                } else {
-                    System.out.println("\nLogin failed!");
-                }
+                login();
             } else if (select == 2) {
-
                 // register -> Come back here after successful registration
-                // return if successful
                 success = register();
 
             } else if (select == 3) {
-
-                // delete account
-                success = deleteAcc();
+                success = deleteAcc();// delete account
             }
 
         } while (select != 1 && select != 3 || !success);
@@ -84,7 +63,8 @@ class Main {
     }
 
     // Login, And return UserId
-    public static String login() {
+    public static boolean login() throws ExTableNotExist, ExTimeSlotAlreadyBeReserved, ExTimeSlotNotReservedYet,
+            ExUnableToSetOpenCloseTime, ExTableIdAlreadyInUse {
 
         String input = "", username = "", password = "";
 
@@ -97,12 +77,63 @@ class Main {
         password = input;
 
         // return ID
-        return accManager.login(username, password);
+        String ID = accManager.login(username, password);
+
+        if (ID != null) {
+            // Identify which userType belong to the login account, then run Module
+            UserModule module = accManager.distinguishMerchantandCustomer(ID);
+            if (module != null) {
+                module.run(ID);
+                return true;
+            } else {
+                System.out.println("There is some error in running corresponding module.");
+                return false;
+            }
+        } else {
+            System.out.println("\nLogin failed!");
+            return false;
+        }
+    }
+
+    public static boolean registerCustomer() {
+        String username = null, password = null;
+        try {
+            System.out.print("\nPlease input the username: ");
+            username = Main.in.next("Input: ");
+
+            System.out.print("Please input the password: ");
+            password = Main.in.next("Input: ");
+        } catch (InputMismatchException ex) {
+            System.out.println("\nError! Wrong input type!");
+        }
+
+        if (username != null && password != null) {
+            return accManager.registerCustomer(username, password);
+        } else {
+            return false;
+        }
+
+    }
+
+    public static boolean registerMerchant() {
+        String username, password, rName;
+
+        System.out.print("\nPlease input the username: ");
+        username = Main.in.next("Input: ");
+
+        System.out.print("Please input the password: ");
+        password = Main.in.next("Input: ");
+
+        System.out.print("\nPlease input the name of the Restaurant: ");
+        rName = Main.in.next("Input: ");
+
+        database.registerRestaurant(rName);
+        return accManager.registerMerchant(username, password, database.matchRestaurant(rName));
     }
 
     public static boolean register() {
 
-        String input = "", username = "", password = "";
+        String input = "";
         int select = 0;
         boolean registerFinished = false;
 
@@ -114,36 +145,18 @@ class Main {
                         "\nPlease choose the type of account to register [1 Customer | 2 Merchant | 3 Cancel]: ");
                 input = Main.in.next("Input: ");
                 select = Integer.parseInt(input);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
+            } catch (NumberFormatException ex) {
+                System.out.println("\nError! NumberFormatException!");
+            } catch (InputMismatchException ex) {
+                System.out.println("\nError! Please input an integer of choice!");
             }
 
             if (select == 1) {
-
-                System.out.print("\nPlease input the username: ");
-                input = Main.in.next("Input: ");
-                username = input;
-
-                System.out.print("Please input the password: ");
-                input = Main.in.next("Input: ");
-                password = input;
-
-                registerFinished = accManager.registerCustomer(username, password);
-
+                registerFinished = registerCustomer();
             } else if (select == 2) {
-
-                String rName;
-                System.out.println("\nPlease input the name of the Restaurant: ");
-                input = Main.in.next("Input: ");
-                rName = input;
-
-                database.registerRestaurant(rName);
-                registerFinished = accManager.registerMerchant(username, password, database.matchRestaurant(rName));
-
+                registerFinished = registerMerchant();
             } else if (select == 3) {
-
                 break;
-
             }
 
         } while (select != 1 && select != 2 || !registerFinished);

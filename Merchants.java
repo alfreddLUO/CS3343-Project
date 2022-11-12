@@ -22,6 +22,14 @@ public class Merchants implements UserType {
         return staffUserId;
     }
 
+    public void promptModifyMenu() {
+        System.out.println("\nCommands: ");
+        System.out.println("[1] Add Dish");
+        System.out.println("[2] Delete Dish");
+        System.out.println("[3] Edit Dish");
+        System.out.println("[4] Cancel");
+    }
+
     // 增加或刪除菜品
     public void modifyMenu() {
 
@@ -36,15 +44,16 @@ public class Merchants implements UserType {
 
         while (select != 1 && select != 2 && select != 3) {
 
-            System.out.println("\nCommands: ");
-            System.out.println("[1] Add Dish");
-            System.out.println("[2] Delete Dish");
-            System.out.println("[3] Edit Dish");
-            System.out.println("[4] Cancel");
+            promptModifyMenu();
 
             System.out.print("\nPlease select your operations: ");
-            String input = Main.in.next("Input: ");
-            select = Integer.parseInt(input);
+
+            try {
+                String input = Main.in.next("Input: ");
+                select = Integer.parseInt(input);
+            } catch (NumberFormatException ex) {
+                System.out.println("\nPlease input an integer!");
+            }
 
             if (select == 4) {
                 break;
@@ -101,7 +110,7 @@ public class Merchants implements UserType {
     // add dish to menu
     public void addDish() {
         String dishName;
-        double dishPrice;
+        double dishPrice = -1;
         String input = "";
 
         System.out.println("\nPlease input the name and price of the dish to add: ");
@@ -110,17 +119,27 @@ public class Merchants implements UserType {
         dishName = Main.in.nextLine("Input: ");
 
         System.out.print("Dish Price: ");
-        input = Main.in.next("Input: ");
-        dishPrice = Double.parseDouble(input);
+        try {
+            input = Main.in.next("Input: ");
+            dishPrice = Double.parseDouble(input);
+        } catch (NumberFormatException ex) {
+            System.out.println("\nPlease input a number!");
+        }
 
-        restaurantOwned.getMenu().add(new Dish(dishName, dishPrice));
+        if (dishPrice != -1) {
+            restaurantOwned.getMenu().add(new Dish(dishName, dishPrice));
 
-        System.out.println("Add Dish success.");
+            System.out.println("Add Dish success.");
+        } else {
+            System.out.println("Add Dish FAILED.");
+        }
+
     }
 
     // delete dish from menu
     public void removeDish() {
         String dishName;
+        boolean removeSuccess = false;
 
         System.out.print("\nPlease input the name of the dish to remove: ");
         dishName = Main.in.nextLine("Input: ");
@@ -128,8 +147,13 @@ public class Merchants implements UserType {
         for (int i = 0; i < restaurantOwned.getMenu().size(); i++) {
             if (restaurantOwned.getMenu().get(i).toString().equals(dishName)) {
                 removefromMenu(restaurantOwned.getMenu().get(i));
-
+                removeSuccess = true;
             }
+        }
+        if (removeSuccess) {
+            System.out.println("Remove dish success.");
+        } else {
+            System.out.println("Remove dish FAILED!");
         }
     }
 

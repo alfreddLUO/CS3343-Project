@@ -43,7 +43,7 @@ public class AdminModule implements UserModule {
         System.out.println("[8] Logout");
     }
 
-    public void run(String Id) {
+    public void run(String Id) throws ExUnableToSetOpenCloseTime, ExTableNotExist, ExTableIdAlreadyInUse {
 
         int select = 0;
         String input = "";

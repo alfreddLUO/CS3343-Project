@@ -3,10 +3,11 @@ public class Payment {
     private Customers customer;
     private static final Database database = Database.getInstance();
     private PaymentMethod paymentMethod;
-    private double originalPrice = 0;
-    private double discountPrice = 0;
     private boolean paymentStatus = false;
     private Restaurants restaurantChosed = null;
+
+    private double originalPrice = 0;
+    private double discountPrice = 0;
 
     public Payment(Customers customer, Restaurants restaurant) {
         this.customer = customer;
@@ -38,48 +39,64 @@ public class Payment {
     // Choose payment method, selected -> paythebill()
     public void payProcess() {
         paymentMethod = null;
-
         getPrice();
 
         while (paymentMethod == null && !paymentStatus) {
 
-            int choice;
-
             if (discountPrice > 0) {
+                int choice = -1;
+                System.out.printf("\nYour bill number is: %s\n", customer.printBillNo());
                 do {
-                    System.out.printf("\nYour bill number is: %s\n", customer.printBillNo());
 
                     promptPaymentMethod();
 
                     System.out.print("\nPlease select your Payment Method: ");
-                    String input = Main.in.next("Input: ");
-                    choice = Integer.parseInt(input);
-
-                    if (choice == 1) {
-                        checkOutbyCustomer(new PayAlipay());
-                    } else if (choice == 2) {
-                        checkOutbyCustomer(new PayWechat());
-                    } else if (choice == 3) {
-
-                        System.out.println("\nPlease go to the counter to proceed payment.");
-
-                        AccountManagement am = AccountManagement.getInstance();
-                        am.printAllMerchantActiveAccounts();
-
-                        System.out.print("\nInput staff MId: ");
-                        input = Main.in.next("\nInput: ");
-                        String staffUserName = input;
-
-                        Merchants merchant = database.matchMId(staffUserName);
-                        merchant.checkOutbyMerchant(this, customer);
-
-                    } else {
-                        System.out.println("\nInvalid Payment method, please try again.");
+                    try {
+                        String input = Main.in.next("Input: ");
+                        choice = Integer.parseInt(input);
+                    } catch (NumberFormatException ex) {
+                        System.out.println("Error! Please input an integer!");
                     }
+
+                    if (choice != -1) {
+                        if (choice == 1) {
+                            checkOutbyCustomer(new PayAlipay());
+                        } else if (choice == 2) {
+                            checkOutbyCustomer(new PayWechat());
+                        } else if (choice == 3) {
+                            System.out.println("\nPlease go to the counter to proceed payment.");
+                            selectMerchantToPayment();
+                        } else {
+                            System.out.println("\nInvalid Payment method, please try again.");
+                        }
+                    }
+
                 } while (choice != 1 && choice != 2 && choice != 3 || this.paymentStatus == false);
             }
         }
 
+    }
+
+    public void selectMerchantToPayment() {
+        AccountManagement accountManager = AccountManagement.getInstance();
+        accountManager.printMerchantOfTheRestaurant(restaurantChosed);
+
+        System.out.print("\nInput staff MId: ");
+        String staffUserName = Main.in.next("\nInput: ");
+
+        Merchants merchant = null;
+        try {
+            merchant = database.matchMId(staffUserName);
+            if (merchant.getRestaurantOwned() == restaurantChosed) {
+                merchant.checkOutbyMerchant(this, customer);
+            } else {
+                System.out.println("No merchant found! Please try again.");
+            }
+        } catch (NullPointerException ex) {
+            System.out.println("No merchant found! Please try again.");
+        } finally {
+
+        }
     }
 
     // Customer use their own payment method

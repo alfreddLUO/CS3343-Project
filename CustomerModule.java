@@ -125,7 +125,7 @@ public class CustomerModule implements UserModule {
     }
 
     @Override
-    public void run(String Id) {
+    public void run(String Id) throws ExTableNotExist, ExTimeSlotAlreadyBeReserved, ExTimeSlotNotReservedYet {
 
         customer = Database.getInstance().matchCId(Id);
         String input = "";

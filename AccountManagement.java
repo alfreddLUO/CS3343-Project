@@ -149,6 +149,19 @@ public class AccountManagement {
         System.out.print("\n");
     }
 
+    public void printMerchantOfTheRestaurant(Restaurants restaurant) {
+        System.out.println("\nList of Merchants of this restaurant: ");
+        allaccounts.forEach((username, id) -> {
+            if (id.charAt(0) == 'M') {
+                if (database.matchMId(id).getRestaurantOwned() == restaurant) {
+                    System.out.printf("\n%17s | %4s", username, id);
+                }
+
+            }
+        });
+        System.out.print("\n");
+    }
+
     public UserModule distinguishMerchantandCustomer(String userid) {
         if (userid.charAt(0) == 'C') {
             return CustomerModule.getInstance();

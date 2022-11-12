@@ -1,3 +1,4 @@
+import java.time.format.DateTimeParseException;
 import java.util.Scanner;
 
 class InputScanner {
@@ -7,6 +8,16 @@ class InputScanner {
 
     private InputScanner() {
 
+    }
+
+    public void promptNewDay(String previousPrintedMsg) {
+        clockInstance.newDay();
+        System.out.print(previousPrintedMsg);
+    }
+
+    public void promptTimeNow(String previousPrintedMsg) {
+        System.out.println(clockInstance.getDateTimeString());
+        System.out.print(previousPrintedMsg);
     }
 
     public static InputScanner getInstance() {
@@ -20,17 +31,20 @@ class InputScanner {
         String in = scannerInput.next();
         // scannerInput.nextLine();
         if (in.equals("newDay")) {
-            clockInstance.newDay();
-            System.out.print(previousPrintedMsg);
+            promptNewDay(previousPrintedMsg);
             in = next(previousPrintedMsg);
         } else if (in.equals("changeTime")) {
             System.out.println("Please enter a new system time (hh:mm)");
-            clockInstance.changeTime(scannerInput.next());
+            try {
+                clockInstance.changeTime(scannerInput.next());
+            } catch (DateTimeParseException ex) {
+                System.out.println("Error! Please input a valid time!");
+            }
+
             System.out.print(previousPrintedMsg);
             in = next(previousPrintedMsg);
         } else if (in.equals("timeNow")) {
-            System.out.println(clockInstance.getDateTimeString());
-            System.out.print(previousPrintedMsg);
+            promptTimeNow(previousPrintedMsg);
             in = next(previousPrintedMsg);
         }
         return in;
@@ -40,17 +54,19 @@ class InputScanner {
         scannerInput.nextLine();
         String in = scannerInput.nextLine();
         if (in.equals("newDay")) {
-            clockInstance.newDay();
-            System.out.print(previousPrintedMsg);
+            promptNewDay(previousPrintedMsg);
             in = nextLine(previousPrintedMsg);
         } else if (in.equals("changeTime")) {
             System.out.println("Please enter a new system time (hh:mm)");
-            clockInstance.changeTime(scannerInput.nextLine());
+            try {
+                clockInstance.changeTime(scannerInput.nextLine());
+            } catch (DateTimeParseException ex) {
+                System.out.println("Error! Please input a valid time!");
+            }
             System.out.print(previousPrintedMsg);
             in = nextLine(previousPrintedMsg);
         } else if (in.equals("timeNow")) {
-            System.out.println(clockInstance.getDateTimeString());
-            System.out.print(previousPrintedMsg);
+            promptTimeNow(previousPrintedMsg);
             in = nextLine(previousPrintedMsg);
         }
         return in;

@@ -56,7 +56,7 @@ public class ManualClock {
 
     public void changeTime(String newTime) {
         if (LocalTime.parse(newTime).compareTo(currDateTime.toLocalTime()) < 0) {
-            System.out.println("Can not jump back to past! This is not how time travel works!");
+            System.out.println("Cannot jump back to past! This is not how time travel works!");
             return;
         }
         currDateTime = LocalDateTime.of(getDate(), LocalTime.parse(newTime));

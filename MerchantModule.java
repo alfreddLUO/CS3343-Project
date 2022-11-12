@@ -39,23 +39,28 @@ public class MerchantModule implements UserModule {
             promptOptionStart();
 
             System.out.print("\nPlease select your operations: ");
-            input = Main.in.next("\nInput: ");
-            select = Integer.parseInt(input);
+            try {
+                input = Main.in.next("\nInput: ");
+                select = Integer.parseInt(input);
+            } catch (NumberFormatException ex) {
+                System.out.println("Error! Please input an integer!");
+            }
 
             String CId = "";
             if (select == 1) {
-
                 merchant.modifyMenu();
-
             } else if (select == 2) {
 
                 System.out.print("\nPlease input customer's id: ");
-                input = Main.in.next("Input: ");
-                CId = input;
 
-                Customers customer = database.matchCId(CId);
+                CId = Main.in.next("Input: ");
 
-                merchant.checkOrder(customer, merchant.getRestaurantOwned());
+                try {
+                    Customers customer = database.matchCId(CId);
+                    merchant.checkOrder(customer, merchant.getRestaurantOwned());
+                } catch (NullPointerException ex) {
+                    System.out.println("No Customer instance found!");
+                }
             }
         }
 
