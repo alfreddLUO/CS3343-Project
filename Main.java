@@ -8,7 +8,7 @@ class Main {
      * Main Function
      */
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ExTableIdAlreadyInUse {
         Initialization initialization = Initialization.getInstance();
         initialization.initialize();
 

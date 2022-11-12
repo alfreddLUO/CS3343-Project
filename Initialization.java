@@ -2,7 +2,7 @@ public class Initialization {
 
     private static Initialization instance = null;
 
-    public void initialize() {
+    public void initialize() throws ExTableIdAlreadyInUse {
         initiateRestaurants();
         initiateDish();
         initializeAdmin();
@@ -79,7 +79,7 @@ public class Initialization {
         accManager.registerAdmin("admin", "t123");
     }
 
-    public void initiateTables() {
+    public void initiateTables() throws ExTableIdAlreadyInUse {
         TablesManagement tm = TablesManagement.getInstance();
 
         tm.addNewTable(1, 2);

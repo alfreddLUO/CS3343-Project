@@ -31,23 +31,6 @@ public class TimeSlots {
         return success;
     }
 
-    // public Boolean addSlot(String startString, String endString, String
-    // customerID) { // format example: 12:00 非整点时间
-    // LocalTime start = LocalTime.parse(startString);
-    // LocalTime end = LocalTime.parse(endString);
-    // // check if before openTime or after closeTime
-    // if (start.compareTo(openTime) < 0 || end.compareTo(closeTime) > 0) {
-    // return false;
-    // }
-    // TimeSlot slot = new TimeSlot(start, end, customerID);
-    // if (!checkAvailable(slot)) {
-    // return false;
-    // }
-    // timeSlots.add(slot);
-    // Collections.sort(timeSlots, (a, b) -> a.getStart().compareTo(b.getStart()));
-    // return true;
-    // }
-
     public Boolean addSlot(TimeSlot ts) { // format example: 12:00 非整点时间
         // check if before openTime or after closeTime
         if (ts.getStart().compareTo(openTime) < 0 || ts.getEnd().compareTo(closeTime) > 0) {
@@ -61,22 +44,6 @@ public class TimeSlots {
         }
     }
 
-    // public Boolean add(String index, int customerID) { // 整点时间
-    // TimeSlot slot = new TimeSlot(index, customerID);
-    // if (slot.getStart().compareTo(openTime) < 0 ||
-    // slot.getEnd().compareTo(closeTime) > 0) {
-    // return false;
-    // }
-    // if (!checkAvaliable(slot)) {
-    // return false;
-    // }
-    // timeSlots.add(slot);
-    // Collections.sort(timeSlots, (a, b) -> a.getStart().compareTo(b.getStart()));
-    // return true;
-    // }
-
-    // check if the timeslot is able to be added in the timeSlots. true -> can,
-    // false -> cannot
     private boolean checkAvailable(TimeSlot slot) {
 
         ArrayList<TimeSlot> timeSlotsCopy = new ArrayList<TimeSlot>();
@@ -84,8 +51,6 @@ public class TimeSlots {
         for (TimeSlot ts : timeSlots) {
             timeSlotsCopy.add(ts.makeDummyCopy());
         }
-        // ArrayList<TimeSlot> timeSlotsCopy = (ArrayList<TimeSlot>)
-        // this.timeSlots.clone();
         timeSlotsCopy.add(slot);
         Collections.sort(timeSlotsCopy, (a, b) -> a.getStart().compareTo(b.getStart()));
         for (int i = 1; i < timeSlotsCopy.size(); i++) {
@@ -141,31 +106,16 @@ public class TimeSlots {
         return respond.toString();
     }
 
-    public void remove(TimeSlot ts) {
-        // for (TimeSlot t : timeSlots) {
-        // if (ts.equals(t)) {
-        // timeSlots.remove(t);
-        // break;
-        // }
-        // }
-        // System.out.println("before remove:");
-        // for (TimeSlot t : timeSlots) {
-        // System.out.printf(t.toString() + ", ");
-        // }
-
-        // System.out.println();
+    public Boolean remove(TimeSlot ts) {
 
         for (int i = 0; i < timeSlots.size(); i++) {
             if (timeSlots.get(i).equals(ts)) {
                 timeSlots.remove(i);
-                break;
+                return true;
             }
         }
-        // System.out.println("after remove:");
-        // for (TimeSlot t : timeSlots) {
-        // System.out.printf(t.toString() + ", ");
-        // }
-        // System.out.println();
+
+        return false;
     }
 
     public Boolean hasReserved(LocalTime now) {
@@ -212,7 +162,16 @@ public class TimeSlots {
         if (!timeSlots.isEmpty()) {
             start = timeSlots.get(0).getStart();
             end = timeSlots.get(timeSlots.size() - 1).getEnd();
+            return new LocalTime[] { start, end };
         }
-        return new LocalTime[] { start, end };
+        return null;
+    }
+
+    public static LocalTime getOpenTime() {
+        return openTime;
+    }
+
+    public static LocalTime getCloseTime() {
+        return closeTime;
     }
 }

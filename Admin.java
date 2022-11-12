@@ -67,21 +67,21 @@ public class Admin implements UserType {
 
     // Set food court open and close (start of reservation and end of reservation)
 
-    public boolean forceSetOpenAndClosingTime(String open, String close) {
+    public boolean forceSetOpenAndClosingTime(String open, String close) throws ExUnableToSetOpenCloseTime {
         // open, close -> format: xx:xx
         TablesManagement tm = TablesManagement.getInstance();
         return tm.setOpenAndCloseTime(open, close);
     }
 
     // addTable
-    public void forceAddTable(int tableId, int tableCapacity) {
+    public void forceAddTable(int tableId, int tableCapacity) throws ExTableIdAlreadyInUse {
         TablesManagement tm = TablesManagement.getInstance();
         tm.addNewTable(tableId, tableCapacity);
     }
 
     // deleteTable
     // 只有桌子在available的情況下可以刪除
-    public void forceDeleteTable(int tableId) {
+    public void forceDeleteTable(int tableId) throws ExTableNotExist {
         TablesManagement tm = TablesManagement.getInstance();
         tm.removeTable(tableId);
     }

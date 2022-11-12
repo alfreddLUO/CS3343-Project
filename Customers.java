@@ -60,7 +60,8 @@ public class Customers implements UserType, TimeObserver {
     }
 
     // Reserve
-    public void setReserve(String timeslotString, ArrayList<Integer> desiredTableIds) {
+    public void setReserve(String timeslotString, ArrayList<Integer> desiredTableIds)
+            throws ExTableNotExist, ExTimeSlotAlreadyBeReserved {
 
         this.reserve = new Reservation(CId, timeslotString, desiredTableIds);
     }
@@ -112,7 +113,7 @@ public class Customers implements UserType, TimeObserver {
         return reserve;
     }
 
-    public void cancelReservation() {
+    public void cancelReservation() throws ExTableNotExist, ExTimeSlotNotReservedYet {
         this.reserve.cancel();
     }
 

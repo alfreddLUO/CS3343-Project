@@ -15,7 +15,8 @@ public class Reservation {
      * desiredTableIds: 想要預訂的table的ID
      */
 
-    public Reservation(String customerID, String timeSlotString, ArrayList<Integer> desiredTableIDs) {
+    public Reservation(String customerID, String timeSlotString, ArrayList<Integer> desiredTableIDs)
+            throws ExTableNotExist, ExTimeSlotAlreadyBeReserved {
         this.customerID = customerID;
         // date = LocalDate.parse(dateString);
         String[] tsString = timeSlotString.split("-");
@@ -24,7 +25,8 @@ public class Reservation {
         reserve(desiredTableIDs, timeSlot);
     }
 
-    private void reserve(ArrayList<Integer> desiredTableIDs, TimeSlot timeslot) {
+    private void reserve(ArrayList<Integer> desiredTableIDs, TimeSlot timeslot)
+            throws ExTableNotExist, ExTimeSlotAlreadyBeReserved {
         for (int id : desiredTableIDs) {
             if (tm.reserveTableAccordingToTimeslot(id, timeSlot)) {
                 tableIDs.add(id);
@@ -47,7 +49,7 @@ public class Reservation {
         return s;
     }
 
-    public void cancel() {
+    public void cancel() throws ExTableNotExist, ExTimeSlotNotReservedYet {
         for (Integer id : tableIDs) {
             tm.cancelReservationAccordingToTimeslot(id, timeSlot);
         }
