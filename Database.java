@@ -69,9 +69,9 @@ public class Database {
 
     // in AdminModule.removeRestaurant()
     public Restaurants matchRestaurant(String rName) {
-        for (int i = 0; i < listOfRestaurants.size(); i++) {
-            if (listOfRestaurants.get(i).toString().equals(rName)) {
-                return listOfRestaurants.get(i);
+        for (Restaurants listOfRestaurant : listOfRestaurants) {
+            if (listOfRestaurant.toString().equals(rName)) {
+                return listOfRestaurant;
             }
         }
         return null;

@@ -1,8 +1,8 @@
 class Main {
 
     public static final InputScanner in = InputScanner.getInstance();
-    private static Database database = Database.getInstance();
-    private static AccountManagement accManager = AccountManagement.getInstance();
+    private static final Database database = Database.getInstance();
+    private static final AccountManagement accManager = AccountManagement.getInstance();
 
     /*
      * Main Function
@@ -17,6 +17,13 @@ class Main {
         }
     }
 
+    public static void promptLoginNRegisterNDelete() {
+        System.out.println("\nCommands: ");
+        System.out.println("[1] Login");
+        System.out.println("[2] Register");
+        System.out.println("[3] Delete Account");
+    }
+
     public static void loginNRegisterNDelete() {
         int select = 0;
         boolean success = false;
@@ -27,10 +34,7 @@ class Main {
             accManager.printAllActiveAccounts();
 
             try {
-                System.out.println("\nCommands: ");
-                System.out.println("[1] Login");
-                System.out.println("[2] Register");
-                System.out.println("[3] Delete Account");
+                promptLoginNRegisterNDelete();
 
                 System.out.print("\nPlease select your operation: ");
                 input = Main.in.next("Input: ");
@@ -43,25 +47,19 @@ class Main {
             if (select == 1) {
 
                 success = false;
-                // Login
+                // Login, return UserId
                 ID = login();
                 if (ID != null) {
                     success = true; // 成功登入
                 }
 
                 // Enter module run() after successful login
-                if (success == true) {
+                if (success) {
 
-                    // Identify which userType belong to the login account, then Module.run()
-                    if (accManager.distinguishMerchantandCustomer(ID).equals("C")) {
-                        CustomerModule customerModule = CustomerModule.getInstance();
-                        customerModule.run(database.matchCId(ID));
-                    } else if (accManager.distinguishMerchantandCustomer(ID).equals("M")) {
-                        MerchantModule merchantModule = MerchantModule.getInstance();
-                        merchantModule.run(database.matchMId(ID));
-                    } else if (accManager.distinguishMerchantandCustomer(ID).equals("A")) {
-                        AdminModule adminModule = AdminModule.getInstance();
-                        adminModule.run();
+                    // Identify which userType belong to the login account, then run Module
+                    UserModule module = accManager.distinguishMerchantandCustomer(ID);
+                    if (module != null) {
+                        module.run(ID);
                     } else {
                         System.out.println("There is some error in running corresponding module.");
                     }
@@ -81,7 +79,7 @@ class Main {
                 success = deleteAcc();
             }
 
-        } while (select != 1 && select != 3 || success == false);
+        } while (select != 1 && select != 3 || !success);
 
     }
 
@@ -98,10 +96,8 @@ class Main {
         input = Main.in.next("Input: ");
         password = input;
 
-        // 返回ID，需判断是Customer/Merchant/Admin
-        String temp = accManager.login(username, password);
-
-        return temp;
+        // return ID
+        return accManager.login(username, password);
     }
 
     public static boolean register() {
@@ -148,10 +144,9 @@ class Main {
 
                 break;
 
-            } else {
-                // TODO： 重新输入
             }
-        } while (select != 1 && select != 2 || registerFinished == false);
+
+        } while (select != 1 && select != 2 || !registerFinished);
 
         if (registerFinished) {
             System.out.println("\nRegistration Completed. Please return to login.");
@@ -167,9 +162,7 @@ class Main {
         input = Main.in.next("Input: ");
         username = input;
 
-        boolean success = accManager.deleteaccountinUserNameAndAccount(username);
-
-        return success;
+        return accManager.deleteaccountinUserNameAndAccount(username);
     }
 
 }

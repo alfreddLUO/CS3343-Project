@@ -5,12 +5,9 @@ public class Reservation {
     private Boolean active; // become false when cancel reservation or sit to reserved tables.
     private String customerID;
     private ArrayList<Integer> tableIDs = new ArrayList<>();
-    private TablesManagement tm = TablesManagement.getInstance();
+    private static final TablesManagement tm = TablesManagement.getInstance();
     private TimeSlot timeSlot;
     // private LocalDate date;
-
-    // public Reservation(int customerID, String dateString, String timeSlotString,
-    // int[] desiredTableIDs)
 
     /*
      * dateString: 預約第二天的，暫時用不上
@@ -21,7 +18,7 @@ public class Reservation {
     public Reservation(String customerID, String timeSlotString, ArrayList<Integer> desiredTableIDs) {
         this.customerID = customerID;
         // date = LocalDate.parse(dateString);
-        String tsString[] = timeSlotString.split("-");
+        String[] tsString = timeSlotString.split("-");
         timeSlot = new TimeSlot(tsString[0], tsString[1], customerID);
         this.active = true;
         reserve(desiredTableIDs, timeSlot);
@@ -42,9 +39,9 @@ public class Reservation {
         String s = "\n\n[" + customerID + "] Reservation made.";
         s += "\nReserved tables: ";
 
-        String ids = "";
+        StringBuilder ids = new StringBuilder();
         for (int id : tableIDs) {
-            ids += String.valueOf(id) + ", ";
+            ids.append(String.valueOf(id)).append(", ");
         }
         s += ids + timeSlot.toString();
         return s;

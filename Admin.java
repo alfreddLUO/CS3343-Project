@@ -1,12 +1,10 @@
 public class Admin implements UserType {
 
-    private String adminId = "A0001";
+    private final String adminId = "A0001";
+    private final String adminUsername = "Admin";
 
-    private String adminUsername = "Admin";
-    protected String adminPassword = "admin1234";
-    private static Admin instance = new Admin();
-
-    private static Database database = Database.getInstance();
+    private static final Admin instance = new Admin();
+    private static final Database database = Database.getInstance();
 
     public Admin() {
     }
@@ -69,10 +67,10 @@ public class Admin implements UserType {
 
     // Set food court open and close (start of reservation and end of reservation)
 
-    // TODO: Check reservation exist before change open and close time
     public boolean forceSetOpenAndClosingTime(String open, String close) {
         // open, close -> format: xx:xx
-        return TimeSlots.setOpenAndCloseTime(open, close);
+        TablesManagement tm = TablesManagement.getInstance();
+        return tm.setOpenAndCloseTime(open, close);
     }
 
     // addTable

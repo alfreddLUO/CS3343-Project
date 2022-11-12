@@ -89,15 +89,11 @@ public class Merchants implements UserType {
             input = Main.in.next("Input: ");
             temp = Integer.parseInt(input);
 
-            if (temp == 4) {
-                // nothing
-            } else if (temp == 1) {
-                editDishName(dishToEdit);
-            } else if (temp == 2) {
-                editDishPrice(dishToEdit);
-            } else {
-                // nothing
+            switch (temp) {
+                case 1 -> editDishName(dishToEdit);
+                case 2 -> editDishPrice(dishToEdit);
             }
+
         }
 
     }
@@ -129,20 +125,12 @@ public class Merchants implements UserType {
         System.out.print("\nPlease input the name of the dish to remove: ");
         dishName = Main.in.nextLine("Input: ");
 
-        boolean success = false;
-
         for (int i = 0; i < restaurantOwned.getMenu().size(); i++) {
             if (restaurantOwned.getMenu().get(i).toString().equals(dishName)) {
                 removefromMenu(restaurantOwned.getMenu().get(i));
-                success = true;
+
             }
         }
-        if (success) {
-            System.out.println("Add Dish success.");
-        } else {
-            System.out.println("Add dish FAILED!");
-        }
-
     }
 
     public void addtoMenu(String dishName, double dishPrice) {
@@ -153,9 +141,9 @@ public class Merchants implements UserType {
     public void removefromMenu(Dish dish) {
         boolean success = restaurantOwned.deletedishfromMenu(dish);
         if (success) {
-            System.out.println("Delete dish success");
+            System.out.println("Delete dish success.");
         } else {
-            System.out.println("Delete FAILED");
+            System.out.println("Delete FAILED!");
         }
     }
 
@@ -189,20 +177,20 @@ public class Merchants implements UserType {
     public void checkOutbyMerchant(Payment payment, Customers customer) {
 
         // Show customers' official order
-        checkOrder(customer);
+        checkOrder(customer, this.restaurantOwned);
         payment.paythebill(customer.getBillAmount(), new PayCash());
 
     }
 
     // Before Payment, check order by merchant
-    public void checkOrder(Customers customer) {
+    public void checkOrder(Customers customer, Restaurants restaurant) {
 
         System.out.println("\nCustomer Name: " + customer.getUsername());
         System.out.println("Customer ID: " + customer.getID());
         System.out.println("Bill no. is: " + customer.printBillNo());
 
         System.out.println("\nOrdered Dishes: ");
-        ArrayList<Dish> customerOrder = customer.customerOrders();
+        ArrayList<Dish> customerOrder = customer.customerOrdersAccordingToRestaurant(restaurant);
 
         if (customerOrder.isEmpty()) {
             System.out.println("This customer has no orders.");
@@ -212,6 +200,10 @@ public class Merchants implements UserType {
             }
         }
 
+    }
+
+    public Restaurants getRestaurantOwned() {
+        return this.restaurantOwned;
     }
 
 }

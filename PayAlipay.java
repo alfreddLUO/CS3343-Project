@@ -1,7 +1,5 @@
 public class PayAlipay implements PaymentMethod {
 
-    private String name = "Alipay";
-
     @Override
     public boolean pay(double price) {
         System.out.println("\nYou will be redirected to Alipay to continue payment.");
@@ -11,6 +9,6 @@ public class PayAlipay implements PaymentMethod {
 
     @Override
     public String toString() {
-        return this.name;
+        return "Alipay";
     }
 }

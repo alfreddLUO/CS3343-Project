@@ -1,7 +1,5 @@
 public class PayWechat implements PaymentMethod {
 
-    private String name = "WeChat Pay";
-
     @Override
     public boolean pay(double price) {
         System.out.println("\nYou will be redirected to WeChat to continue payment.");
@@ -11,6 +9,6 @@ public class PayWechat implements PaymentMethod {
 
     @Override
     public String toString() {
-        return this.name;
+        return "WeChat Pay";
     }
 }

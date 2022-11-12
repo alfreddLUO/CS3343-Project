@@ -18,8 +18,8 @@ public class Initialization {
         return instance;
     }
 
-    private static AccountManagement accManager = AccountManagement.getInstance();
-    private static Database database = Database.getInstance();
+    private static final AccountManagement accManager = AccountManagement.getInstance();
+    private static final Database database = Database.getInstance();
 
     static Restaurants PepperLunch = new Restaurants("Pepper-Lunch");
     static Restaurants TamJai = new Restaurants("Tam-Jai-Mi-Xian");

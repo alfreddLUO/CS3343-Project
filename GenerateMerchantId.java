@@ -1,6 +1,6 @@
 
-public class GenerateMerchantId {
-    private String prefix = "M";
+public class GenerateMerchantId implements GenerateId {
+    private final String prefix = "M";
     private int currentId = 0;
     private static GenerateMerchantId instance = null;
 

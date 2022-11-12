@@ -1,5 +1,6 @@
 
 import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -18,10 +19,11 @@ public class TimeSlots {
         timeSlots = new ArrayList<>();
     }
 
+    // Changed to tablesManagement.setOpenAndCloseTime()
     public static boolean setOpenAndCloseTime(String open, String close) {
         boolean success = false;
 
-        while (success == false) {
+        while (!success) {
             openTime = LocalTime.parse(open);
             closeTime = LocalTime.parse(close);
             success = true;
@@ -110,7 +112,7 @@ public class TimeSlots {
     public String getAvailableSlots() {
         ArrayList<LocalTime> temp = new ArrayList<>();
         ArrayList<TimeSlot> available = new ArrayList<>();
-        String respond = "";
+        StringBuilder respond = new StringBuilder();
         temp.add(openTime);
         for (TimeSlot ts : timeSlots) {
             temp.add(ts.getStart());
@@ -128,15 +130,15 @@ public class TimeSlots {
 
         for (TimeSlot a : available) {
             if (cnt > 0) {
-                respond += ", " + a.toString();
+                respond.append(", ").append(a.toString());
             } else {
-                respond += a.toString();
+                respond.append(a.toString());
             }
             cnt++;
         }
         temp.clear();
         available.clear();
-        return respond;
+        return respond.toString();
     }
 
     public void remove(TimeSlot ts) {
@@ -202,5 +204,15 @@ public class TimeSlots {
             }
         }
         return false;
+    }
+
+    public LocalTime[] getReservationStartEndInDay() {
+        LocalTime start = openTime;
+        LocalTime end = closeTime;
+        if (!timeSlots.isEmpty()) {
+            start = timeSlots.get(0).getStart();
+            end = timeSlots.get(timeSlots.size() - 1).getEnd();
+        }
+        return new LocalTime[] { start, end };
     }
 }

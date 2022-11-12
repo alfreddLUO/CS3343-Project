@@ -1,14 +1,11 @@
 import java.util.HashMap;
 
 public class AccountManagement {
-    /*
-     * 先加载txt文件到hashmap里面
-     */
 
     protected static HashMap<String, String> allaccounts = new HashMap<>();// username-> userId
     protected static HashMap<String, String> usernamesandPasswords = new HashMap<>();// username->password
 
-    private Database database = Database.getInstance();
+    private final Database database = Database.getInstance();
 
     protected AccountManagement() {
     }
@@ -18,54 +15,6 @@ public class AccountManagement {
     public static AccountManagement getInstance() {
         return instance;
     }
-
-    // initialize into the hashmap
-
-    // public void initializationUsernameandPasswordtxt() throws IOException {
-    // FileInputStream freader;
-    // try {
-    // freader = new FileInputStream("UsernameAndPassword.txt");
-    // ObjectInputStream objectInputStream = new ObjectInputStream(freader);
-
-    // List<HashMap<String, String>> list = (List<HashMap<String, String>>)
-    // objectInputStream.readObject();
-    // for (HashMap<String, String> map : list) {
-    // Visitor.usernamesandPasswords = map;
-    // }
-
-    // objectInputStream.close();
-
-    // } catch (FileNotFoundException e) {
-    // e.printStackTrace();
-    // } catch (IOException e) {
-    // e.printStackTrace();
-    // } catch (ClassNotFoundException e) {
-    // e.printStackTrace();
-    // }
-    // }
-
-    // public void initializationALLACCOUNTStxt() throws IOException {
-    // FileInputStream freader;
-    // try {
-    // freader = new FileInputStream("ALLACCOUNTS.txt");
-    // ObjectInputStream objectInputStream = new ObjectInputStream(freader);
-
-    // List<HashMap<String, String>> list = (List<HashMap<String, String>>)
-    // objectInputStream.readObject();
-    // for (HashMap<String, String> map : list) {
-    // Visitor.allaccounts = map;
-    // }
-
-    // objectInputStream.close();
-
-    // } catch (FileNotFoundException e) {
-    // e.printStackTrace();
-    // } catch (IOException e) {
-    // e.printStackTrace();
-    // } catch (ClassNotFoundException e) {
-    // e.printStackTrace();
-    // }
-    // }
 
     // Register account and generate customerid
     public void customerIDPutHashMap(String username, String Id) {
@@ -98,7 +47,7 @@ public class AccountManagement {
         return null;
     }
 
-    public boolean registerAdmin(String username, String password) {
+    public void registerAdmin(String username, String password) {
 
         // 隨機生成UserId並放到HashMap
         customerIDPutHashMap(username, "A0001");
@@ -110,7 +59,6 @@ public class AccountManagement {
 
         // System.out.println("\nRegistration completed. Please return to login.");
 
-        return true;
     }
 
     // register Customer Account
@@ -166,7 +114,8 @@ public class AccountManagement {
     public boolean deleteaccountinUserNameAndAccount(String username) {
         if (AccountManagement.usernamesandPasswords.containsKey(username)) {
             AccountManagement.usernamesandPasswords.remove(username);
-            return true;
+            return deleteaccountinUserNameAndCustomerid(username);
+
         } else {
             System.out.println("\nPlease enter the correct username.");
             return false;
@@ -186,64 +135,28 @@ public class AccountManagement {
     public void printAllActiveAccounts() {
         System.out.println("\nList of Active Accounts: ");
 
-        allaccounts.entrySet().forEach(entry -> {
-            System.out.printf("%20s | %4s\n", entry.getKey(), entry.getValue());
-        });
+        allaccounts.forEach((key, value) -> System.out.printf("%20s | %4s\n", key, value));
     }
 
     public void printAllMerchantActiveAccounts() {
         System.out.println("\nList of Active Accounts: ");
-        allaccounts.entrySet().forEach(entry -> {
-            if (entry.getValue().substring(0, 1).equals("M")) {
-                System.out.printf("\n%20s | %4s", entry.getKey(), entry.getValue());
+        allaccounts.forEach((key, value) -> {
+            if (value.charAt(0) == 'M') {
+                System.out.printf("\n%20s | %4s", key, value);
             }
-
         });
 
-        System.out.printf("\n");
+        System.out.print("\n");
     }
 
-    public String distinguishMerchantandCustomer(String userid) {
-        return userid.substring(0, 1);
+    public UserModule distinguishMerchantandCustomer(String userid) {
+        if (userid.charAt(0) == 'C') {
+            return CustomerModule.getInstance();
+        } else if (userid.charAt(0) == 'M') {
+            return MerchantModule.getInstance();
+        } else if (userid.charAt(0) == 'A') {
+            return AdminModule.getInstance();
+        }
+        return null;
     }
-
-    // 退出时将hashmap中的数据存入对应的txt文件中
-    // public void exit1andStoreAllaccounts() throws Exception {
-    // try {
-    // File file = new File("ALLACCOUNTS.txt");
-    // file.delete();
-    // List<HashMap<String, String>> list = new ArrayList<HashMap<String,
-    // String>>();
-    // list.add(AccountManagement.allaccounts);
-    // FileOutputStream fileOutputStream = new FileOutputStream("ALLACCOUNTS.txt");
-    // ObjectOutputStream objectOutputStream = new
-    // ObjectOutputStream(fileOutputStream);
-    // objectOutputStream.writeObject(list);
-    // fileOutputStream.close();
-    // System.out.println("\nYou have succeeded in input the data to the
-    // ALLACCOUNTS.txt");
-    // } catch (Exception e) {
-    // e.printStackTrace();
-    // }
-    // }
-
-    // public void exit2andStoreUsernameAndPassword() throws Exception {
-    // try {
-    // File file = new File("UsernameAndPassword.txt");
-    // file.delete();
-    // List<HashMap<String, String>> list = new ArrayList<HashMap<String,
-    // String>>();
-    // list.add(AccountManagement.usernamesandPasswords);
-    // FileOutputStream fileOutputStream = new
-    // FileOutputStream("UsernameAndPassword.txt");
-    // ObjectOutputStream objectOutputStream = new
-    // ObjectOutputStream(fileOutputStream);
-    // objectOutputStream.writeObject(list);
-    // fileOutputStream.close();
-    // System.out.println("\nYou have succeeded in input the data to the
-    // UsernameAndPassword.txt");
-    // } catch (Exception e) {
-    // e.printStackTrace();
-    // }
-    // }
 }

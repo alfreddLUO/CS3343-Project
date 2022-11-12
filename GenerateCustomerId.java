@@ -1,6 +1,6 @@
 
-public class GenerateCustomerId {
-    private String prefix = "C";
+public class GenerateCustomerId implements GenerateId {
+    private final String prefix = "C";
     private int currentId = 0;
     private static GenerateCustomerId instance = null;
 

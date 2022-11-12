@@ -1,12 +1,13 @@
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Customers implements UserType, TimeObserver {
 
     private static LocalDate currDate;
     private static LocalTime currTime;
-    private static TablesManagement tm = TablesManagement.getInstance();
+    private static final TablesManagement tm = TablesManagement.getInstance();
 
     private String username;
     protected String password;
@@ -24,7 +25,8 @@ public class Customers implements UserType, TimeObserver {
     // private Table occupiedtable;
 
     private Restaurants restaurantChosed;
-    private ArrayList<Dish> orders = new ArrayList<>();
+    // private ArrayList<Dish> orders = new ArrayList<>();
+    private HashMap<Dish, Restaurants> DishToRestaurant = new HashMap<>();
 
     // constructor
     public Customers(String username, String userid) {
@@ -117,7 +119,6 @@ public class Customers implements UserType, TimeObserver {
     public boolean isReserveTime() {
         boolean isTime = false;
 
-        // TODO: check time now == reserve time
         ArrayList<Table> tables = tm.getReservedTablesfromId(reserveChosedTableIds);
 
         for (Table t : tables) {
@@ -138,7 +139,7 @@ public class Customers implements UserType, TimeObserver {
 
     public void setBillNo() {
         GenerateCustomerBillNo genBillNo = GenerateCustomerBillNo.getInstance();
-        this.billno = genBillNo.getNextBillNo();
+        this.billno = genBillNo.getNextId();
     }
 
     public String printBillNo() {
@@ -164,30 +165,31 @@ public class Customers implements UserType, TimeObserver {
         return this.restaurantChosed;
     }
 
-    // customer order dish
-    public ArrayList<Dish> orderdish(Dish dish) {
-        this.orders.add(dish);
-        return this.orders;
-    }
-
-    // customer delete dish
-    public ArrayList<Dish> deletedish(Dish dish) {
-        this.orders.remove(dish);
-        return this.orders;
+    public void updateOrder(ArrayList<Dish> pendingOrder, Restaurants restaurant) {
+        for (Dish d : pendingOrder) {
+            DishToRestaurant.put(d, restaurant);
+        }
     }
 
     // get ArrayList of customer's official-confirmed orders
-    public ArrayList<Dish> customerOrders() {
-        return this.orders;
+    // get dish with respect to restaurant
+    public ArrayList<Dish> customerOrdersAccordingToRestaurant(Restaurants restaurant) {
+        ArrayList<Dish> resultOrders = new ArrayList<>();
+
+        DishToRestaurant.forEach((key, value) -> {
+            if (value.equals(restaurant)) {
+                resultOrders.add(key);
+            }
+        });
+        return resultOrders;
     }
 
     // print official customer's orders
     public void printOrders() {
-        if (orders.size() != 0) {
-            System.out.println("\nOfficial Orders: ");
-            for (int i = 0; i < orders.size(); i++) {
-                System.out.println("[" + (i + 1) + "] " + orders.get(i).toString());
-            }
+        System.out.println("\nOfficial Orders: ");
+        int i = 1;
+        if (DishToRestaurant != null) {
+            DishToRestaurant.forEach((key, value) -> System.out.printf("[%d] %s\n", i, key));
         } else {
             System.out.println("There is no orders made by this customer.");
         }
@@ -209,7 +211,7 @@ public class Customers implements UserType, TimeObserver {
      * public void reserveTable() {
      * this.reservedtable.setReserved();
      * }
-     * 
+     *
      * public void deleteReserveTable() {
      * this.reservedtable.cancelReserved();
      * }

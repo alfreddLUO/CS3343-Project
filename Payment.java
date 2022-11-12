@@ -1,20 +1,30 @@
 public class Payment {
 
     private Customers customer;
-    private Database database = Database.getInstance();
+    private static final Database database = Database.getInstance();
     private PaymentMethod paymentMethod;
     private double originalPrice = 0;
     private double discountPrice = 0;
     private boolean paymentStatus = false;
+    private Restaurants restaurantChosed = null;
 
-    public Payment(Customers customer) {
+    public Payment(Customers customer, Restaurants restaurant) {
         this.customer = customer;
+        this.restaurantChosed = restaurant;
+    }
+
+    public void promptPaymentMethod() {
+        System.out.println("\nCommands: ");
+        System.out.println("[1] Alipay");
+        System.out.println("[2] WeChat Pay");
+        System.out.println("[3] Cash");
     }
 
     // Get the amount to pay from restaurant countPrice with different VIP state
     public double getPrice() {
 
-        originalPrice = customer.getRestaurantChosed().countPrice(customer.customerOrders());
+        originalPrice = customer.getRestaurantChosed()
+                .countPrice(customer.customerOrdersAccordingToRestaurant(this.restaurantChosed));
 
         customer.getMembership().updateState(originalPrice);
 
@@ -31,7 +41,7 @@ public class Payment {
 
         getPrice();
 
-        while (paymentMethod == null && paymentStatus == false) {
+        while (paymentMethod == null && !paymentStatus) {
 
             int choice;
 
@@ -39,10 +49,7 @@ public class Payment {
                 do {
                     System.out.printf("\nYour bill number is: %s\n", customer.printBillNo());
 
-                    System.out.println("\nCommands: ");
-                    System.out.println("[1] Alipay");
-                    System.out.println("[2] WeChat Pay");
-                    System.out.println("[3] Cash");
+                    promptPaymentMethod();
 
                     System.out.print("\nPlease select your Payment Method: ");
                     String input = Main.in.next("Input: ");
@@ -87,7 +94,7 @@ public class Payment {
 
         this.paymentStatus = paymentMethod.pay(price);
 
-        if (paymentStatus == true) {
+        if (paymentStatus) {
             System.out.println("\nYou have completed payment with " + paymentMethod.toString() + ". Thank you!");
         }
     }

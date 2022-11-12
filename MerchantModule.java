@@ -1,43 +1,42 @@
 
-public class MerchantModule {
+public class MerchantModule implements UserModule {
 
-    private static MerchantModule instance = null;
+    /*
+     * RunDown：
+     * 1. Edit Menu
+     * 1.1 Add Dish
+     * 1.2 Remove Dish
+     * 1.3 Edit Dish name / price
+     *
+     * 2. Check Customer's Order
+     * 2.1 Check Order
+     * 2.2 payment by Cash
+     */
+    private MerchantModule() {
+    }
+
+    private static final MerchantModule instance = new MerchantModule();
 
     public static MerchantModule getInstance() {
-        if (instance == null) {
-            instance = new MerchantModule();
-        }
         return instance;
     }
 
-    private static Customers customer;
-    private static Database database = Database.getInstance();
+    public void promptOptionStart() {
+        System.out.println("\nCommands: ");
+        System.out.println("[1] Modify Menu");
+        System.out.println("[2] Check Order");
+        System.out.println("[3] Logout");
+    }
 
-    /*
-     * 流程：
-     * 1. 修改菜單
-     * 1.1 增加菜品
-     * 1.2 刪除菜品
-     * 1.3 修改名稱/價錢
-     * 1.4 返回MerchantModule.run
-     * 
-     * 2. Check Customer's Order
-     * 2.1 查看顧客的Order
-     * 2.2 payment by Cash
-     * 
-     * 3. Exit -> 登出
-     */
+    @Override
+    public void run(String Id) {
 
-    public void run(Merchants merchant) {
-
+        Merchants merchant = database.matchMId(Id);
         int select = 0;
         String input = "";
 
         while (select != 3) {
-            System.out.println("\nCommands: ");
-            System.out.println("[1] Modify Menu");
-            System.out.println("[2] Check Order");
-            System.out.println("[3] Logout");
+            promptOptionStart();
 
             System.out.print("\nPlease select your operations: ");
             input = Main.in.next("\nInput: ");
@@ -54,14 +53,10 @@ public class MerchantModule {
                 input = Main.in.next("Input: ");
                 CId = input;
 
-                // loop through the listOfCustomers in Main to find a match
-                customer = database.matchCId(CId);
+                Customers customer = database.matchCId(CId);
 
-                merchant.checkOrder(customer);
-            } else {
-
+                merchant.checkOrder(customer, merchant.getRestaurantOwned());
             }
-
         }
 
     }

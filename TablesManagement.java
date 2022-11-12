@@ -1,7 +1,6 @@
 import java.time.*;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 
 //singleton pattern
 public class TablesManagement implements TimeObserver {
@@ -45,7 +44,7 @@ public class TablesManagement implements TimeObserver {
     }
 
     public void updateStatusAccordingToDate() {
-        // TODO-loop tables and change status
+
         for (Table t : reservedTables) {
             setTableFromReservedToAvailable(t.getTableId());
         }
@@ -75,9 +74,9 @@ public class TablesManagement implements TimeObserver {
     public ArrayList<Table> getReservedTablesfromId(ArrayList<Integer> ids) {
         ArrayList<Table> tables = new ArrayList<>();
 
-        for (int i = 0; i < ids.size(); i++) {
+        for (Integer id : ids) {
             for (Table t : reservedTables) {
-                if (t.getId() == ids.get(i)) {
+                if (t.getId() == id) {
                     tables.add(t);
                 }
             }
@@ -119,7 +118,7 @@ public class TablesManagement implements TimeObserver {
     // 则arraylist的数字应该是 2，7，9（index 从0到2）
 
     // sigleton pattern
-    private static TablesManagement instance = new TablesManagement();
+    private static final TablesManagement instance = new TablesManagement();
 
     public static TablesManagement getInstance() {
         return instance;
@@ -153,7 +152,7 @@ public class TablesManagement implements TimeObserver {
     // index最大的那一个，返回的数字代表的是最小桌子的安排数量
     public ArrayList<Integer> arrangeTableAccordingToNumOfPeople(int peopleNum) {
         int tmpPeopleNum = peopleNum;
-        String arrangementResultMessage = "\nYour arranged tables are: \n";
+        StringBuilder arrangementResultMessage = new StringBuilder("\nYour arranged tables are: \n");
         // 按顺序储存的对应的桌型安排的数量
         ArrayList<Integer> tableArrangementResults = new ArrayList<Integer>();
         for (int i = 0; i < tableCapacityTypeList.size(); i++) {
@@ -161,10 +160,9 @@ public class TablesManagement implements TimeObserver {
         }
         for (int i = 0; i < tableCapacityTypeList.size(); i++) {
             int tmpResults = 0;
-            int capacityIndex = i;
             int tableCapacity = tableCapacityTypeList.get(i);
             // 这一步是指当执行到最后一步时，即最小桌型时，若人数为0则0，若大于0则1
-            if (capacityIndex == tableCapacityTypeList.size() - 1) {
+            if (i == tableCapacityTypeList.size() - 1) {
                 tmpResults = (tmpPeopleNum % tableCapacity == 0) ? (tmpPeopleNum / tableCapacity)
                         : ((tmpPeopleNum / tableCapacity) + 1);
             } else {
@@ -177,16 +175,16 @@ public class TablesManagement implements TimeObserver {
                     tmpPeopleNum = tmpPeopleNum - tableCapacity * returnTableNumWithTableCapacity(tableCapacity);
                 }
                 if (tableCapacity >= tmpPeopleNum
-                        && tmpPeopleNum > tableCapacityTypeList.get(capacityIndex + 1)) {
+                        && tmpPeopleNum > tableCapacityTypeList.get(i + 1)) {
                     tmpResults += 1;
                     tmpPeopleNum = 0;
                 }
             }
             // System.out.printf("%d %d-Seats Tables \n", tmpResults, tableCapacity);
             if (tmpResults > 0) {
-                arrangementResultMessage += String.format("[%d] [%d-Seats] Tables \n", tmpResults, tableCapacity);
+                arrangementResultMessage.append(String.format("[%d] [%d-Seats] Tables \n", tmpResults, tableCapacity));
             }
-            tableArrangementResults.set(capacityIndex, tmpResults);
+            tableArrangementResults.set(i, tmpResults);
             if (tmpPeopleNum == 0) {
                 break;
             }
@@ -233,10 +231,11 @@ public class TablesManagement implements TimeObserver {
             System.out.println("No Optimized Recommended Arrangements!");
             return null;
         } else {
-            String recommendedArrangementMsg = "The Optimized Recommended Arrangements are: ";
+            StringBuilder recommendedArrangementMsg = new StringBuilder("The Optimized Recommended Arrangements are: ");
             for (int i = 0; i < tableArrangementResults.size(); i++) {
                 int tCapacity = tableCapacityTypeList.get(i);
-                recommendedArrangementMsg += String.format(" %d %d seats ", tableArrangementResults.get(i), tCapacity);
+                recommendedArrangementMsg
+                        .append(String.format(" %d %d seats ", tableArrangementResults.get(i), tCapacity));
             }
             System.out.println(recommendedArrangementMsg);
             return tableArrangementResults;
@@ -252,7 +251,8 @@ public class TablesManagement implements TimeObserver {
     // 最后看print的结果是否是对的
     public boolean canDirectlyDineIn(ArrayList<Integer> tableArrangementResults) {
         boolean canDirectlyWalkIn = true;
-        String waitingTablesListMessage = "For default arrangements, you still need to wait for: ";
+        StringBuilder waitingTablesListMessage = new StringBuilder(
+                "For default arrangements, you still need to wait for: ");
         for (int i = 0; i < tableArrangementResults.size(); i++) {
             int tableCapacityType = tableCapacityTypeList.get(i);
             int availableNumOfThisTableType = returnAvailableTableNumWithCapacity(tableCapacityType);
@@ -260,7 +260,8 @@ public class TablesManagement implements TimeObserver {
             if (num > availableNumOfThisTableType) {
                 int numOfWaitingTables = num - availableNumOfThisTableType;
                 canDirectlyWalkIn = false;
-                waitingTablesListMessage += String.format(" %d %d-Seats Table ", numOfWaitingTables, tableCapacityType);
+                waitingTablesListMessage
+                        .append(String.format(" %d %d-Seats Table ", numOfWaitingTables, tableCapacityType));
             }
         }
         if (canDirectlyWalkIn) {
@@ -324,7 +325,8 @@ public class TablesManagement implements TimeObserver {
         for (int i = 0; i < tableCapacityTypeList.size(); i++) {
             waitingTablesNumList.add(i, 0);
         }
-        String waitingTablesListMessage = "For selected arrangements, you still need to wait for: \n";
+        StringBuilder waitingTablesListMessage = new StringBuilder(
+                "For selected arrangements, you still need to wait for: \n");
         for (Integer tableCapacityType : tableCapacityTypeList) {
             int index = tableCapacityTypeList.indexOf(tableCapacityType);
             int needOfThisTableCapcity = tableArrangement.get(index);
@@ -349,8 +351,8 @@ public class TablesManagement implements TimeObserver {
                 if (tmpCount < needOfThisTableCapcity) {
                     int waitingCount = needOfThisTableCapcity - tmpCount;
                     waitingTablesNumList.set(index, waitingCount);
-                    waitingTablesListMessage += String.format(" [%d] [%d-Seats] Table ", waitingCount,
-                            tableCapacityType);
+                    waitingTablesListMessage.append(String.format(" [%d] [%d-Seats] Table ", waitingCount,
+                            tableCapacityType));
                     // c.addWaitingTable(tableCapacity, needOfThisTableCapcity - tmpCount);
                 } else {
                     waitingTablesNumList.set(index, 0);
@@ -373,15 +375,16 @@ public class TablesManagement implements TimeObserver {
 
     // 展示各自table的课预定时间段
     public void showReservationTable() {
-        String showReservationTableMsg = "\nTable for tommorrow reservation and available time slots: \n";
+        StringBuilder showReservationTableMsg = new StringBuilder(
+                "\nTable for tomorrow reservation and available time slots: \n");
         ArrayList<Table> copyOfAvailableTables = new ArrayList<Table>();
         copyOfAvailableTables.addAll(availableTables);
         Collections.sort(copyOfAvailableTables);
         for (Table t : availableTables) {
             TimeSlots tmrReservationTimeslots = t.getTmrReservationTimeSlot();
-            showReservationTableMsg += String.format(
+            showReservationTableMsg.append(String.format(
                     "%d-Seats Table with ID of %d is available tmr for the timeslots: %s \n", t.getTableCapacity(),
-                    t.getTableId(), tmrReservationTimeslots.getAvailableSlots());
+                    t.getTableId(), tmrReservationTimeslots.getAvailableSlots()));
             // showReservationTableMsg += "\n";
         }
         System.out.println(showReservationTableMsg);
@@ -390,13 +393,13 @@ public class TablesManagement implements TimeObserver {
 
     // 展示所有桌型的available的数量
     public String showAvailableTables() {
-        String showAvailableTableMsg = "\nBelow is the available tables: \n";
+        StringBuilder showAvailableTableMsg = new StringBuilder("\nBelow is the available tables: \n");
         for (Integer tableCapacity : tableCapacityTypeList) {
-            showAvailableTableMsg += String.format("Num of Available %d-Seats Table: %d \n", tableCapacity,
-                    returnAvailableTableNumWithCapacity(tableCapacity));
+            showAvailableTableMsg.append(String.format("Num of Available %d-Seats Table: %d \n", tableCapacity,
+                    returnAvailableTableNumWithCapacity(tableCapacity)));
         }
         System.out.println(showAvailableTableMsg);
-        return showAvailableTableMsg;
+        return showAvailableTableMsg.toString();
     }
 
     // admin可以添加新的桌子：1.该桌型之前就存在直接加桌子 2.该桌型之前不存在，加桌型和桌子
@@ -602,19 +605,56 @@ public class TablesManagement implements TimeObserver {
                 // get waitingNumList中的第i個
                 Customers customer = database.matchCId(id);
 
-                // TODO:
-
                 if (customer.getithTableNumList(capacityIndex) > 0) {
                     customer.minusOneTableNumList(capacityIndex);
                     customer.addOccupiedTable(t.getTableId());
                     setTableFromAvailableToOccupiedStatus(tId);
-                    System.out.printf("Customer with Id of %d now occupied a new table with id of %", id,
+                    System.out.printf("Customer with Id of %s now occupied a new table with id of %d", id,
                             t.getTableId());
                     break;
                 }
             }
         }
+    }
 
+    public LocalTime[] getReservationStartEndInDayOfTables(ArrayList<Table> tables, LocalTime start, LocalTime end) {
+        for (Table tb : tables) {
+            LocalTime[] temp = tb.getTmrReservationTimeSlot().getReservationStartEndInDay();
+            if (temp[0].compareTo(start) < 0) {
+                start = temp[0];
+            }
+            if (temp[1].compareTo(end) > 0) {
+                end = temp[0];
+            }
+        }
+        return new LocalTime[] { start, end };
+    }
+
+    public boolean setOpenAndCloseTime(String open, String close) {
+        LocalTime start = LocalTime.of(23, 59);
+        LocalTime end = LocalTime.of(0, 0);
+        LocalTime[] temp;
+
+        if (!availableTables.isEmpty() || !reservedTables.isEmpty() || !occupiedTables.isEmpty()) {
+            temp = getReservationStartEndInDayOfTables(availableTables, start, end);
+            temp = getReservationStartEndInDayOfTables(reservedTables, temp[0], temp[1]);
+            temp = getReservationStartEndInDayOfTables(occupiedTables, temp[0], temp[1]);
+            start = temp[0];
+            end = temp[1];
+        } else {
+            start = LocalTime.of(0, 0);
+            end = LocalTime.of(23, 59);
+        }
+        LocalTime inputOpen = LocalTime.parse(open);
+        LocalTime inputClose = LocalTime.parse(close);
+        if (inputOpen.compareTo(start) > 0 || inputClose.compareTo(end) < 0) {
+            TimeSlot ts = new TimeSlot(start, end, null);
+            System.out.println("Error: Cannot set Open/Close time, reservation(s) overlap(), " + ts.toString()
+                    + "should be the subset.");
+            return false;
+        }
+        TimeSlots.setOpenAndCloseTime(open, close);
+        return true;
     }
 
 }

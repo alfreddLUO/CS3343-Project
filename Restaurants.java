@@ -35,8 +35,8 @@ public class Restaurants {
     // count the price that a customer should pay
     public double countPrice(ArrayList<Dish> orders) {
         double sum = 0;
-        for (int i = 0; i < orders.size(); i++) {
-            sum += orders.get(i).getdishPrice();
+        for (Dish order : orders) {
+            sum += order.getdishPrice();
         }
         return sum;
     }
