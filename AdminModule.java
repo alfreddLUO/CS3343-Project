@@ -143,7 +143,7 @@ public class AdminModule implements UserModule {
         }
     }
 
-    private void setOpenHours() {
+    private void setOpenHours() throws ExUnableToSetOpenCloseTime {
         String sHour = null, fHour = null;
         boolean success = false;
 

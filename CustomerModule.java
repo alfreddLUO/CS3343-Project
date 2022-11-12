@@ -192,7 +192,7 @@ public class CustomerModule implements UserModule {
 
     }
 
-    public static boolean reservationOperation() {
+    public static boolean reservationOperation() throws ExTableNotExist, ExTimeSlotAlreadyBeReserved {
 
         ArrayList<Integer> chosedTableIds = new ArrayList<>();
         String reserveTime = null, chosedTable = null;
@@ -356,7 +356,7 @@ public class CustomerModule implements UserModule {
 
     }
 
-    public static boolean cancelReservation() {
+    public static boolean cancelReservation() throws ExTableNotExist, ExTimeSlotNotReservedYet {
         customer.cancelReservation();
         customer.clearReservation();
 
