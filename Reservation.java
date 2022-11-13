@@ -26,14 +26,14 @@ public class Reservation {
     }
 
     private void reserve(ArrayList<Integer> desiredTableIDs, TimeSlot timeslot) {
-        try {
-            for (int id : desiredTableIDs) {
+        for (int id : desiredTableIDs) {
+            try {
                 if (tm.reserveTableAccordingToTimeslot(id, timeSlot)) {
                     tableIDs.add(id);
                 }
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
             }
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
         }
     }
 
@@ -42,9 +42,9 @@ public class Reservation {
     @Override
     public String toString() {
         if (tableIDs.isEmpty()) {
-            return "\n\n[" + customerID + "] Error: Reservation not made.";
+            return "\n[" + customerID + "] Error: Reservation not made.";
         }
-        String s = "\n\n[" + customerID + "] Reservation made.";
+        String s = "\n[" + customerID + "] Reservation made.";
         s += "\nReserved tables: ";
 
         StringBuilder ids = new StringBuilder();
