@@ -97,63 +97,6 @@ class Main {
         }
     }
 
-    public static boolean registerCustomer() {
-        String username = null, password = null;
-        try {
-            System.out.print("\nPlease input the username: ");
-            username = Main.in.next("Input: ");
-
-            System.out.print("Please input the password: ");
-            password = Main.in.next("Input: ");
-        } catch (InputMismatchException ex) {
-            System.out.println("\nError! Wrong input type!");
-        }
-
-        if (username != null && password != null) {
-            if (confirmToRegister(username, password)) {
-                return accManager.registerCustomer(username, password);
-            } else {
-                return false;
-            }
-        } else {
-            return false;
-        }
-
-    }
-
-    public static boolean confirmToRegister(String username, String password) throws ExWrongSelectionNum {
-        boolean select = false;
-        String input = null;
-
-        System.out.println("Your username will be: " + username);
-        System.out.println("Your password will be: " + password);
-
-        try {
-            System.out.println("\nDo you wish to confirm and proceed registration? [true / false]");
-            input = Main.in.next("Input: ");
-            select = Boolean.parseBoolean(input);
-        } catch (InputMismatchException ex) {
-            System.out.println("\nError! Wrong input type!");
-        }
-        return select;
-    }
-
-    public static boolean registerMerchant() {
-        String username, password, rName;
-
-        System.out.print("\nPlease input the username: ");
-        username = Main.in.next("Input: ");
-
-        System.out.print("Please input the password: ");
-        password = Main.in.next("Input: ");
-
-        System.out.print("\nPlease input the name of the Restaurant: ");
-        rName = Main.in.next("Input: ");
-
-        database.registerRestaurant(rName);
-        return accManager.registerMerchant(username, password, database.matchRestaurant(rName));
-    }
-
     public static boolean register() throws ExWrongSelectionNum {
 
         String input = "";
@@ -186,6 +129,78 @@ class Main {
             System.out.println("\nRegistration Completed. Please return to login.");
         }
         return registerFinished;
+    }
+
+    public static boolean registerCustomer() {
+        String username = null, password = null;
+        try {
+            System.out.print("\nPlease input the username: ");
+            username = Main.in.next("Input: ");
+
+            System.out.print("Please input the password: ");
+            password = Main.in.next("Input: ");
+        } catch (InputMismatchException ex) {
+            System.out.println("\nError! Wrong input type!");
+        }
+
+        if (username != null && password != null) {
+            if (confirmToRegister(username, password, null)) {
+                return accManager.registerCustomer(username, password);
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    public static boolean registerMerchant() {
+        String username = null, password = null, rName = null;
+
+        System.out.print("\nPlease input the username: ");
+        username = Main.in.next("Input: ");
+
+        System.out.print("Please input the password: ");
+        password = Main.in.next("Input: ");
+
+        System.out.print("\nPlease input the name of the Restaurant: ");
+        rName = Main.in.next("Input: ");
+
+        if (username != null && password != null && rName != null) {
+            if (confirmToRegister(username, password, rName)) {
+                database.registerRestaurant(rName);
+                return accManager.registerMerchant(username, password, database.matchRestaurant(rName));
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    public static boolean confirmToRegister(String username, String password, String restaurantName)
+            throws ExWrongSelectionNum {
+        boolean select = false;
+        String input = null;
+        String rName = restaurantName;
+
+        if (rName == null) {
+            System.out.println("Your username will be: " + username);
+            System.out.println("Your password will be: " + password);
+        } else {
+            System.out.println("Your username will be: " + username);
+            System.out.println("Your password will be: " + password);
+            System.out.println("Your restaurant name will be :" + restaurantName);
+        }
+
+        try {
+            System.out.println("\nDo you wish to confirm and proceed registration? [true / false]");
+            input = Main.in.next("Input: ");
+            select = Boolean.parseBoolean(input);
+        } catch (InputMismatchException ex) {
+            System.out.println("\nError! Wrong input type!");
+        }
+        return select;
     }
 
     public static boolean deleteAcc() {
