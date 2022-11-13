@@ -217,9 +217,11 @@ public class TablesManagement implements TimeObserver {
         } else {
             StringBuilder recommendedArrangementMsg = new StringBuilder("The Optimized Recommended Arrangements are: ");
             for (int i = 0; i < tableArrangementResults.size(); i++) {
-                int tCapacity = tableCapacityTypeList.get(i);
-                recommendedArrangementMsg
-                        .append(String.format(" %d %d seats ", tableArrangementResults.get(i), tCapacity));
+                if (tableArrangementResults.get(i) > 0) {
+                    int tCapacity = tableCapacityTypeList.get(i);
+                    recommendedArrangementMsg
+                            .append(String.format("\n[%d] [%d-seats] ", tableArrangementResults.get(i), tCapacity));
+                }
             }
             System.out.println(recommendedArrangementMsg);
             return tableArrangementResults;
@@ -245,7 +247,7 @@ public class TablesManagement implements TimeObserver {
                 int numOfWaitingTables = num - availableNumOfThisTableType;
                 canDirectlyWalkIn = false;
                 waitingTablesListMessage
-                        .append(String.format(" %d %d-Seats Table ", numOfWaitingTables, tableCapacityType));
+                        .append(String.format("\n[%d] [%d-Seats] Table(s) ", numOfWaitingTables, tableCapacityType));
             }
         }
         if (canDirectlyWalkIn) {
@@ -558,7 +560,7 @@ public class TablesManagement implements TimeObserver {
         for (Integer tId : tableId) {
             setTableFromOccupiedToAvailable(tId);
             Table t = returnTableAccordingToTableId(tId);
-            int capacityIndex = t.getTableCapacity();
+            int capacityIndex = tableCapacityTypeList.indexOf(t.getTableCapacity());
             for (String id : waitingCustomers) {
                 // get waitingNumList中的第i個
                 Customers customer;
@@ -568,7 +570,7 @@ public class TablesManagement implements TimeObserver {
                         customer.minusOneTableNumList(capacityIndex);
                         customer.addOccupiedTable(t.getTableId());
                         setTableFromAvailableToOccupiedStatus(tId);
-                        System.out.printf("Customer with Id of %s now occupied a new table with id of %d", id,
+                        System.out.printf("\nCustomer with Id of %s now occupied a new table with id of %d", id,
                                 t.getTableId());
                         break;
                     }
