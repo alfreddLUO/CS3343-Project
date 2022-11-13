@@ -69,7 +69,7 @@ public class Merchants implements UserType {
     }
 
     // Edit Dish name or price
-    public void editDish() {
+    public void editDish() throws ExWrongSelectionNum {
 
         String dishName;
         int temp = 0;
@@ -78,7 +78,6 @@ public class Merchants implements UserType {
         String input = Main.in.nextLine("Input: ");
         dishName = input;
 
-        // TODO: try catch and reinput
         Dish dishToEdit = null;
 
         dishToEdit = findDish(dishName);
