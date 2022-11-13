@@ -42,6 +42,7 @@ public class CustomerModule implements UserModule {
 
     public void promptOptionStart() {
         // check if customer is sit-down
+        System.out.print("\n--------------------------------------------------");
         if (customer.getOccupiedTableId().isEmpty()) {
             if (customer.checkisReserved()) {
                 // reserved -> cannot reserve again
@@ -166,6 +167,8 @@ public class CustomerModule implements UserModule {
                         } else {
                             if (!reservationOperation())
                                 System.out.println("Something is wrong in reservation!");
+                            else
+                                System.out.println(customer.getReserve().toString());
                         }
                         break;
                     case 3:

@@ -29,6 +29,7 @@ public class AdminModule implements UserModule {
     private static final Admin admin = Admin.getInstance();
 
     public void promptOptionStart() {
+        System.out.print("\n--------------------------------------------------");
         System.out.println("\nCommands: ");
         System.out.println("[1] Set Food Court's Opening and Closing Time");
         System.out.println("[2] Check Customer's Orders");

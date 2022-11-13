@@ -22,6 +22,7 @@ public class MerchantModule implements UserModule {
     }
 
     public void promptOptionStart() {
+        System.out.print("\n--------------------------------------------------");
         System.out.println("\nCommands: ");
         System.out.println("[1] Modify Menu");
         System.out.println("[2] Check Order");
