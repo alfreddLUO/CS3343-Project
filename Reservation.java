@@ -41,7 +41,6 @@ public class Reservation {
         System.out.println();
     }
 
-    // TODO:
     @Override
     public String toString() {
         if (tableIDs.isEmpty()) {

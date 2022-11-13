@@ -99,7 +99,6 @@ public class Customers implements UserType, TimeObserver {
         occupiedTableId.add(tableId);
     }
 
-    // TODO:
     public String getReserveInfo() {
 
         if (reserve.getReserveString() != null) {
