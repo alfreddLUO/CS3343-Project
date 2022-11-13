@@ -254,7 +254,7 @@ public class CustomerModule implements UserModule {
                 if (select == 1) {
                     ArrayList<Integer> checkinTableId = tm.setWalkInStatus(result);
 
-                    // TODO: 拆成两个
+                    // TODO: break into two sub-functions
                     addCheckInAndWaitingInfo(str, checkinTableId, null);
                     success = true;
 
