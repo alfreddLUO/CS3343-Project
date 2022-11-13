@@ -1,4 +1,11 @@
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Set;
+import java.util.Map.Entry;
 
 public class AccountManagement {
 
@@ -132,33 +139,75 @@ public class AccountManagement {
         }
     }
 
-    public void printAllActiveAccounts() {
-        System.out.println("\nList of Active Accounts: ");
+    public static Set<Entry<String, String>> sortByValue(HashMap<String, String> hashmap) {
 
-        allaccounts.forEach((key, value) -> System.out.printf("%20s | %4s\n", key, value));
+        Set<Entry<String, String>> entries = hashmap.entrySet();
+        // Sort Method
+        Comparator<Entry<String, String>> valueComparator = new Comparator<Entry<String, String>>() {
+            @Override
+            public int compare(Entry<String, String> e1, Entry<String, String> e2) {
+                String v1 = e1.getValue();
+                String v2 = e2.getValue();
+                return v1.compareTo(v2);
+            }
+        };
+
+        List<Entry<String, String>> listOfEntries = new ArrayList<Entry<String, String>>(entries);
+
+        // sorting HashMap by values using comparator
+        Collections.sort(listOfEntries,
+                valueComparator);
+        LinkedHashMap<String, String> sortedByValue = new LinkedHashMap<String, String>(listOfEntries.size());
+
+        // List to Map
+        for (Entry<String, String> entry : listOfEntries) {
+            sortedByValue.put(entry.getKey(), entry.getValue());
+        }
+
+        Set<Entry<String, String>> entrySetSortedByValue = sortedByValue.entrySet();
+
+        return entrySetSortedByValue;
+    }
+
+    public void printAllActiveAccounts() {
+        Set<Entry<String, String>> sortedAllAccounts = sortByValue(allaccounts);
+        System.out.print("\nList of All Active Accounts: ");
+        int i = 1;
+        for (Entry<String, String> mapping : sortedAllAccounts) {
+            System.out.printf("\n[%d] %5s | %s", i, mapping.getValue(), mapping.getKey());
+            i++;
+        }
+        System.out.print("\n");
     }
 
     public void printAllMerchantActiveAccounts() {
-        System.out.println("\nList of Active Accounts: ");
-        allaccounts.forEach((key, value) -> {
-            if (value.charAt(0) == 'M') {
-                System.out.printf("\n%20s | %4s", key, value);
-            }
-        });
+        Set<Entry<String, String>> sortedAllAccounts = sortByValue(allaccounts);
+        System.out.print("\nList of all active merchant accounts: ");
 
+        int i = 1;
+        for (Entry<String, String> mapping : sortedAllAccounts) {
+            if (mapping.getValue().charAt(0) == 'M') {
+                System.out.printf("\n[%d] %5s | %s", i, mapping.getValue(), mapping.getKey());
+                i++;
+            }
+        }
         System.out.print("\n");
     }
 
     public void printMerchantOfTheRestaurant(Restaurants restaurant) {
-        System.out.println("\nList of Merchants of this restaurant: ");
-        allaccounts.forEach((username, id) -> {
-            if (id.charAt(0) == 'M') {
-                if (database.matchMId(id).getRestaurantOwned() == restaurant) {
-                    System.out.printf("\n%17s | %4s", username, id);
+        Set<Entry<String, String>> sortedAllAccounts = sortByValue(allaccounts);
+
+        System.out.print("\nList of Merchants of this restaurant: ");
+        int i = 1;
+        for (Entry<String, String> mapping : sortedAllAccounts) {
+            if (mapping.getValue().charAt(0) == 'M') {
+                if (database.matchMId(mapping.getValue()).getRestaurantOwned() == restaurant) {
+                    System.out.printf("\n[%d] %5s | %s", i, mapping.getValue(), mapping.getKey());
+                    i++;
                 }
 
             }
-        });
+        }
         System.out.print("\n");
     }
 
