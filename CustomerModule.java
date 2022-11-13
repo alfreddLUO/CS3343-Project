@@ -125,7 +125,7 @@ public class CustomerModule implements UserModule {
     }
 
     @Override
-    public void run(String Id) {
+    public void run(String Id) throws ExWrongSelectionNum {
         try {
             customer = Database.getInstance().matchCId(Id);
             String input = "";
@@ -139,6 +139,7 @@ public class CustomerModule implements UserModule {
                 promptOptionStart();
 
                 System.out.print("\nPlease select your operation: ");
+
                 input = Main.in.next("\nInput: ");
                 select = Integer.parseInt(input);
 
@@ -232,7 +233,7 @@ public class CustomerModule implements UserModule {
         return customer.getReserve() != null;
     }
 
-    public boolean directWalkIn(ArrayList<Integer> result) {
+    public boolean directWalkIn(ArrayList<Integer> result) throws ExWrongSelectionNum {
         int select = 0;
         String str = "";
         boolean success = false;
@@ -277,7 +278,7 @@ public class CustomerModule implements UserModule {
         return success;
     }
 
-    public void noRecommendedResultAndQueue(ArrayList<Integer> result) {
+    public void noRecommendedResultAndQueue(ArrayList<Integer> result) throws ExWrongSelectionNum {
         int select = 0;
         String str = "";
         do {
@@ -293,7 +294,7 @@ public class CustomerModule implements UserModule {
         } while (select != 1 && select != 2);
     }
 
-    public boolean hasRecommendedResult(ArrayList<Integer> result) {
+    public boolean hasRecommendedResult(ArrayList<Integer> result) throws ExWrongSelectionNum {
         String str = "";
         int select = 0;
         boolean success = false;
