@@ -21,6 +21,8 @@ class Main {
     }
 
     public static void promptLoginNRegisterNDelete() {
+        System.out.println("--------------------------------------------------");
+        System.out.println("--------------------------------------------------");
         System.out.println("\nCommands: ");
         System.out.println("[1] Login");
         System.out.println("[2] Register");
@@ -108,11 +110,32 @@ class Main {
         }
 
         if (username != null && password != null) {
-            return accManager.registerCustomer(username, password);
+            if (confirmToRegister(username, password)) {
+                return accManager.registerCustomer(username, password);
+            } else {
+                return false;
+            }
         } else {
             return false;
         }
 
+    }
+
+    public static boolean confirmToRegister(String username, String password) throws ExWrongSelectionNum {
+        boolean select = false;
+        String input = null;
+
+        System.out.println("Your username will be: " + username);
+        System.out.println("Your password will be: " + password);
+
+        try {
+            System.out.println("\nDo you wish to confirm and proceed registration? [true / false]");
+            input = Main.in.next("Input: ");
+            select = Boolean.parseBoolean(input);
+        } catch (InputMismatchException ex) {
+            System.out.println("\nError! Wrong input type!");
+        }
+        return select;
     }
 
     public static boolean registerMerchant() {
