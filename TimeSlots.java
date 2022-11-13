@@ -32,6 +32,9 @@ public class TimeSlots {
     }
 
     public Boolean addSlot(TimeSlot ts) { // format example: 12:00 非整点时间
+        if (ts.getStart().plusMinutes(30).compareTo(ts.getEnd()) > 0) {
+            return false;
+        }
         // check if before openTime or after closeTime
         if (ts.getStart().compareTo(openTime) < 0 || ts.getEnd().compareTo(closeTime) > 0) {
             return false;
