@@ -99,9 +99,14 @@ public class Customers implements UserType, TimeObserver {
         occupiedTableId.add(tableId);
     }
 
+    // TODO:
     public String getReserveInfo() {
-        if (reserve != null) {
-            return reserve.toString();
+
+        if (reserve.getReserveString() != null) {
+            String str = "";
+            str += "\nReminder: You have a reserved for tomorrow: ";
+            str += reserve.getReserveString();
+            return str;
         } else {
             return null;
         }

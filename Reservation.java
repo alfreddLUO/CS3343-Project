@@ -8,6 +8,7 @@ public class Reservation {
     private static final TablesManagement tm = TablesManagement.getInstance();
     private TimeSlot timeSlot;
     // private LocalDate date;
+    private String reserveInfo = null;
 
     /*
      * dateString: 預約第二天的，暫時用不上
@@ -17,11 +18,13 @@ public class Reservation {
 
     public Reservation(String customerID, String timeSlotString, ArrayList<Integer> desiredTableIDs)
             throws ExTableNotExist, ExTimeSlotAlreadyBeReserved {
+
         this.customerID = customerID;
-        // date = LocalDate.parse(dateString);
+
         String[] tsString = timeSlotString.split("-");
         timeSlot = new TimeSlot(tsString[0], tsString[1], customerID);
         this.active = true;
+
         reserve(desiredTableIDs, timeSlot);
     }
 
@@ -35,24 +38,39 @@ public class Reservation {
                 System.out.println(e.getMessage());
             }
         }
+        System.out.println();
     }
 
-    // "this reservation was made by {customerID}, reserved tables: {tableID[]}. +
-    // timeSlot.toString()"
+    // TODO:
     @Override
     public String toString() {
         if (tableIDs.isEmpty()) {
-            return "\n[" + customerID + "] Error: Reservation not made.";
+            return "\n[" + customerID + "] Error: Reservation not made.\n";
         }
-        String s = "\n[" + customerID + "] Reservation made.";
-        s += "\nReserved tables: ";
+        String s = "\n[" + customerID + "] Reservation made, Reserved tables: ";
 
-        StringBuilder ids = new StringBuilder();
-        for (int id : tableIDs) {
-            ids.append(String.valueOf(id)).append(", ");
-        }
-        s += ids + timeSlot.toString();
+        computeReserveString();
+        s += reserveInfo;
         return s;
+    }
+
+    public void computeReserveString() {
+        String str = "";
+        StringBuilder ids = new StringBuilder();
+
+        int num = 1;
+        for (int id : tableIDs) {
+            ids.append("\n[" + num + "] " + "[Table with ID: " + String.valueOf(id) + "] " + "[Time Slot: "
+                    + timeSlot.toString() + "]");
+            num++;
+        }
+        str += ids;
+        this.reserveInfo = str;
+    }
+
+    public String getReserveString() {
+        computeReserveString();
+        return this.reserveInfo;
     }
 
     public void cancel() {
