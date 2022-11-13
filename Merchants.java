@@ -31,7 +31,7 @@ public class Merchants implements UserType {
     }
 
     // 增加或刪除菜品
-    public void modifyMenu() throws ExWrongSelectionNum {
+    public void modifyMenu() {
 
         int select = 0;
 
@@ -47,9 +47,12 @@ public class Merchants implements UserType {
             promptModifyMenu();
 
             System.out.print("\nPlease select your operations: ");
-
-            String input = Main.in.next("Input: ");
-            select = Integer.parseInt(input);
+            try {
+                String input = Main.in.next("Input: ");
+                select = Integer.parseInt(input);
+            } catch (NumberFormatException e) {
+                System.out.println("Error! Wrong input for selection! Please input an integer!");
+            }
 
             if (select == 4) {
                 break;
@@ -69,7 +72,7 @@ public class Merchants implements UserType {
     }
 
     // Edit Dish name or price
-    public void editDish() throws ExWrongSelectionNum {
+    public void editDish() {
 
         String dishName;
         int temp = 0;
@@ -90,12 +93,15 @@ public class Merchants implements UserType {
             System.out.println("[3] Cancel");
 
             System.out.print("\nPlease select your operations: ");
-            input = Main.in.next("Input: ");
-            temp = Integer.parseInt(input);
-
-            switch (temp) {
-                case 1 -> editDishName(dishToEdit);
-                case 2 -> editDishPrice(dishToEdit);
+            try {
+                input = Main.in.next("Input: ");
+                temp = Integer.parseInt(input);
+                switch (temp) {
+                    case 1 -> editDishName(dishToEdit);
+                    case 2 -> editDishPrice(dishToEdit);
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Error! Wrong input for selection! Please input an integer!");
             }
 
         }
@@ -103,7 +109,7 @@ public class Merchants implements UserType {
     }
 
     // add dish to menu
-    public void addDish() throws ExWrongSelectionNum {
+    public void addDish() {
         String dishName;
         double dishPrice = -1;
         String input = "";

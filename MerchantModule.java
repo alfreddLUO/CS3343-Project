@@ -30,7 +30,7 @@ public class MerchantModule implements UserModule {
     }
 
     @Override
-    public void run(String Id) throws ExWrongSelectionNum {
+    public void run(String Id) {
 
         Merchants merchant = database.matchMId(Id);
         int select = 0;
@@ -41,8 +41,12 @@ public class MerchantModule implements UserModule {
 
             System.out.print("\nPlease select your operations: ");
 
-            input = Main.in.next("\nInput: ");
-            select = Integer.parseInt(input);
+            try {
+                input = Main.in.next("\nInput: ");
+                select = Integer.parseInt(input);
+            } catch (NumberFormatException e) {
+                System.out.println("Error! Wrong input for selection! Please input an integer!");
+            }
 
             String CId = "";
             if (select == 1) {

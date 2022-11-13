@@ -126,7 +126,7 @@ public class CustomerModule implements UserModule {
     }
 
     @Override
-    public void run(String Id) throws ExWrongSelectionNum {
+    public void run(String Id) {
         try {
             customer = Database.getInstance().matchCId(Id);
             String input = "";
@@ -141,8 +141,12 @@ public class CustomerModule implements UserModule {
 
                 System.out.print("\nPlease select your operation: ");
 
-                input = Main.in.next("\nInput: ");
-                select = Integer.parseInt(input);
+                try {
+                    input = Main.in.next("\nInput: ");
+                    select = Integer.parseInt(input);
+                } catch (NumberFormatException e) {
+                    System.out.println("Error! Wrong input for selection! Please input an integer!");
+                }
 
                 switch (select) {
                     case 1:
@@ -236,7 +240,7 @@ public class CustomerModule implements UserModule {
         return customer.getReserve() != null;
     }
 
-    public boolean directWalkIn(ArrayList<Integer> result) throws ExWrongSelectionNum {
+    public boolean directWalkIn(ArrayList<Integer> result) {
         int select = 0;
         String str = "";
         boolean success = false;
@@ -257,8 +261,9 @@ public class CustomerModule implements UserModule {
                     // TODO: break into two sub-functions
                     addCheckInAndWaitingInfo(str, checkinTableId, null);
                     success = true;
-
                 }
+            } catch (NumberFormatException e) {
+                System.out.println("Error! Wrong input for selection! Please input an integer!");
             } catch (Exception e) {
                 System.out.println(e.getMessage());
             }
@@ -286,15 +291,19 @@ public class CustomerModule implements UserModule {
         return success;
     }
 
-    public void noRecommendedResultAndQueue(ArrayList<Integer> result) throws ExWrongSelectionNum {
+    public void noRecommendedResultAndQueue(ArrayList<Integer> result) {
         int select = 0;
         String str = "";
         do {
             promptNoRecommendedResult();
 
             System.out.print("\nPlease choose your operation: ");
-            str = Main.in.next("Input: ");
-            select = Integer.parseInt(str);
+            try {
+                str = Main.in.next("Input: ");
+                select = Integer.parseInt(str);
+            } catch (NumberFormatException e) {
+                System.out.println("Error! Wrong input for selection! Please input an integer!");
+            }
 
             if (select == 1) {
                 tm.setWaitingTables(database.getCustomerCid(customer), result);
@@ -302,7 +311,7 @@ public class CustomerModule implements UserModule {
         } while (select != 1 && select != 2);
     }
 
-    public boolean hasRecommendedResult(ArrayList<Integer> result) throws ExWrongSelectionNum {
+    public boolean hasRecommendedResult(ArrayList<Integer> result) {
         String str = "";
         int select = 0;
         boolean success = false;
@@ -311,12 +320,15 @@ public class CustomerModule implements UserModule {
             promptHasRecommendedResult();
 
             System.out.print("\nPlease choose your operation: ");
-            str = Main.in.next("Input: ");
-            select = Integer.parseInt(str);
+            try {
+                str = Main.in.next("Input: ");
+                select = Integer.parseInt(str);
+            } catch (NumberFormatException e) {
+                System.out.println("Error! Wrong input for selection! Please input an integer!");
+            }
 
             if (select == 1) {
                 tm.setWaitingTables(database.getCustomerCid(customer), result);
-
             } else if (select == 2) {
                 ArrayList<Integer> checkinTableId = tm.setWalkInStatus(result);
 
@@ -353,12 +365,11 @@ public class CustomerModule implements UserModule {
             // Input number of people to dine in
             System.out.print("Please input the number of people: ");
             int numOfPeople;
-            str = Main.in.next("Input: ");
-            numOfPeople = Integer.parseInt(str);
-
-            ArrayList<Integer> result = new ArrayList<>();
-            // result = tm.makeTableArrangements(numOfPeople);
             try {
+                str = Main.in.next("Input: ");
+                numOfPeople = Integer.parseInt(str);
+
+                ArrayList<Integer> result = new ArrayList<>();
                 result = tm.arrangeTableAccordingToNumOfPeople(numOfPeople);
 
                 if (tm.canDirectlyDineIn(result)) {
@@ -367,6 +378,8 @@ public class CustomerModule implements UserModule {
                 } else {
                     success = waitQueue(numOfPeople, result);
                 }
+            } catch (NumberFormatException e) {
+                System.out.println("Error! Wrong input for selection! Please input an integer!");
             } catch (ExPeopleNumExceedTotalCapacity e) {
                 System.out.println(e.getMessage());
             }
@@ -423,11 +436,15 @@ public class CustomerModule implements UserModule {
         do {
             ArrayList<Restaurants> availableRestaurants = database.getListofRestaurants();
             System.out.print("\nPlease choose the restaurant to order: ");
-            input = Main.in.next("Input: ");
-            int idx = Integer.parseInt(input);
 
-            restaurant = availableRestaurants.get(idx - 1);
-            customer.chooseRestaurant(restaurant);
+            try {
+                input = Main.in.next("Input: ");
+                int idx = Integer.parseInt(input);
+                restaurant = availableRestaurants.get(idx - 1);
+                customer.chooseRestaurant(restaurant);
+            } catch (NumberFormatException e) {
+                System.out.println("Error! Wrong input for selection! Please input an integer!");
+            }
 
         } while (restaurant == null);
 
@@ -435,7 +452,6 @@ public class CustomerModule implements UserModule {
 
         // show menu of the chosen restaurant
         menu = restaurant.getMenu();
-
         outputMenu();
 
         // customer ordering
@@ -449,7 +465,7 @@ public class CustomerModule implements UserModule {
 
     public void confirmOrder() {
         boolean confirmOrder = false;
-        int addDel = 0;
+        int addDel = -1;
         String input = "";
 
         do {
@@ -470,25 +486,31 @@ public class CustomerModule implements UserModule {
 
                 promptEditOrder();
 
-                System.out.print("\nDo you want to add or delete order? ");
-                input = Main.in.next("Input: ");
-                addDel = Integer.parseInt(input);
+                do {
+                    System.out.print("\nDo you want to add or delete order? ");
+                    try {
+                        input = Main.in.next("Input: ");
+                        addDel = Integer.parseInt(input);
+                    } catch (NumberFormatException e) {
+                        System.out.println("Error! Wrong input for selection! Please input an integer!");
+                    }
 
-                if (addDel == 3) {
-                    confirmOrder = true;
-                    break;
-                } else if (addDel == 1) {
-                    outputMenu();
+                    if (addDel == 3) {
+                        confirmOrder = true;
+                        break;
+                    } else if (addDel == 1) {
+                        outputMenu();
 
-                    System.out.print("\nInput the dish number to add: (separate by a COMMA): ");
-                    addDishtoPending();
+                        System.out.print("\nInput the dish number to add: (separate by a COMMA): ");
+                        addDishtoPending();
 
-                    outputPendingDish();
-                } else if (addDel == 2) {
-                    removeDishfromPending();
+                        outputPendingDish();
+                    } else if (addDel == 2) {
+                        removeDishfromPending();
 
-                    outputPendingDish();
-                }
+                        outputPendingDish();
+                    }
+                } while (addDel == -1);
             }
         } while (!confirmOrder);
 
