@@ -42,9 +42,9 @@ public class Reservation {
     @Override
     public String toString() {
         if (tableIDs.isEmpty()) {
-            return "\n\n[" + customerID + "] Error: Reservation not made.";
+            return "\n[" + customerID + "] Error: Reservation not made.";
         }
-        String s = "\n\n[" + customerID + "] Reservation made.";
+        String s = "\n[" + customerID + "] Reservation made.";
         s += "\nReserved tables: ";
 
         StringBuilder ids = new StringBuilder();
