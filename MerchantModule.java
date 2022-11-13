@@ -29,7 +29,7 @@ public class MerchantModule implements UserModule {
     }
 
     @Override
-    public void run(String Id) {
+    public void run(String Id) throws ExWrongSelectionNum {
 
         Merchants merchant = database.matchMId(Id);
         int select = 0;
@@ -39,12 +39,9 @@ public class MerchantModule implements UserModule {
             promptOptionStart();
 
             System.out.print("\nPlease select your operations: ");
-            try {
-                input = Main.in.next("\nInput: ");
-                select = Integer.parseInt(input);
-            } catch (NumberFormatException ex) {
-                System.out.println("Error! Please input an integer!");
-            }
+
+            input = Main.in.next("\nInput: ");
+            select = Integer.parseInt(input);
 
             String CId = "";
             if (select == 1) {

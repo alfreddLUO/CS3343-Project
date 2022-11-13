@@ -38,7 +38,7 @@ class InputScanner {
             try {
                 clockInstance.changeTime(scannerInput.next());
             } catch (DateTimeParseException ex) {
-                System.out.println("Error! Please input a valid time!");
+                System.out.println("DateTime Error! Please input a valid time!");
             }
 
             System.out.print(previousPrintedMsg);
@@ -61,7 +61,7 @@ class InputScanner {
             try {
                 clockInstance.changeTime(scannerInput.nextLine());
             } catch (DateTimeParseException ex) {
-                System.out.println("Error! Please input a valid time!");
+                System.out.println("DateTime Error! Please input a valid time!");
             }
             System.out.print(previousPrintedMsg);
             in = nextLine(previousPrintedMsg);

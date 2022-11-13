@@ -37,7 +37,7 @@ public class Payment {
     }
 
     // Choose payment method, selected -> paythebill()
-    public void payProcess() {
+    public void payProcess() throws ExWrongSelectionNum {
         paymentMethod = null;
         getPrice();
 
@@ -51,12 +51,9 @@ public class Payment {
                     promptPaymentMethod();
 
                     System.out.print("\nPlease select your Payment Method: ");
-                    try {
-                        String input = Main.in.next("Input: ");
-                        choice = Integer.parseInt(input);
-                    } catch (NumberFormatException ex) {
-                        System.out.println("Error! Please input an integer!");
-                    }
+
+                    String input = Main.in.next("Input: ");
+                    choice = Integer.parseInt(input);
 
                     if (choice != -1) {
                         if (choice == 1) {

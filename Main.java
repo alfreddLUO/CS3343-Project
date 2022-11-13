@@ -28,7 +28,7 @@ class Main {
     }
 
     public static void loginNRegisterNDelete() throws ExTableNotExist, ExTimeSlotAlreadyBeReserved,
-            ExTimeSlotNotReservedYet, ExUnableToSetOpenCloseTime, ExTableIdAlreadyInUse {
+            ExTimeSlotNotReservedYet, ExUnableToSetOpenCloseTime, ExTableIdAlreadyInUse, ExWrongSelectionNum {
         int select = 0;
         boolean success = false;
 
@@ -44,8 +44,6 @@ class Main {
                 input = Main.in.next("Input: ");
                 select = Integer.parseInt(input);
 
-            } catch (NumberFormatException e) {
-                System.out.println("\nError! Please input an integer!");
             } catch (Exception e) {
                 System.out.println(e.getMessage());
             }
@@ -133,7 +131,7 @@ class Main {
         return accManager.registerMerchant(username, password, database.matchRestaurant(rName));
     }
 
-    public static boolean register() {
+    public static boolean register() throws ExWrongSelectionNum {
 
         String input = "";
         int select = 0;
@@ -147,8 +145,6 @@ class Main {
                         "\nPlease choose the type of account to register [1 Customer | 2 Merchant | 3 Cancel]: ");
                 input = Main.in.next("Input: ");
                 select = Integer.parseInt(input);
-            } catch (NumberFormatException ex) {
-                System.out.println("\nError! NumberFormatException!");
             } catch (InputMismatchException ex) {
                 System.out.println("\nError! Please input an integer of choice!");
             }

@@ -31,7 +31,7 @@ public class Merchants implements UserType {
     }
 
     // 增加或刪除菜品
-    public void modifyMenu() {
+    public void modifyMenu() throws ExWrongSelectionNum {
 
         int select = 0;
 
@@ -48,12 +48,8 @@ public class Merchants implements UserType {
 
             System.out.print("\nPlease select your operations: ");
 
-            try {
-                String input = Main.in.next("Input: ");
-                select = Integer.parseInt(input);
-            } catch (NumberFormatException ex) {
-                System.out.println("\nPlease input an integer!");
-            }
+            String input = Main.in.next("Input: ");
+            select = Integer.parseInt(input);
 
             if (select == 4) {
                 break;
@@ -108,7 +104,7 @@ public class Merchants implements UserType {
     }
 
     // add dish to menu
-    public void addDish() {
+    public void addDish() throws ExWrongSelectionNum {
         String dishName;
         double dishPrice = -1;
         String input = "";
@@ -119,12 +115,9 @@ public class Merchants implements UserType {
         dishName = Main.in.nextLine("Input: ");
 
         System.out.print("Dish Price: ");
-        try {
-            input = Main.in.next("Input: ");
-            dishPrice = Double.parseDouble(input);
-        } catch (NumberFormatException ex) {
-            System.out.println("\nPlease input a number!");
-        }
+
+        input = Main.in.next("Input: ");
+        dishPrice = Double.parseDouble(input);
 
         if (dishPrice != -1) {
             restaurantOwned.getMenu().add(new Dish(dishName, dishPrice));
