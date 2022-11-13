@@ -196,7 +196,10 @@ public class Customers implements UserType, TimeObserver {
         System.out.println("\nOfficial Orders: ");
         int i = 1;
         if (DishToRestaurant != null) {
-            DishToRestaurant.forEach((key, value) -> System.out.printf("[%d] %s\n", i, key));
+            for (HashMap.Entry<Dish, Restaurants> dishNRestaurants : DishToRestaurant.entrySet()) {
+                System.out.printf("[%d] %s\n", i, dishNRestaurants.getKey());
+                i++;
+            }
         } else {
             System.out.println("There is no orders made by this customer.");
         }
