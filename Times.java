@@ -1,4 +1,4 @@
 
-enum Times{
+enum Times {
 
 }

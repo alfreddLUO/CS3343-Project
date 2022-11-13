@@ -2,6 +2,8 @@ import java.time.*;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import javax.swing.plaf.TreeUI;
+
 //singleton pattern
 public class TablesManagement implements TimeObserver {
     private static LocalDate currDate;
@@ -384,16 +386,20 @@ public class TablesManagement implements TimeObserver {
     // admin删除旧桌子: 1.桌子是available的直接delete就ok 2.桌子不在available
     // list里可能是因为根本不available或根本没有这张桌子，统一print不能删除
     // 测试：1.桌子本身available 2.桌子不available 3.桌子根本就没有
-    public void removeTable(int tableId) throws ExTableNotExist {
+    public void removeTable(int tableId) throws ExTableNotExist, ExUnableToRemoveTable {
         Table t = returnTableAccordingToTableId(tableId);
         if (t != null) {
-            allTableIds.remove(tableId);
-            availableTables.remove(t);
-            if (returnTableNumWithTableCapacity(t.getTableCapacity()) == 0) {
-                removeTableCapacity(t.getTableCapacity());
+            if (availableTables.contains(t) && t.noReservationForTodayAndTmr() == true) {
+                allTableIds.remove(tableId);
+                availableTables.remove(t);
+                if (returnTableNumWithTableCapacity(t.getTableCapacity()) == 0) {
+                    removeTableCapacity(t.getTableCapacity());
+                }
+                System.out.printf("Successfully delete the table with id of %d \n", tableId);
+                return;
+            } else {
+                throw new ExUnableToRemoveTable(tableId);
             }
-            System.out.printf("Successfully delete the table with id of %d \n", tableId);
-            return;
         }
         throw new ExTableNotExist(tableId);
 
@@ -465,7 +471,7 @@ public class TablesManagement implements TimeObserver {
     public boolean checkTableIdIsAreadyInUsed(int tableId) {
         for (int i : allTableIds) {
             if (i == tableId) {
-                return false;
+                return true;
             }
         }
         return false;
@@ -585,6 +591,15 @@ public class TablesManagement implements TimeObserver {
             total += t.getTableCapacity();
         }
         return total;
+    }
+
+    public void reserverCheckIn(int tableId, TimeSlot ts, String cId) throws ExCustomersIdNotFound {
+        final Database database = Database.getInstance();
+        Table t = returnTableAccordingToTableId(tableId);
+        t.removeTdayTimeslot(ts);
+        Customers customer = database.matchCId(cId);
+        customer.addOccupiedTable(t.getTableId());
+        setTableFromAvailableToOccupiedStatus(tableId);
     }
 
     public LocalTime[] getReservationStartEndInDayOfTables(ArrayList<Table> tables, LocalTime start, LocalTime end) {

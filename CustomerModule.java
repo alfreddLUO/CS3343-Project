@@ -267,14 +267,19 @@ public class CustomerModule implements UserModule {
         return success;
     }
 
-    public boolean reserveWalkIn(ArrayList<Integer> tableIds) {
+    public boolean reserveWalkIn(ArrayList<Integer> tableIds, TimeSlot ts, String cId) {
 
         boolean success = false;
 
         System.out.println("You can now walk in.");
 
         for (Integer tableId : tableIds) {
-            tm.setTableFromAvailableToOccupiedStatus(tableId);
+            try {
+                tm.reserverCheckIn(tableId, ts, cId);
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+            ;
         }
         success = true;
 
@@ -368,7 +373,9 @@ public class CustomerModule implements UserModule {
 
         } else if (customer.getReserve() != null && customer.isReserveTime()) {
             // Sit in
-            success = reserveWalkIn(customer.getReserveChosedTableIds());
+            TimeSlot ts = customer.getReserve().getReservedTimeSlot();
+            customer.reservationCheckIn();
+            success = reserveWalkIn(customer.getReserveChosedTableIds(), ts, customer.getID());
         }
         return success;
 

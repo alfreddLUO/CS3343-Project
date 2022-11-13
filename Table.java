@@ -86,4 +86,12 @@ public class Table implements Comparable<Table> {// 所有的桌子放在一起
     public void removeTimeslot(TimeSlot timeslot) {
         reservationsTmr.remove(timeslot);
     }
+
+    public void removeTdayTimeslot(TimeSlot timeslot) {
+        reservationsTdy.remove(timeslot);
+    }
+
+    public Boolean noReservationForTodayAndTmr() {
+        return reservationsTmr.isEmpty() && reservationsTdy.isEmpty();
+    }
 }

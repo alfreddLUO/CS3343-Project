@@ -177,4 +177,8 @@ public class TimeSlots {
     public static LocalTime getCloseTime() {
         return closeTime;
     }
+
+    public Boolean isEmpty() {
+        return timeSlots.isEmpty();
+    }
 }
