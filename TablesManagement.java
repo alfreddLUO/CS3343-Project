@@ -197,7 +197,7 @@ public class TablesManagement implements TimeObserver {
     // 1. 把available的table list按降序排列，然后从第一个小于当前桌子人数的桌子开始，依次放入，若能放完则output出结果
     // 2. 若不能放完，则output没有优化结果
     public ArrayList<Integer> recommendedArrangementAccordingToWaitingTime(int peopleNum) {
-        Collections.sort(availableTables, Collections.reverseOrder());
+        Collections.sort(availableTables);
         int tmpPeopleNum = peopleNum;
         ArrayList<Integer> tableArrangementResults = new ArrayList<Integer>();
         tableArrangementResults.addAll(initializeTableArrangementList());
@@ -206,7 +206,7 @@ public class TablesManagement implements TimeObserver {
                 int tCapacity = t.getTableCapacity();
                 int capacityIndex = tableCapacityTypeList.indexOf(tCapacity);
                 int num = tableArrangementResults.get(capacityIndex);
-                tableArrangementResults.set(tableCapacityTypeList.indexOf(tCapacity), num + 1);
+                tableArrangementResults.set(capacityIndex, num + 1);
                 tmpPeopleNum = tmpPeopleNum - tCapacity;
                 if (tmpPeopleNum <= 0) {
                     break;
@@ -350,7 +350,8 @@ public class TablesManagement implements TimeObserver {
     // 展示所有桌型的available的数量
     public String showAvailableTables() {
         StringBuilder showAvailableTableMsg = new StringBuilder("\nBelow is the available tables: \n");
-        for (Integer tableCapacity : tableCapacityTypeList) {
+        for (int index = tableCapacityTypeList.size() - 1; index >= 0; index--) {
+            int tableCapacity = tableCapacityTypeList.get(index);
             showAvailableTableMsg.append(String.format("Num of Available %d-Seats Table: %d \n", tableCapacity,
                     returnAvailableTableNumWithCapacity(tableCapacity)));
         }
