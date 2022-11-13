@@ -319,7 +319,7 @@ public class CustomerModule implements UserModule {
                 addCheckInAndWaitingInfo(str, checkinTableId, null);
                 success = true;
             }
-        } while (select != 1 && select != 2);
+        } while (select != 1 && select != 2 && select != 3);
 
         return success;
     }
