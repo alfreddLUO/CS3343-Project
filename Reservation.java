@@ -41,6 +41,9 @@ public class Reservation {
     // timeSlot.toString()"
     @Override
     public String toString() {
+        if (tableIDs.isEmpty()) {
+            return "\n\n[" + customerID + "] Error: Reservation not made.";
+        }
         String s = "\n\n[" + customerID + "] Reservation made.";
         s += "\nReserved tables: ";
 
