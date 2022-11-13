@@ -334,9 +334,7 @@ public class TablesManagement implements TimeObserver {
     public String showReservationTable() {
         StringBuilder showReservationTableMsg = new StringBuilder(
                 "\nTable(s) for tomorrow reservation and available time slots: \n");
-        ArrayList<Table> copyOfAvailableTables = new ArrayList<Table>();
-        copyOfAvailableTables.addAll(availableTables);
-        Collections.sort(copyOfAvailableTables);
+        Collections.sort(availableTables, Collections.reverseOrder());
         for (Table t : availableTables) {
             TimeSlots tmrReservationTimeslots = t.getTmrReservationTimeSlot();
             showReservationTableMsg.append(String.format(
