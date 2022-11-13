@@ -26,14 +26,14 @@ public class Reservation {
     }
 
     private void reserve(ArrayList<Integer> desiredTableIDs, TimeSlot timeslot) {
-        try {
-            for (int id : desiredTableIDs) {
+        for (int id : desiredTableIDs) {
+            try {
                 if (tm.reserveTableAccordingToTimeslot(id, timeSlot)) {
                     tableIDs.add(id);
                 }
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
             }
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
         }
     }
 
