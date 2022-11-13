@@ -44,8 +44,7 @@ public class AdminModule implements UserModule {
         System.out.println("[8] Logout");
     }
 
-    public void run(String Id) throws ExUnableToSetOpenCloseTime, ExTableNotExist, ExTableIdAlreadyInUse,
-            ExWrongSelectionNum {
+    public void run(String Id) throws ExUnableToSetOpenCloseTime, ExTableNotExist, ExTableIdAlreadyInUse {
 
         int select = 0;
         String input = "";
@@ -55,99 +54,108 @@ public class AdminModule implements UserModule {
             promptOptionStart();
 
             System.out.print("\nPlease select your operations: ");
-            input = Main.in.next("Input: ");
-            select = Integer.parseInt(input);
+            try {
+                input = Main.in.next("Input: ");
+                select = Integer.parseInt(input);
+            } catch (NumberFormatException e) {
+                System.out.println("Error! Wrong input for selection! Please input an integer!\n");
+            }
 
             Restaurants temp = null;
             String customerId = null;
             Customers customer = null;
             int tableId = 0, tableCapacity = 0;
 
-            switch (select) {
-                case 1:
-                    setOpenHours();
-                    break;
-                case 2:
-                    try {
-                        System.out.print("\nPlease input the CustomerId to check order: ");
-                        customerId = Main.in.next("Input: ");
-                        customer = database.matchCId(customerId);
-                        admin.checkCustomerOrder(customer);
+            try {
+                switch (select) {
+                    case 1:
+                        setOpenHours();
                         break;
-                    } catch (Exception e) {
-                        System.out.println(e.getMessage());
-                    }
-                case 3:
-                    try {
-                        System.out.print("\nPlease input the CustomerId to check reservation info: ");
-                        customerId = Main.in.next("Input: ");
-                        customer = database.matchCId(customerId);
-                        String result = customer.getReserveInfo();
-                        if (result != null) {
-                            System.out.println(result);
-                        } else {
-                            System.out.println("There is no reservation for this customer.");
+                    case 2:
+                        try {
+                            System.out.print("\nPlease input the CustomerId to check order: ");
+                            customerId = Main.in.next("Input: ");
+                            customer = database.matchCId(customerId);
+                            admin.checkCustomerOrder(customer);
+                            break;
+                        } catch (Exception e) {
+                            System.out.println(e.getMessage());
                         }
+                    case 3:
+                        try {
+                            System.out.print("\nPlease input the CustomerId to check reservation info: ");
+                            customerId = Main.in.next("Input: ");
+                            customer = database.matchCId(customerId);
+                            String result = customer.getReserveInfo();
+                            if (result != null) {
+                                System.out.println(result);
+                            } else {
+                                System.out.println("There is no reservation for this customer.");
+                            }
+                            break;
+                        } catch (Exception e) {
+                            System.out.println(e.getMessage());
+                        }
+                        // case 4:
+                        // System.out.println("\nPlease input the CustomerId to set state: ");
+                        // customerId = Main.in.next("Input: ");
+                        // customer = database.matchCId(customerId);
+                        // customerState = new CustomerSuperVIPstate();
+                        // admin.setCustomerState(customer, customerState);
+                        // break;
+                        // case 5:
+                        // System.out.println("\nPlease input the CustomerId to set state: ");
+                        // customerId = Main.in.next("Input: ");
+                        // customer = database.matchCId(customerId);
+                        // customerState = new CustomerVIPstate();
+                        // admin.setCustomerState(customer, customerState);
+                        // break;
+                        // case 6:
+                        // System.out.println("\nPlease input the CustomerId to set state: ");
+                        // customerId = Main.in.next("Input: ");
+                        // customer = database.matchCId(customerId);
+                        // System.out.println("\nPlease input the new discount value: ");
+                        // input = Main.in.next("Input: ");
+                        // double discount = Double.parseDouble(input);
+                        // admin.setCustomerDiscount(customer, discount);
+                        // break;
+                    case 4:
+                        temp = addNewRestaurant();
+                        admin.addRestaurant(temp);
+                        database.showListOfRestaurants();
                         break;
-                    } catch (Exception e) {
-                        System.out.println(e.getMessage());
-                    }
-                    // case 4:
-                    // System.out.println("\nPlease input the CustomerId to set state: ");
-                    // customerId = Main.in.next("Input: ");
-                    // customer = database.matchCId(customerId);
-                    // customerState = new CustomerSuperVIPstate();
-                    // admin.setCustomerState(customer, customerState);
-                    // break;
-                    // case 5:
-                    // System.out.println("\nPlease input the CustomerId to set state: ");
-                    // customerId = Main.in.next("Input: ");
-                    // customer = database.matchCId(customerId);
-                    // customerState = new CustomerVIPstate();
-                    // admin.setCustomerState(customer, customerState);
-                    // break;
-                    // case 6:
-                    // System.out.println("\nPlease input the CustomerId to set state: ");
-                    // customerId = Main.in.next("Input: ");
-                    // customer = database.matchCId(customerId);
-                    // System.out.println("\nPlease input the new discount value: ");
-                    // input = Main.in.next("Input: ");
-                    // double discount = Double.parseDouble(input);
-                    // admin.setCustomerDiscount(customer, discount);
-                    // break;
-                case 4:
-                    temp = addNewRestaurant();
-                    admin.addRestaurant(temp);
-                    database.showListOfRestaurants();
-                    break;
-                case 5:
-                    temp = removeRestaurant();
-                    if (temp == null) {
-                        System.out.println("No such restaurant. Please check again.");
-                    } else {
-                        admin.deleteRestaurant(temp);
-                    }
-                    database.showListOfRestaurants();
-                    break;
-                case 6:
-                    System.out.print("\nPlease input the new tableId: ");
-                    input = Main.in.next("Input: ");
-                    tableId = Integer.parseInt(input);
-                    System.out.print("\nPlease input the capacity of new table: ");
-                    input = Main.in.next("Input: ");
-                    tableCapacity = Integer.parseInt(input);
-                    admin.forceAddTable(tableId, tableCapacity);
-                    tableId = 0;
-                    break;
-                case 7:
-                    System.out.print("\nPlease input the TableId to delete table: ");
-                    input = Main.in.next("Input: ");
-                    tableId = Integer.parseInt(input);
-                    admin.forceDeleteTable(tableId);
-                    tableId = 0;
-                    break;
-                case 8:
-                    break;
+                    case 5:
+                        temp = removeRestaurant();
+                        if (temp == null) {
+                            System.out.println("No such restaurant. Please check again.");
+                        } else {
+                            admin.deleteRestaurant(temp);
+                        }
+                        database.showListOfRestaurants();
+                        break;
+                    case 6:
+                        System.out.print("\nPlease input the new tableId: ");
+                        input = Main.in.next("Input: ");
+                        tableId = Integer.parseInt(input);
+                        System.out.print("\nPlease input the capacity of new table: ");
+                        input = Main.in.next("Input: ");
+                        tableCapacity = Integer.parseInt(input);
+
+                        admin.forceAddTable(tableId, tableCapacity);
+                        tableId = 0;
+                        break;
+                    case 7:
+                        System.out.print("\nPlease input the TableId to delete table: ");
+                        input = Main.in.next("Input: ");
+                        tableId = Integer.parseInt(input);
+                        admin.forceDeleteTable(tableId);
+                        tableId = 0;
+                        break;
+                    case 8:
+                        break;
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Error! Wrong input for selection! Please input an integer!");
             }
 
         }

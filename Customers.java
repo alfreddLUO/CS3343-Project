@@ -216,6 +216,10 @@ public class Customers implements UserType, TimeObserver {
         currDate = newDate;
     }
 
+    public void reservationCheckIn() {
+        reserve = null;
+    }
+
     // About table reservation
     /*
      * public void reserveTable() {

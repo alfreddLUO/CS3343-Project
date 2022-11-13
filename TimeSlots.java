@@ -1,4 +1,3 @@
-
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -176,5 +175,9 @@ public class TimeSlots {
 
     public static LocalTime getCloseTime() {
         return closeTime;
+    }
+
+    public Boolean isEmpty() {
+        return timeSlots.isEmpty();
     }
 }

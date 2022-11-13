@@ -82,4 +82,8 @@ public class Reservation {
             System.out.println(e.getMessage());
         }
     }
+
+    public TimeSlot getReservedTimeSlot() {
+        return timeSlot;
+    }
 }

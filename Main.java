@@ -30,7 +30,7 @@ class Main {
     }
 
     public static void loginNRegisterNDelete() throws ExTableNotExist, ExTimeSlotAlreadyBeReserved,
-            ExTimeSlotNotReservedYet, ExUnableToSetOpenCloseTime, ExTableIdAlreadyInUse, ExWrongSelectionNum {
+            ExTimeSlotNotReservedYet, ExUnableToSetOpenCloseTime, ExTableIdAlreadyInUse {
         int select = 0;
         boolean success = false;
 
@@ -46,6 +46,8 @@ class Main {
                 input = Main.in.next("Input: ");
                 select = Integer.parseInt(input);
 
+            } catch (NumberFormatException e) {
+                System.out.println("\nError! Wrong input for selection! Please input an integer!");
             } catch (Exception e) {
                 System.out.println(e.getMessage());
             }
@@ -97,7 +99,7 @@ class Main {
         }
     }
 
-    public static boolean register() throws ExWrongSelectionNum {
+    public static boolean register() {
 
         String input = "";
         int select = 0;
@@ -178,8 +180,7 @@ class Main {
         }
     }
 
-    public static boolean confirmToRegister(String username, String password, String restaurantName)
-            throws ExWrongSelectionNum {
+    public static boolean confirmToRegister(String username, String password, String restaurantName) {
         boolean select = false;
         String input = null;
         String rName = restaurantName;
