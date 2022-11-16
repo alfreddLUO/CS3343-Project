@@ -378,7 +378,13 @@ public class TablesManagement implements TimeObserver {
     }
 
     public void removeTableCapacity(int tableCapacity) {
-        tableCapacityTypeList.remove(tableCapacity);
+        ArrayList<Integer> copyOfTablCapacityTypeList = new ArrayList<Integer>();
+        copyOfTablCapacityTypeList.addAll(tableCapacityTypeList);
+        for (Integer tCapacity : copyOfTablCapacityTypeList) {
+            if (tCapacity == tableCapacity) {
+                tableCapacityTypeList.remove(tCapacity);
+            }
+        }
         Collections.sort(tableCapacityTypeList, Collections.reverseOrder());
     }
 
@@ -389,7 +395,13 @@ public class TablesManagement implements TimeObserver {
         Table t = returnTableAccordingToTableId(tableId);
         if (t != null) {
             if (availableTables.contains(t) && t.noReservationForTodayAndTmr() == true) {
-                allTableIds.remove(tableId);
+                ArrayList<Integer> copyOfAllTableIds = new ArrayList<Integer>();
+                copyOfAllTableIds.addAll(allTableIds);
+                for (Integer tId : copyOfAllTableIds) {
+                    if (tId == tableId) {
+                        allTableIds.remove(tId);
+                    }
+                }
                 availableTables.remove(t);
                 if (returnTableNumWithTableCapacity(t.getTableCapacity()) == 0) {
                     removeTableCapacity(t.getTableCapacity());
@@ -483,7 +495,7 @@ public class TablesManagement implements TimeObserver {
     }
 
     public Table returnTableAccordingToTableId(int tableId) {
-        ArrayList<Table> allTablesList = new ArrayList<>();
+        ArrayList<Table> allTablesList = new ArrayList<Table>();
         allTablesList.addAll(availableTables);
         allTablesList.addAll(reservedTables);
         allTablesList.addAll(occupiedTables);
