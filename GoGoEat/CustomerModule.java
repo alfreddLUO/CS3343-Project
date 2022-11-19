@@ -49,7 +49,7 @@ public class CustomerModule implements UserModule {
             // Customer run customerModule
             customer = Database.getInstance().matchCId(Id);
 
-            CustomerModulePrompt prompt = new CustomerModulePrompt(customer);
+            CustomerModulePrompt prompt = new CustomerModulePrompt(this);
             String input = "";
             int select = 0;
 
@@ -114,5 +114,17 @@ public class CustomerModule implements UserModule {
     // Clear State -> Change state to VIP as default
     public static void clearState() {
         customer.setState(new CustomerVIPstate());
+    }
+
+    public boolean isSitDown() {
+        return customer.getOccupiedTableId().isEmpty();
+    }
+
+    public boolean checkisReserved() {
+        return customer.checkisReserved();
+    }
+
+    public String getReserveReminder() {
+        return customer.getReserveReminder();
     }
 }

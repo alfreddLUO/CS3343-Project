@@ -7,7 +7,6 @@ public class CommandCustomerDineIn implements Commands {
 
     private static final TablesManagement tm = TablesManagement.getInstance();
     private static final Database database = Database.getInstance();
-    private CustomerModulePrompt prompt = new CustomerModulePrompt(customer);
 
     private static Customers customer;
     private Restaurants restaurant = null;
@@ -94,7 +93,7 @@ public class CommandCustomerDineIn implements Commands {
                 System.out.println("You can now directly walk in.");
 
                 // Prompt 1. Walkin / 2. Leave
-                prompt.promptWalkInLeave();
+                CustomerModulePrompt.promptWalkInLeave();
 
                 System.out.print("\nPlease choose your operation: ");
                 try {
@@ -153,7 +152,7 @@ public class CommandCustomerDineIn implements Commands {
 
         do {
             // 1. Queue / 2. Leave
-            prompt.promptNoRecommendedResult();
+            CustomerModulePrompt.promptNoRecommendedResult();
 
             System.out.print("\nPlease choose your operation: ");
             try {
@@ -181,7 +180,7 @@ public class CommandCustomerDineIn implements Commands {
 
         do {
             // 1. Queue 2. Walkin 3. Leave
-            prompt.promptHasRecommendedResult();
+            CustomerModulePrompt.promptHasRecommendedResult();
 
             System.out.print("\nPlease choose your operation: ");
             try {
@@ -324,7 +323,7 @@ public class CommandCustomerDineIn implements Commands {
             customer.outputPendingDish("\nYour pending orders: ");
 
             System.out.println("\nDo you want to confirm order?");
-            prompt.promptConfirmOrder();
+            CustomerModulePrompt.promptConfirmOrder();
 
             System.out.print("\nYour option: ");
             input = Main.in.next("\nYour option: ");
@@ -337,7 +336,7 @@ public class CommandCustomerDineIn implements Commands {
                 customer.outputPendingDish("\nYour pending orders: ");
 
                 // prompt 1. Add dish 2. Delete dish
-                prompt.promptEditOrder();
+                CustomerModulePrompt.promptEditOrder();
 
                 System.out.print("\nPlease choose your operation: ");
                 try {

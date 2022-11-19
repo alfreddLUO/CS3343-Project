@@ -1,11 +1,11 @@
 package GoGoEat;
 
 class CustomerModulePrompt implements AbstractModulePrompt {
-    private Customers customer;
+    private CustomerModule cm;
 
     // constructor
-    public CustomerModulePrompt(Customers customer) {
-        this.customer = customer;
+    public CustomerModulePrompt(CustomerModule cm) {
+        this.cm = cm;
     }
 
     // customer module
@@ -16,13 +16,13 @@ class CustomerModulePrompt implements AbstractModulePrompt {
         // Check if customer is sit-down
 
         // Not Sit down
-        if (customer.getOccupiedTableId().isEmpty()) {
+        if (cm.isSitDown()) {
 
             // Check if customer has reserved
-            if (customer.checkisReserved()) {
+            if (cm.checkisReserved()) {
 
                 // reserved -> print reservation info
-                System.out.println(customer.getReserveReminder());
+                System.out.println(cm.getReserveReminder());
                 promptOptionReserved();
 
             } else {
@@ -33,9 +33,9 @@ class CustomerModulePrompt implements AbstractModulePrompt {
             // Already Sit down
 
             // Reserved
-            if (customer.checkisReserved()) {
+            if (cm.checkisReserved()) {
 
-                System.out.println(customer.getReserveReminder());
+                System.out.println(cm.getReserveReminder());
                 promptOptionReservedStillSitting();
 
             } else {
@@ -46,60 +46,60 @@ class CustomerModulePrompt implements AbstractModulePrompt {
         }
     }
 
-    public void promptOptionReserved() {
+    public static void promptOptionReserved() {
         System.out.println("\nCommands: ");
         System.out.println("[1] Dine in");
         System.out.println("[3] Cancel Reservation");
         System.out.println("[5] Logout");
     }
 
-    public void promptOptionNotReserved() {
+    public static void promptOptionNotReserved() {
         System.out.println("\nCommands: ");
         System.out.println("[1] Dine in");
         System.out.println("[2] Reserve");
         System.out.println("[5] Logout");
     }
 
-    public void promptOptionNotReservedStillSitting() {
+    public static void promptOptionNotReservedStillSitting() {
         System.out.println("\nCommands: ");
         System.out.println("[2] Reserve");
         System.out.println("[4] Check Out");
         System.out.println("[5] Logout");
     }
 
-    public void promptOptionReservedStillSitting() {
+    public static void promptOptionReservedStillSitting() {
         System.out.println("\nCommands: ");
         System.out.println("[3] Cancel Reservation");
         System.out.println("[4] Check Out");
         System.out.println("[5] Logout");
     }
 
-    public void promptNoRecommendedResult() {
+    public static void promptNoRecommendedResult() {
         System.out.println("\nCommands: ");
         System.out.println("[1] Queue");
         System.out.println("[2] Leave");
     }
 
-    public void promptHasRecommendedResult() {
+    public static void promptHasRecommendedResult() {
         System.out.println("\nCommands: ");
         System.out.println("[1] Queue");
         System.out.println("[2] Walk in with recommended arrangement");
         System.out.println("[3] Leave");
     }
 
-    public void promptWalkInLeave() {
+    public static void promptWalkInLeave() {
         System.out.println("\nCommands: ");
         System.out.println("[1] Walk in");
         System.out.println("[2] Leave");
     }
 
-    public void promptConfirmOrder() {
+    public static void promptConfirmOrder() {
         System.out.println("\nCommands: ");
         System.out.println("[1] Yes: Please input 'True'/'true'/'TRUE'");
         System.out.println("[2] No: Please input 'False'/'false'/'FALSE'");
     }
 
-    public void promptEditOrder() {
+    public static void promptEditOrder() {
         System.out.println("\nCommands: ");
         System.out.println("[1] Add Order");
         System.out.println("[2] Delete Order");
