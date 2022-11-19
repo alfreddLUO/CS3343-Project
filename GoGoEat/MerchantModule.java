@@ -16,6 +16,7 @@ public class MerchantModule implements UserModule {
     private MerchantModule() {
     }
 
+    private Merchants merchant = null;
     private static final MerchantModule instance = new MerchantModule();
 
     private MerchantModulePrompt prompt = new MerchantModulePrompt();
@@ -29,7 +30,7 @@ public class MerchantModule implements UserModule {
             ExTableIdAlreadyInUse, ExTableNotExist,
             ExTimeSlotNotReservedYet, ExCustomersIdNotFound, ExTimeSlotAlreadyBeReserved {
 
-        Merchants merchant = database.matchMId(Id);
+        this.merchant = database.matchMId(Id);
         int select = 0;
         String input = "";
 
@@ -62,5 +63,4 @@ public class MerchantModule implements UserModule {
         }
 
     }
-
 }

@@ -14,7 +14,7 @@ class MerchantModulePrompt implements AbstractModulePrompt {
         System.out.println("[3] Logout");
     }
 
-    public void promptModifyMenu() {
+    public static void promptModifyMenu() {
         System.out.println("\nCommands: ");
         System.out.println("[1] Add Dish");
         System.out.println("[2] Delete Dish");
@@ -22,7 +22,7 @@ class MerchantModulePrompt implements AbstractModulePrompt {
         System.out.println("[4] Cancel");
     }
 
-    public void promptEditDish() {
+    public static void promptEditDish() {
         System.out.println("\nCommands: ");
         System.out.println("[1] Edit Dish Name");
         System.out.println("[2] Edit Dish Price");

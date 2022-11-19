@@ -9,7 +9,6 @@ public class Merchants implements UserType {
     private String staffUserId;
     private Restaurants restaurantOwned;
     private Commands command;
-    private MerchantModulePrompt prompt = new MerchantModulePrompt();
 
     public Merchants(String username, String merchantId, Restaurants restaurant) {
         this.username = username;
@@ -43,89 +42,6 @@ public class Merchants implements UserType {
     public void getMenu() {
         // Print all dish from restaurant's menu
         restaurantOwned.printMenu();
-    }
-
-    // Add / Delete / Edit dish
-    public void modifyMenu() {
-
-        /*
-         * 1 Add Dish to Menu
-         * 2 Delete Dish from Menu
-         * 3 Edit name or price of the Dish in the Menu
-         * 4 Cancel Operation (Do nothing)
-         */
-
-        int select = 0;
-        while (select != 1 && select != 2 && select != 3) {
-
-            prompt.promptModifyMenu();
-
-            System.out.print("\nPlease select your operations: ");
-
-            try {
-                String input = Main.in.next("\nPlease select your operations: ");
-                select = Integer.parseInt(input);
-            } catch (NumberFormatException e) {
-                System.out.println("Error! Wrong input for selection! Please input an integer!");
-            }
-
-            if (select == 4) {
-                break;
-            } else if (select == 1 || select == 2 || select == 3) {
-                getMenu();
-                if (select == 1) {
-                    addDish();
-                } else if (select == 2) {
-                    removeDish();
-                } else if (select == 3) {
-                    editDish();
-                }
-            } else {
-                continue;
-            }
-        }
-    }
-
-    // Edit Dish name or price
-    public void editDish() {
-
-        String dishName;
-        int temp = 0;
-
-        System.out.print("\nPlease input the name of the dish: ");
-        String input = Main.in.nextLine("\nPlease input the name of the dish: ");
-        dishName = input;
-
-        Dish dishToEdit = null;
-
-        dishToEdit = findDish(dishName);
-        if (dishToEdit == null) {
-            System.out.println("Wrong Dish Name! Please try again.");
-        } else {
-            /*
-             * 1. Edit Name
-             * 2. Edit Price
-             */
-
-            prompt.promptEditDish();
-
-            System.out.print("\nPlease select your operations: ");
-            try {
-                input = Main.in.next("\nPlease select your operations: ");
-                temp = Integer.parseInt(input);
-            } catch (NumberFormatException e) {
-                System.out.println("Error! Wrong input for selection! Please input an integer!");
-            }
-
-            switch (temp) {
-                case 1:
-                    editDishName(dishToEdit);
-                    break;
-                case 2:
-                    editDishPrice(dishToEdit);
-                    break;
-            }
-        }
     }
 
     public void addDish() {
@@ -172,7 +88,7 @@ public class Merchants implements UserType {
             menuModified.remove(i - 1);
         }
         restaurantOwned.updateMenu(menuModified);
-        System.out.println("Delete Dish success");
+        System.out.println("Delete Dish success.");
 
     }
 
@@ -240,4 +156,47 @@ public class Merchants implements UserType {
             }
         }
     }
+
+    // Edit Dish name or price
+    public void editDish() {
+
+        String dishName;
+        int temp = 0;
+
+        System.out.print("\nPlease input the name of the dish: ");
+        String input = Main.in.nextLine("\nPlease input the name of the dish: ");
+        dishName = input;
+
+        Dish dishToEdit = null;
+
+        dishToEdit = findDish(dishName);
+        if (dishToEdit == null) {
+            System.out.println("Wrong Dish Name! Please try again.");
+        } else {
+            /*
+             * 1. Edit Name
+             * 2. Edit Price
+             */
+
+            MerchantModulePrompt.promptEditDish();
+
+            System.out.print("\nPlease select your operations: ");
+            try {
+                input = Main.in.next("\nPlease select your operations: ");
+                temp = Integer.parseInt(input);
+            } catch (NumberFormatException e) {
+                System.out.println("Error! Wrong input for selection! Please input an integer!");
+            }
+
+            switch (temp) {
+                case 1:
+                    editDishName(dishToEdit);
+                    break;
+                case 2:
+                    editDishPrice(dishToEdit);
+                    break;
+            }
+        }
+    }
+
 }
