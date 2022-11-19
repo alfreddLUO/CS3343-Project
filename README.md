@@ -1,16 +1,31 @@
-# To Preview Markdown in VSCode:
-Windows: Ctrl + Shift + V
-MacOS: Cmd + Shift + V 
+# GoGo Eat
+GoGo Eat is a restaurant management system targeting customers, merchants, and admins. The food-court-like restaurant contains several dining windows that customers can order food from, and an open space where customer can sit-in to dine on a first-come-first-served basis or through reservation.
 
-# Before Run Project, Please install library:
+* Functionalities
+    * Customers 
+        * Dine in
+        * Reserve a table
+        * Queue
+        * Order food
+        * Online Payment 
+    * Merchants 
+        * Manage their dishes
+        * Manage dish prices
+        * Assist in payments
+    * Admins
+        * Change the opening hours of the food court
+        * Check Customers' orders
+        * Check Customers' Reservations
+        * Add restaurants
+        * Remove restaurants
+        * Add Tables
+        * Remove Tables
 
-This is a library for importing Multimap used.
-link: https://search.maven.org/search?q=g:com.google.guava%20AND%20a:guava
+## Run program (java executable)
+Execute the following command in terminal: ` java -jar program.jar `
 
-1. After installing the jar file, Go to VSCode.
-2. Under JAVA PROJECTS, Find "Referenced Libraries"
-3. Click on the "+" button on the right hand side of "Referenced Libraries"
-4. On the pop-up Folder screen, import the jar file downloaded.
-5. You should be good to go!
-
-[!alt text](https://drive.google.com/file/d/1Byw5avocHFCVVp1u1sKbOroXp59o3la9/view?usp=sharing)
+## Run program (source code)
+* Package of library required:
+    * Download from `https://search.maven.org/search?q=g:com.google.guava%20AND%20a:guava`
+    * Add the downloaded jar file into java project library
+* Run from main
