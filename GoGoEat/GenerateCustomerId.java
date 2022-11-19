@@ -10,12 +10,14 @@ public class GenerateCustomerId implements GenerateId {
     }
 
     public static GenerateCustomerId getInstance() {
-        if (instance == null)
-            {instance = new GenerateCustomerId();}
+        if (instance == null) {
+            instance = new GenerateCustomerId();
+        }
 
         return instance;
     }
 
+    @Override
     public String getNextId() {
         currentId += 1;
         String temp = String.format("%04d", currentId);

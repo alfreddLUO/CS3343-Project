@@ -11,13 +11,15 @@ import java.util.Map.Entry;
 
 public class AccountManagement {
 
-	// Username -> UserId mapping
+    // Username -> UserId mapping
     protected static HashMap<String, String> allaccounts = new HashMap<>();
-    
+
     // Username -> Password mapping
     protected static HashMap<String, String> usernamesandPasswords = new HashMap<>();// username->password
 
     private final Database database = Database.getInstance();
+    private GenerateId genCId = GenerateCustomerId.getInstance();
+    private GenerateId genMId = GenerateMerchantId.getInstance();
 
     protected AccountManagement() {
     }
@@ -28,16 +30,15 @@ public class AccountManagement {
         return instance;
     }
 
-
     // login and return userId
     public String login(String username, String password) {
 
-    	/*
-    	 * Case 1: Successful login with username and password -> return ID
-    	 * Case 2: Wrong Password -> return null
-    	 * Case 3: Username not found -> return null
-    	 */
-    	
+        /*
+         * Case 1: Successful login with username and password -> return ID
+         * Case 2: Wrong Password -> return null
+         * Case 3: Username not found -> return null
+         */
+
         String userId = "";
 
         if (AccountManagement.usernamesandPasswords.containsKey(username)
@@ -65,7 +66,7 @@ public class AccountManagement {
     public void registerAdmin(String username, String password) {
 
         // Fixed UserId since only 1 admin instance allowed
-    	// Put admin ID into allaccounts Hashmap
+        // Put admin ID into allaccounts Hashmap
         customerIDPutHashMap(username, "A0001");
 
         // Put username and password into usernamesandPasswords Hashmap
@@ -77,19 +78,19 @@ public class AccountManagement {
 
     // register Customer Account
     public boolean registerCustomer(String username, String password) {
-    	
-    	/*
-    	 * 1: Username already exist -> Not successfully registered -> return false
-    	 * 2: Username not exist ->
-    	 * 		Generate CustomerID with prefix 'C' and get next numbering -> return true 
-    	 */
-    	
+
+        /*
+         * 1: Username already exist -> Not successfully registered -> return false
+         * 2: Username not exist ->
+         * Generate CustomerID with prefix 'C' and get next numbering -> return true
+         */
+
         if (AccountManagement.usernamesandPasswords.containsKey(username)) {
             System.out.println("\nThis username has been registered. Please choose another username.");
             return false;
         } else {
-        	// Generate CustomerID with prefix 'C'
-            GenerateCustomerId genCId = GenerateCustomerId.getInstance();
+            // Generate CustomerID with prefix 'C'
+
             String customerId = genCId.getNextId();
 
             // Put CID into allaccounts Hashmap
@@ -108,19 +109,18 @@ public class AccountManagement {
 
     // Register Merchant account
     public boolean registerMerchant(String username, String password, Restaurants restaurant) {
-    	
-    	/*
-    	 * 1: Username already exist -> Not successfully registered -> return false
-    	 * 2: Username not exist ->
-    	 * 		Generate MerchantId with prefix 'M' and get next numbering -> return true 
-    	 */
-    	
+
+        /*
+         * 1: Username already exist -> Not successfully registered -> return false
+         * 2: Username not exist ->
+         * Generate MerchantId with prefix 'M' and get next numbering -> return true
+         */
+
         if (AccountManagement.usernamesandPasswords.containsKey(username)) {
             System.out.println("\nThis username has been registered. Please choose another username.");
             return false;
         } else {
-        	// Generate MerchantId with prefix 'M'
-            GenerateMerchantId genMId = GenerateMerchantId.getInstance();
+            // Generate MerchantId with prefix 'M'
             String merchantID = genMId.getNextId();
 
             // Put MID into allaccounts Hashmap
@@ -133,7 +133,8 @@ public class AccountManagement {
             database.addTolistofMerchants(allaccounts.get(username),
                     new Merchants(username, allaccounts.get(username), restaurant));
 
-            // Add into listofMerchantsnRestaurant in database for mapping merchant and restaurants 
+            // Add into listofMerchantsnRestaurant in database for mapping merchant and
+            // restaurants
             database.addTolistofMerchantsnRestaurant(allaccounts.get(username), restaurant);
 
             return true;
@@ -144,7 +145,7 @@ public class AccountManagement {
     public boolean deleteaccountinUserNameAndAccount(String username) {
         if (AccountManagement.usernamesandPasswords.containsKey(username)) {
             AccountManagement.usernamesandPasswords.remove(username);
-            
+
             // Delete from allaccounts
             return deleteaccountinUserNameAndCustomerid(username);
 
@@ -164,22 +165,22 @@ public class AccountManagement {
             return false;
         }
     }
-    
+
     // Put the generated UserId and username into allaccounts
     public void customerIDPutHashMap(String username, String Id) {
         AccountManagement.allaccounts.put(username, Id);
     }
-    
+
     public static Set<Entry<String, String>> sortByValue(HashMap<String, String> hashmap) {
-    	
-    	/* 
+
+        /*
          * Account List Sorting by UserId
          * 1. Sort by prefix: A, C, M
          * 2. Sort by ID: 4-index number
          */
-    	
+
         Set<Entry<String, String>> entries = hashmap.entrySet();
-        
+
         // Sort Method comparator
         Comparator<Entry<String, String>> valueComparator = new Comparator<Entry<String, String>>() {
             @Override
@@ -205,14 +206,14 @@ public class AccountManagement {
 
         return entrySetSortedByValue;
     }
- 
+
     public void printAllActiveAccounts() {
-    	
-    	/*
-    	 * Print all active accounts with numbering
-    	 * [numbering] [username] [userId] 
-    	 */
-    	
+
+        /*
+         * Print all active accounts with numbering
+         * [numbering] [username] [userId]
+         */
+
         Set<Entry<String, String>> sortedAllAccounts = sortByValue(allaccounts);
         System.out.print("\nList of All Active Accounts: ");
         int i = 1;
@@ -225,11 +226,11 @@ public class AccountManagement {
 
     public void printMerchantOfTheRestaurant(Restaurants restaurant) {
 
-    	/*
-    	 * Print all active accounts with numbering
-    	 * [numbering] [username] [userId] 
-    	 */
-    	
+        /*
+         * Print all active accounts with numbering
+         * [numbering] [username] [userId]
+         */
+
         Set<Entry<String, String>> sortedAllAccounts = sortByValue(allaccounts);
 
         System.out.print("\nList of Merchants of this restaurant: ");
@@ -246,7 +247,8 @@ public class AccountManagement {
         System.out.print("\n");
     }
 
-    // Identify which userType belong to the login account, then return Module to Main to run
+    // Identify which userType belong to the login account, then return Module to
+    // Main to run
     public UserModule distinguishMerchantandCustomer(String userid) {
         if (userid.charAt(0) == 'C') {
             return CustomerModule.getInstance();

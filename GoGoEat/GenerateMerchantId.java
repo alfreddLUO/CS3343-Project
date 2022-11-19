@@ -10,12 +10,14 @@ public class GenerateMerchantId implements GenerateId {
     }
 
     public static GenerateMerchantId getInstance() {
-        if (instance == null)
-            {instance = new GenerateMerchantId();}
+        if (instance == null) {
+            instance = new GenerateMerchantId();
+        }
 
         return instance;
     }
 
+    @Override
     public String getNextId() {
         currentId += 1;
         String temp = String.format("%04d", currentId);
