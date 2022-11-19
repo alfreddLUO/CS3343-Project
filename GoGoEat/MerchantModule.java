@@ -18,7 +18,7 @@ public class MerchantModule implements UserModule {
 
     private static final MerchantModule instance = new MerchantModule();
 
-    private MerchantModulePromptions promptions = new MerchantModulePromptions();
+    private MerchantModulePrompt prompt = new MerchantModulePrompt();
 
     public static MerchantModule getInstance() {
         return instance;
@@ -34,7 +34,7 @@ public class MerchantModule implements UserModule {
         String input = "";
 
         while (select != 3) {
-            promptions.promptOptionStart();
+            prompt.promptOptionStart();
 
             System.out.print("\nPlease select your operations: ");
 

@@ -1,6 +1,6 @@
 package GoGoEat;
 
-public interface AbstractModulePromptions {
+public interface AbstractModulePrompt {
 
     public void promptOptionStart();
 

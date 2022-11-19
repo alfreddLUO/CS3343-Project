@@ -1,11 +1,12 @@
 package GoGoEat;
 
-public class AdminModulePromptions implements AbstractModulePromptions {
+public class AdminModulePrompt implements AbstractModulePrompt {
 
-    public AdminModulePromptions(){};
-     
+    public AdminModulePrompt() {
+    };
+
     // All prompts for admin module
-     public void promptOptionStart() {
+    public void promptOptionStart() {
         System.out.print("\n--------------------------------------------------");
         System.out.println("\nCommands: ");
         System.out.println("[1] Set Food Court's Opening and Closing Time");

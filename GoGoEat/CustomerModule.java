@@ -44,12 +44,12 @@ public class CustomerModule implements UserModule {
 
     @Override
     public void run(String Id) {
-    	
+
         try {
-        	// Customer run customerModule
+            // Customer run customerModule
             customer = Database.getInstance().matchCId(Id);
-            
-            CustomerModulePromptions promptions = new CustomerModulePromptions(customer);
+
+            CustomerModulePrompt prompt = new CustomerModulePrompt(customer);
             String input = "";
             int select = 0;
 
@@ -58,7 +58,7 @@ public class CustomerModule implements UserModule {
 
             while (select != 5) {
 
-                promptions.promptOptionStart();
+                prompt.promptOptionStart();
 
                 System.out.print("\nPlease select your operation: ");
                 try {

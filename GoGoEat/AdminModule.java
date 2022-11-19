@@ -13,7 +13,7 @@ public class AdminModule implements UserModule {
 
     private static final Admin admin = Admin.getInstance();
 
-    AdminModulePromptions promptions = new AdminModulePromptions();
+    AdminModulePrompt prompt = new AdminModulePrompt();
 
     public void run(String Id) throws ExUnableToSetOpenCloseTime, ExTableNotExist, ExTableIdAlreadyInUse,
             ExTimeSlotNotReservedYet, ExCustomersIdNotFound, ExTimeSlotAlreadyBeReserved {
@@ -29,22 +29,22 @@ public class AdminModule implements UserModule {
          * 7. Remove Table
          * 8. Log out
          */
-    	
+
         int select = 0;
         String input = "";
 
         while (select != 8) {
 
-            promptions.promptOptionStart();
+            prompt.promptOptionStart();
 
             try {
-            	System.out.print("\nPlease select your operations: ");
+                System.out.print("\nPlease select your operations: ");
                 input = Main.in.next("\nPlease select your operations: ");
                 select = Integer.parseInt(input);
             } catch (NumberFormatException e) {
                 System.out.println("Error! Wrong input for selection! Please input an integer!");
             }
-            
+
             do {
                 switch (select) {
                     case 1:

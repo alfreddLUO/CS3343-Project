@@ -8,14 +8,14 @@ public class Payment {
     private PaymentMethod paymentMethod;
     private Commands command;
     private Restaurants restaurantChosed = null;
-    private PaymentModulePromptions promptions = new PaymentModulePromptions();
-    
+    private PaymentModulePrompt prompt = new PaymentModulePrompt();
+
     private boolean paymentStatus = false;
     private boolean isNoOrder = false;
-    
+
     private double originalPrice = 0;
     private double discountPrice = 0;
-    
+
     public Payment(Customers customer, Restaurants restaurant) {
         this.customer = customer;
         this.restaurantChosed = restaurant;
@@ -24,24 +24,24 @@ public class Payment {
     // UPDATE: Modified on 16 Nov added parameter + originalPrice modified
     public double getPrice(ArrayList<Dish> orders) {
 
-    	/*
-    	 * 1. Calculate Original Sum 
-    	 * 2. Update Customers' bill amount -> updateState
-    	 * 3. Use updated state to calculate discount price
-    	 * 4. Update customers' bill amount
-    	 */
-    	
-    	// Calculate original price of the orders
+        /*
+         * 1. Calculate Original Sum
+         * 2. Update Customers' bill amount -> updateState
+         * 3. Use updated state to calculate discount price
+         * 4. Update customers' bill amount
+         */
+
+        // Calculate original price of the orders
         originalPrice = customer.getRestaurantChosed().countPrice(orders);
 
         customer.setBillAmount(originalPrice);
         customer.updateState();
-        
+
         if (originalPrice > 0) {
             customer.updateStateOutput();
         }
-        
-        // Updated discountprice from different VIP state 
+
+        // Updated discountprice from different VIP state
         discountPrice = customer.getState().priceCount(originalPrice);
         customer.setBillAmount(discountPrice);
 
@@ -52,18 +52,18 @@ public class Payment {
     public void payProcess(ArrayList<Dish> orders)
             throws ExUnableToSetOpenCloseTime, ExTableIdAlreadyInUse, ExTableNotExist,
             ExTimeSlotNotReservedYet, ExCustomersIdNotFound, ExTimeSlotAlreadyBeReserved {
-        
-    	paymentMethod = null;
+
+        paymentMethod = null;
         getPrice(orders);
 
         if (discountPrice > 0) {
             int choice = -1;
-            
+
             // Print Bill no
             System.out.printf("\nYour bill number is: %s\n", customer.printBillNo());
-            
+
             do {
-                promptions.promptOptionStart();
+                prompt.promptOptionStart();
 
                 System.out.print("\nPlease select your Payment Method: ");
 
@@ -100,7 +100,7 @@ public class Payment {
 
             } while (choice != 1 && choice != 2 && choice != 3 || this.paymentStatus == false && !this.isNoOrder
                     || paymentMethod == null);
-        
+
         } else {
             // UPDATE: Modified on 16 Nov
             String outputString = "\nThere is no order made. Thank you.\nYou have successfully check out.\n";

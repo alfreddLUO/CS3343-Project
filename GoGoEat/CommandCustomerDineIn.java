@@ -7,7 +7,7 @@ public class CommandCustomerDineIn implements Commands {
 
     private static final TablesManagement tm = TablesManagement.getInstance();
     private static final Database database = Database.getInstance();
-    private CustomerModulePromptions promptions = new CustomerModulePromptions(customer);
+    private CustomerModulePrompt prompt = new CustomerModulePrompt(customer);
 
     private static Customers customer;
     private Restaurants restaurant = null;
@@ -94,7 +94,7 @@ public class CommandCustomerDineIn implements Commands {
                 System.out.println("You can now directly walk in.");
 
                 // Prompt 1. Walkin / 2. Leave
-                promptions.promptWalkInLeave();
+                prompt.promptWalkInLeave();
 
                 System.out.print("\nPlease choose your operation: ");
                 try {
@@ -153,7 +153,7 @@ public class CommandCustomerDineIn implements Commands {
 
         do {
             // 1. Queue / 2. Leave
-            promptions.promptNoRecommendedResult();
+            prompt.promptNoRecommendedResult();
 
             System.out.print("\nPlease choose your operation: ");
             try {
@@ -181,7 +181,7 @@ public class CommandCustomerDineIn implements Commands {
 
         do {
             // 1. Queue 2. Walkin 3. Leave
-            promptions.promptHasRecommendedResult();
+            prompt.promptHasRecommendedResult();
 
             System.out.print("\nPlease choose your operation: ");
             try {
@@ -245,10 +245,10 @@ public class CommandCustomerDineIn implements Commands {
         for (int i : checkInTable) {
             customer.addTableId(i);
         }
-        
+
     }
 
-    public static void addWaitingInfo(ArrayList<Integer> waitingTableNumList){
+    public static void addWaitingInfo(ArrayList<Integer> waitingTableNumList) {
         if (waitingTableNumList != null) {
             for (int i : waitingTableNumList) {
                 customer.addTableNumList(i);
@@ -324,7 +324,7 @@ public class CommandCustomerDineIn implements Commands {
             customer.outputPendingDish("\nYour pending orders: ");
 
             System.out.println("\nDo you want to confirm order?");
-            promptions.promptConfirmOrder();
+            prompt.promptConfirmOrder();
 
             System.out.print("\nYour option: ");
             input = Main.in.next("\nYour option: ");
@@ -337,7 +337,7 @@ public class CommandCustomerDineIn implements Commands {
                 customer.outputPendingDish("\nYour pending orders: ");
 
                 // prompt 1. Add dish 2. Delete dish
-                promptions.promptEditOrder();
+                prompt.promptEditOrder();
 
                 System.out.print("\nPlease choose your operation: ");
                 try {

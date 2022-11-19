@@ -1,6 +1,6 @@
 package GoGoEat;
 
-class PaymentModulePromptions implements AbstractModulePromptions{
+class PaymentModulePrompt implements AbstractModulePrompt {
 
     @Override
     public void promptOptionStart() {
@@ -9,5 +9,5 @@ class PaymentModulePromptions implements AbstractModulePromptions{
         System.out.println("[2] WeChat Pay");
         System.out.println("[3] Cash");
     }
-    
+
 }

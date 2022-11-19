@@ -1,10 +1,10 @@
 package GoGoEat;
 
-class CustomerModulePromptions implements AbstractModulePromptions {
+class CustomerModulePrompt implements AbstractModulePrompt {
     private Customers customer;
 
     // constructor
-    public CustomerModulePromptions(Customers customer) {
+    public CustomerModulePrompt(Customers customer) {
         this.customer = customer;
     }
 
@@ -14,32 +14,32 @@ class CustomerModulePromptions implements AbstractModulePromptions {
         System.out.print("\n--------------------------------------------------");
 
         // Check if customer is sit-down
-        
+
         // Not Sit down
         if (customer.getOccupiedTableId().isEmpty()) {
-        	
-        	// Check if customer has reserved
-        	if (customer.checkisReserved()) {
 
-        		// reserved -> print reservation info
+            // Check if customer has reserved
+            if (customer.checkisReserved()) {
+
+                // reserved -> print reservation info
                 System.out.println(customer.getReserveReminder());
                 promptOptionReserved();
 
             } else {
-            	// Not reserved -> Get Customer's choice to dine or reserve
+                // Not reserved -> Get Customer's choice to dine or reserve
                 promptOptionNotReserved();
             }
         } else {
-        	// Already Sit down
-        	
-        	// Reserved
+            // Already Sit down
+
+            // Reserved
             if (customer.checkisReserved()) {
-               
-            	System.out.println(customer.getReserveReminder());
+
+                System.out.println(customer.getReserveReminder());
                 promptOptionReservedStillSitting();
-                
+
             } else {
-            	// Not reserved (customer dining & haven't get up from seat)
+                // Not reserved (customer dining & haven't get up from seat)
                 promptOptionNotReservedStillSitting();
             }
 
