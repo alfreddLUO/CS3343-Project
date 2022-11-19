@@ -384,7 +384,7 @@ public class TablesManagement implements TimeObserver {
         System.out.println(showReservationTableMsg);
     }
 
-    // 展示所有桌型的available的数量
+    // show the available num of each table type
     public String showAvailableTables() {
         StringBuilder showAvailableTableMsg = new StringBuilder("\nBelow is the available tables: \n");
         for (int index = tableCapacityTypeList.size() - 1; index >= 0; index--) {
