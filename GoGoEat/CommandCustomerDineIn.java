@@ -109,7 +109,7 @@ public class CommandCustomerDineIn implements Commands {
                     ArrayList<Integer> checkinTableId = tm.setWalkInStatus(result);
 
                     // TODO: Separate into two method
-                    addCheckInAndWaitingInfo(str, checkinTableId, null);
+                    addCheckInInfo(checkinTableId);
                     success = true;
                 } else if (select == 2) {
                     // Leave
@@ -199,7 +199,7 @@ public class CommandCustomerDineIn implements Commands {
                 ArrayList<Integer> checkinTableId = tm.setWalkInStatus(result);
 
                 // TODO: Separate into two method
-                addCheckInAndWaitingInfo(str, checkinTableId, null);
+                addCheckInInfo(checkinTableId);
 
                 success = true;
             } else if (select == 3) {
@@ -231,8 +231,7 @@ public class CommandCustomerDineIn implements Commands {
     }
 
     // TODO: CID传进来了没用到
-    public static void addCheckInAndWaitingInfo(String CId, ArrayList<Integer> checkInTable,
-            ArrayList<Integer> waitingTableNumList) {
+    public static void addCheckInInfo(ArrayList<Integer> checkInTable) {
 
         /*
          * 1. Find Customer Instance
@@ -246,11 +245,16 @@ public class CommandCustomerDineIn implements Commands {
         for (int i : checkInTable) {
             customer.addTableId(i);
         }
+        
+    }
+
+    public static void addWaitingInfo(ArrayList<Integer> waitingTableNumList){
         if (waitingTableNumList != null) {
             for (int i : waitingTableNumList) {
                 customer.addTableNumList(i);
             }
         }
+
     }
 
     public void ordering() {

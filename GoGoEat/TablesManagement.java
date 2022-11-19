@@ -127,38 +127,39 @@ public class TablesManagement implements TimeObserver {
         return tableArrangementResults;
     }
 
-    // 这部分我没有测试过，所以可能会有不少bug (^-^)见谅^_^
-    // 根据输入的人数判断安排对应桌型的数量
-    // 简单来说就是用最少的桌子让顾客坐下，但同时也得满足桌子不能浪费，即顾客必须得坐最适合自己的桌子
-    // 测试：打比方： 假设现在只有15，12， 8，4，2这五种类型的桌子， 那么即有以下几种情况
-    // 这一部分是纯理论，不用考虑相应桌型数量不够的情况
-    // 1.最简单的：一个人来让坐两人桌
-    // 2.二人来：两人桌
-    // 3.三人来：四人桌
-    // 4.五人来：八人桌
-    // 5.九人来：十二人桌
-    // 6.十七人来： 十五人桌+二人桌
-    // 7.十九人来： 十五人桌+四人桌
-    // 8.二十三人来： 十五人桌+八人桌
-    // 最后返回的是一个array list存放不同桌型安排的数量
-    // index为0时，那个返回数字代表的是最大的桌子的安排数量
-    // index最大的那一个，返回的数字代表的是最小桌子的安排数量
+    // arrange table according to people num
+    // Simple logic: minimize the number of tables but seat all people. In the
+    // meantime, people should sit at the "most appropriate" table
+    // For testing： assume now table types: 15，12， 8，4，2 five table types, then:
+    // 1.simplest: 1 people - [1] 2-seats table
+    // 2.2 people -> [1] 2-seats table
+    // 3.3 people -> [1] 4-seats table
+    // 4.5 people -> [1] 8-seats table
+    // 5.9 people -> [1] 12-seats table
+    // 6.17 people -> [1] 15-seats table + [1] 2-seats table
+    // 7.19 people -> [1] 15-seats table + [1] 4-seats table
+    // 8.23 people -> [1] 15-seats table + [1] 8-seats table
+    // The tableArrangements stores the num of tables according to table types
+    // index=0: stores the num of tables with the max table capacity
+    // index=max: stores the num of tables with the minimum table capacity
     public ArrayList<Integer> arrangeTableAccordingToNumOfPeople(int peopleNum) throws ExPeopleNumExceedTotalCapacity {
         if (peopleNum <= returnTotalCapcityOfTables()) {
             int tmpPeopleNum = peopleNum;
             StringBuilder arrangementResultMessage = new StringBuilder("\nYour arranged tables are: \n");
-            // 按顺序储存的对应的桌型安排的数量
+            // Store the number of tables of the corresponding table type of that index
             ArrayList<Integer> tableArrangementResults = new ArrayList<Integer>();
             tableArrangementResults.addAll(initializeTableArrangementList());
             for (int i = 0; i < tableCapacityTypeList.size(); i++) {
                 int tmpResults = 0;
                 int tableCapacity = tableCapacityTypeList.get(i);
-                // 这一步是指当执行到最后一步时，即最小桌型时，若人数为0则0，若大于0则1
+                // This happens when the last table type comes, it should store all the
+                // remaining people
                 if (i == tableCapacityTypeList.size() - 1) {
                     tmpResults = (tmpPeopleNum % tableCapacity == 0) ? (tmpPeopleNum / tableCapacity)
                             : ((tmpPeopleNum / tableCapacity) + 1);
                 } else {
-                    // 最佳的是把人放置于能装下他们的最小桌子， e.g. 假设有2，4，8人桌； 7人来放8人桌
+                    // minimize the table num ， e.g. if exists table type of 2，4，8； 7 people -> [1]
+                    // 8-seats tables
                     int addingTableNum = (tmpPeopleNum
                             / tableCapacity <= returnTableNumWithTableCapacity(tableCapacity))
                                     ? (tmpPeopleNum / tableCapacity)
@@ -186,13 +187,17 @@ public class TablesManagement implements TimeObserver {
         throw new ExPeopleNumExceedTotalCapacity(returnTotalCapcityOfTables());
     }
 
-    // （测试不用管后面这一句话）前提上一种结果不可用，即没有比人数更大的桌型available
-    // 这部分是指按现有的availableTables里的table按从大到小让顾客坐下
-    // 返回有两种情况：
-    // 1.所有的比人数更少的available table加在一起都不够坐，即return null
-    // 测试：当available tables： 一张二人桌，一张四人桌，一张八人桌； 但来了十八个人；return null
+    // Precondition: the previous table arrangement results is not all available
+    // Arrange the tables acoording to the available table and still based on the
+    // purpose of minimizing the table num:
+    // two situations：
+    // 1.All the available tables with capacity less than people num add up to not
+    // enough to sit on, that is, return null
+    // Test: When available tables: one for two, one for four, one for eight; But
+    // eighteen people came; return null
     // 2.可以坐的情况：最后返回的是一个array list存放不同桌型安排的数量
-    // 测试：当available tables： 一张二人桌，一张四人桌，一张八人桌； 来了十四个人；return 相应的array list
+    // Test: When available tables: one for two, one for four, one for eight;
+    // Fourteen people came; return the corresponding array list
     // 如果之前自动的安排不能直接入座则启用该算法
     // 这算法：
     // 1. 把available的table list按降序排列，然后从第一个小于当前桌子人数的桌子开始，依次放入，若能放完则output出结果
@@ -232,12 +237,13 @@ public class TablesManagement implements TimeObserver {
 
     }
 
-    // 根据安排的桌子结果判断顾客能否直接进店吃：
-    // 1.可以,则return true； （测试不用管后面这一句话）且print出桌子的安排
-    // 2.不可以，则return false
-    // 测试：首先你得确保availableTables 有哪些；
-    // 然后你自己建一个arraylist存放一个要测试的arraylist作为argument，放进去；
-    // 最后看print的结果是否是对的
+    // determine: whether the table arrangement results is available now
+    // 1.Yes: return true；
+    // 2.No: return false
+    // Testing:
+    // need to know the current available tables
+    // Then you may create a arraylist as table arrangemnet results, and put it into
+    // argument
     public boolean canDirectlyDineIn(ArrayList<Integer> tableArrangementResults) {
         boolean canDirectlyWalkIn = true;
         StringBuilder waitingTablesListMessage = new StringBuilder(
@@ -261,7 +267,7 @@ public class TablesManagement implements TimeObserver {
 
     }
 
-    // （测试不用管后面这一句话）用于当根据人数计算桌子或推荐算法中某一个可行时，且顾客选择入座，则用此函数入座
+    // Usage: when the 用于当根据人数计算桌子或推荐算法中某一个可行时，且顾客选择入座，则用此函数入座
     // 测试：自己建一个arraylist存放对应桌型的安排数量 作为argument；
     // 1.首先看return的结果是不是对的：可以顺利入座true，不可以顺利入座false
     // 2.当可以顺利入座这种情况发生时，执行完该函数后，去get available tables list看对应的table是否变成了occupied
@@ -291,8 +297,8 @@ public class TablesManagement implements TimeObserver {
         return checkedInTableIds;
     }
 
-    // Again，Sorry，这部分我也没有测试过，所以可能会有不少bug (^-^)见谅^_^
-    // 用于根据安排结果，返回顾客需要等待的对应桌型的数量的list
+    // According to table arrangements, put the table that are available into
+    // customer's occupied, and store the remaining into wairing list
     public ArrayList<Integer> setWaitingTables(String cId, ArrayList<Integer> tableArrangement) {
         ArrayList<Integer> waitingTablesNumList = new ArrayList<Integer>();
         ArrayList<Integer> checkedInTableIds = new ArrayList<Integer>();
@@ -317,7 +323,7 @@ public class TablesManagement implements TimeObserver {
                         }
                     }
                 }
-                // 如果该桌型当前的还没够，那么就将待等桌型及等待的数量传递给customer
+                // if available num is not enough, then pass the remaining num to customer
                 if (tmpCount < needOfThisTableCapcity) {
                     int waitingCount = needOfThisTableCapcity - tmpCount;
                     waitingTablesNumList.set(index, waitingCount);
@@ -328,11 +334,11 @@ public class TablesManagement implements TimeObserver {
                 }
             }
         }
-        CommandCustomerDineIn.addCheckInAndWaitingInfo(cId, checkedInTableIds, waitingTablesNumList);
+        CommandCustomerDineIn.addCheckInInfo(checkedInTableIds);
+        CommandCustomerDineIn.addWaitingInfo(waitingTablesNumList);
         System.out.println(waitingTablesListMessage);
         return waitingTablesNumList;
     }
-
     // 展示各自table的课预定时间段
     // public String showReservationTable() {
     // StringBuilder showReservationTableMsg = new StringBuilder(
