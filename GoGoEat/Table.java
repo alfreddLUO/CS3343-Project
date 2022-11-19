@@ -2,16 +2,14 @@ package GoGoEat;
 
 import java.time.LocalTime;
 
-public class Table implements Comparable<Table> {// 所有的桌子放在一起
-    // -------------------------------------------------------------------------------------------------------------------------------------------------------
+public class Table implements Comparable<Table> {
+	// All Tables put together
+	
     private int tableID;
     private int capacity;
-    private TimeSlots reservationsTmr = new TimeSlots(); // for tomorror
+    private TimeSlots reservationsTmr = new TimeSlots(); // for tomorrorw
     private TimeSlots reservationsTdy = new TimeSlots(); // for today
 
-    // private Boolean reserved = false;
-    // private Boolean seated = false;
-    // private int customerID;
     public int getTableCapacity;
 
     @Override
@@ -33,18 +31,15 @@ public class Table implements Comparable<Table> {// 所有的桌子放在一起
     public Table(int tableID, int capacity) {
         this.tableID = tableID;
         this.capacity = capacity;
-        // reservationsTmr = new TimeSlots();
     }
 
     public int getId() {
         return this.tableID;
     }
 
-    // TODO: change reserved timeslot daystring to "today" in customer.java
     public void startNewDay() {
         reservationsTdy = reservationsTmr;
         reservationsTmr = new TimeSlots();
-
     }
 
     public int getTableId() {
@@ -68,29 +63,32 @@ public class Table implements Comparable<Table> {// 所有的桌子放在一起
         return false;
     }
 
-    public void makeReservation(Customers c, TimeSlot reservedTime) {
-    }
-
+    // Get tomorrow's all reservation timeslot
     public TimeSlots getTmrReservationTimeSlot() {
         return reservationsTmr;
     }
 
+    // Get Today's all reservation timeslot
     public TimeSlots getTodayReservationTimeSlot() {
         return reservationsTdy;
     }
 
+    // Update timeslot of tomorrow
     public void updatetmrTimeslots(TimeSlots tmrTimeSlots) {
         reservationsTmr = tmrTimeSlots;
     }
 
+    // Remove timeslot for tomorrow
     public void removeTimeslot(TimeSlot timeslot) {
         reservationsTmr.remove(timeslot);
     }
 
+    // Remove today Timeslot
     public void removeTdayTimeslot(TimeSlot timeslot) {
         reservationsTdy.remove(timeslot);
     }
 
+    // Check if today and tomorrow has no reservation
     public Boolean noReservationForTodayAndTmr() {
         return reservationsTmr.isEmpty() && reservationsTdy.isEmpty();
     }

@@ -1,6 +1,12 @@
 package GoGoEat;
 
 public interface UserModule {
+	
+	/*
+	 * 1. AdminModule
+	 * 2. CustomerModule
+	 * 3. MerchantModule
+	 */
 
     static TablesManagement tm = TablesManagement.getInstance();
     static Database database = Database.getInstance();

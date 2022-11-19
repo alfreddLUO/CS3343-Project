@@ -11,6 +11,11 @@ public class CommandAdminCheckCustomerOrder implements Commands {
     @Override
     public void exe() throws ExCustomersIdNotFound {
 
+    	/*
+    	 * 1. Input Customer ID -> Check and get existing Instance
+    	 * 2. Call admin.checkCustomerOrder to print
+    	 */
+    	
         System.out.print("\nPlease input the CustomerId to check order: ");
         String customerId = Main.in.next("\nPlease input the CustomerId to check order: ");
         try {

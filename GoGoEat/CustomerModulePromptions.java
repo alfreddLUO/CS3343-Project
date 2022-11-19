@@ -10,25 +10,36 @@ class CustomerModulePromptions implements AbstractModulePromptions {
 
     // customer module
     public void promptOptionStart() {
-        // check if customer is sit-down
+
         System.out.print("\n--------------------------------------------------");
 
+        // Check if customer is sit-down
+        
+        // Not Sit down
         if (customer.getOccupiedTableId().isEmpty()) {
-            if (customer.checkisReserved()) {
-                // reserved -> cannot reserve again
+        	
+        	// Check if customer has reserved
+        	if (customer.checkisReserved()) {
+
+        		// reserved -> print reservation info
                 System.out.println(customer.getReserveReminder());
                 promptOptionReserved();
 
             } else {
-                // Get Customer's choice to dine or reserve
+            	// Not reserved -> Get Customer's choice to dine or reserve
                 promptOptionNotReserved();
             }
         } else {
+        	// Already Sit down
+        	
+        	// Reserved
             if (customer.checkisReserved()) {
-                System.out.println(customer.getReserveReminder());
+               
+            	System.out.println(customer.getReserveReminder());
                 promptOptionReservedStillSitting();
+                
             } else {
-                // customer dining & haven't get up from seat
+            	// Not reserved (customer dining & haven't get up from seat)
                 promptOptionNotReservedStillSitting();
             }
 

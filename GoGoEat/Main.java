@@ -8,10 +8,6 @@ class Main {
     private static final Database database = Database.getInstance();
     private static final AccountManagement accManager = AccountManagement.getInstance();
 
-    /*
-     * Main Function
-     */
-
     public static void main(String[] args) throws ExTableIdAlreadyInUse, ExTableNotExist, ExTimeSlotAlreadyBeReserved,
             ExTimeSlotNotReservedYet, ExUnableToSetOpenCloseTime, ExCustomersIdNotFound {
         Initialization initialization = Initialization.getInstance();
@@ -39,6 +35,7 @@ class Main {
         String input = null;
 
         do {
+        	// Print all active accounts
             accManager.printAllActiveAccounts();
 
             try {
@@ -47,6 +44,7 @@ class Main {
                 System.out.print("\nPlease select your operation: ");
                 input = Main.in.next("\nPlease select your operation: ");
                 select = Integer.parseInt(input);
+                
                 if (select == 1) {
                     login();
                 } else if (select == 2) {
@@ -66,7 +64,7 @@ class Main {
 
     }
 
-    // Login, And return UserId
+    // Login, get userId then return boolean  
     public static boolean login() throws ExTableNotExist, ExTimeSlotAlreadyBeReserved, ExTimeSlotNotReservedYet,
             ExUnableToSetOpenCloseTime, ExTableIdAlreadyInUse, ExCustomersIdNotFound {
 
@@ -80,12 +78,14 @@ class Main {
         input = Main.in.next("Please input the password: ");
         password = input;
 
-        // return ID
+        // Get ID
         String ID = accManager.login(username, password);
 
         if (ID != null) {
-            // Identify which userType belong to the login account, then run Module
+            
+        	// Identify which userType belong to the login account, then run Module
             UserModule module = accManager.distinguishMerchantandCustomer(ID);
+            
             if (module != null) {
                 module.run(ID);
                 return true;

@@ -109,6 +109,7 @@ public class Database {
         throw new ExCustomersIdNotFound(cid);
     }
 
+    // Work with getCustomerCid
     public <T, E> T getKeyByValue(HashMap<T, E> map, E value) {
         for (Entry<T, E> entry : map.entrySet()) {
             if (Objects.equals(value, entry.getValue())) {

@@ -5,11 +5,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class TimeSlots {
-    private ArrayList<TimeSlot> timeSlots;
-    private static LocalTime openTime = LocalTime.of(0, 0);// opening time of the table
+    
+	private ArrayList<TimeSlot> timeSlots;
+	private LocalDate date;
+	
+	private static LocalTime openTime = LocalTime.of(0, 0);// opening time of the table
     private static LocalTime closeTime = LocalTime.of(23, 59);// closing time of the table
-    private LocalDate date;
-
+    
     public TimeSlots(String dateString) {
         timeSlots = new ArrayList<>();
         this.date = LocalDate.parse(dateString);
@@ -31,7 +33,9 @@ public class TimeSlots {
         return success;
     }
 
-    public Boolean addSlot(TimeSlot ts) { // format example: 12:00 非整点时间
+    public Boolean addSlot(TimeSlot ts) { 
+    	// format example: xx:xx
+    	
         if (ts.getStart().plusMinutes(30).compareTo(ts.getEnd()) > 0) {
             return false;
         }
@@ -54,7 +58,9 @@ public class TimeSlots {
         for (TimeSlot ts : timeSlots) {
             timeSlotsCopy.add(ts.makeDummyCopy());
         }
+        
         timeSlotsCopy.add(slot);
+        
         Collections.sort(timeSlotsCopy, (a, b) -> a.getStart().compareTo(b.getStart()));
         for (int i = 1; i < timeSlotsCopy.size(); i++) {
             if (timeSlotsCopy.get(i - 1).getEnd().compareTo(timeSlotsCopy.get(i).getStart()) > 0) {
@@ -68,6 +74,7 @@ public class TimeSlots {
         return date;
     }
 
+    // Check if the timeslot is reserved -> return CustomerID
     public String checkReserver(LocalTime time) {
         for (TimeSlot ts : timeSlots) {
             if (time.compareTo(ts.getStart()) > 0 && time.compareTo(ts.getEnd()) < 0) {
@@ -77,6 +84,7 @@ public class TimeSlots {
         return null;
     }
 
+    // Return available slots
     public String getAvailableSlots() {
         ArrayList<LocalTime> temp = new ArrayList<>();
         ArrayList<TimeSlot> available = new ArrayList<>();
@@ -109,6 +117,7 @@ public class TimeSlots {
         return respond.toString();
     }
 
+    // Remove Timeslot
     public Boolean remove(TimeSlot ts) {
 
         for (int i = 0; i < timeSlots.size(); i++) {
@@ -132,9 +141,6 @@ public class TimeSlots {
         return false;
     }
 
-    // 0 = reached reservation time slot
-    // 1 = 30 minutes before reservation time slot
-    // 2 =
     public int checkReservedStatus(LocalTime now) {
         for (TimeSlot ts : timeSlots) {
             if (now.compareTo(ts.getStart().minusMinutes(30)) >= 0 && now.compareTo(ts.getEnd()) <= 0) {
@@ -159,6 +165,7 @@ public class TimeSlots {
         return false;
     }
 
+    // Get Reservation time period in Day
     public LocalTime[] getReservationStartEndInDay() {
         LocalTime start = openTime;
         LocalTime end = closeTime;

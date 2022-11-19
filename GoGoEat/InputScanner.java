@@ -29,6 +29,7 @@ class InputScanner {
         return instance;
     }
 
+    // next
     public String next(String previousPrintedMsg) {
         String in = scannerInput.next();
         // scannerInput.nextLine();
@@ -52,6 +53,7 @@ class InputScanner {
         return in;
     }
 
+    // nextLine
     public String nextLine(String previousPrintedMsg) {
         scannerInput.nextLine();
         String in = scannerInput.nextLine();

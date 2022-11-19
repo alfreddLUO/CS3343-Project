@@ -1,10 +1,10 @@
 package GoGoEat;
 
 public class AdminModulePromptions implements AbstractModulePromptions {
-    private static AdminModulePromptions instance = null;
 
     public AdminModulePromptions(){};
-     //admin module
+     
+    // All prompts for admin module
      public void promptOptionStart() {
         System.out.print("\n--------------------------------------------------");
         System.out.println("\nCommands: ");

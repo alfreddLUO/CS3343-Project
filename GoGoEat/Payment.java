@@ -5,34 +5,43 @@ import java.util.ArrayList;
 public class Payment {
 
     private Customers customer;
-    private static final Database database = Database.getInstance();
-    private AccountManagement accountManager = AccountManagement.getInstance();
-    private TablesManagement tm = TablesManagement.getInstance();
     private PaymentMethod paymentMethod;
-    private boolean paymentStatus = false;
-    private boolean isNoOrder = false;
+    private Commands command;
     private Restaurants restaurantChosed = null;
     private PaymentModulePromptions promptions = new PaymentModulePromptions();
+    
+    private boolean paymentStatus = false;
+    private boolean isNoOrder = false;
+    
     private double originalPrice = 0;
     private double discountPrice = 0;
-    private Commands command;
-
+    
     public Payment(Customers customer, Restaurants restaurant) {
         this.customer = customer;
         this.restaurantChosed = restaurant;
     }
 
-    // Get the amount to pay from restaurant countPrice with different VIP state
+    // UPDATE: Modified on 16 Nov added parameter + originalPrice modified
     public double getPrice(ArrayList<Dish> orders) {
 
-        // TODO: Modified on 16 Nov 23:11 added parameter + originalPrice modified
+    	/*
+    	 * 1. Calculate Original Sum 
+    	 * 2. Update Customers' bill amount -> updateState
+    	 * 3. Use updated state to calculate discount price
+    	 * 4. Update customers' bill amount
+    	 */
+    	
+    	// Calculate original price of the orders
         originalPrice = customer.getRestaurantChosed().countPrice(orders);
 
         customer.setBillAmount(originalPrice);
         customer.updateState();
+        
         if (originalPrice > 0) {
             customer.updateStateOutput();
         }
+        
+        // Updated discountprice from different VIP state 
         discountPrice = customer.getState().priceCount(originalPrice);
         customer.setBillAmount(discountPrice);
 
@@ -43,18 +52,22 @@ public class Payment {
     public void payProcess(ArrayList<Dish> orders)
             throws ExUnableToSetOpenCloseTime, ExTableIdAlreadyInUse, ExTableNotExist,
             ExTimeSlotNotReservedYet, ExCustomersIdNotFound, ExTimeSlotAlreadyBeReserved {
-        paymentMethod = null;
+        
+    	paymentMethod = null;
         getPrice(orders);
 
         if (discountPrice > 0) {
             int choice = -1;
+            
+            // Print Bill no
             System.out.printf("\nYour bill number is: %s\n", customer.printBillNo());
+            
             do {
-
                 promptions.promptOptionStart();
 
                 System.out.print("\nPlease select your Payment Method: ");
 
+                // Choose Payment method
                 String input;
                 try {
                     input = Main.in.next("\nPlease select your Payment Method: ");
@@ -63,6 +76,7 @@ public class Payment {
                     System.out.println("Error! Wrong input for selection! Please input an integer!");
                 }
 
+                // 1. Alipay 2. Wechat Pay 3. Cash
                 if (choice != -1) {
                     if (choice == 1) {
                         Commands cmd1 = new CommandPaymentAlipay(this, discountPrice);
@@ -70,7 +84,7 @@ public class Payment {
                         this.callCommand();
                         break;
                     } else if (choice == 2) {
-                        Commands cmd2 = new CommandPaymentAlipay(this, discountPrice);
+                        Commands cmd2 = new CommandPaymentWeChatPay(this, discountPrice);
                         this.setCommand(cmd2);
                         this.callCommand();
                         break;
@@ -86,19 +100,17 @@ public class Payment {
 
             } while (choice != 1 && choice != 2 && choice != 3 || this.paymentStatus == false && !this.isNoOrder
                     || paymentMethod == null);
+        
         } else {
-            // TODO: Modified on 16 Nov 23:11
-            String outputString = "\nThere is no order made. Thank you.";
+            // UPDATE: Modified on 16 Nov
+            String outputString = "\nThere is no order made. Thank you.\nYou have successfully check out.\n";
             isNoOrder = true;
 
             // CHECKOUT
-            // TODO: There is no order made. Thank you. \nYou have successfully check out.
             CommandCustomerCheckOut cmdCheckout = new CommandCustomerCheckOut(customer, outputString);
             customer.setCommand(cmdCheckout);
             customer.callCommand();
-
         }
-
     }
 
     public void setPaymentStatus(boolean status) {

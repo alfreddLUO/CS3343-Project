@@ -1,5 +1,6 @@
 package GoGoEat;
 
+// WHAT IS THIS FOR?
 public class MerchantTypeError implements Commands {
     private static final Database database = Database.getInstance();
     

@@ -69,6 +69,7 @@ public class Reservation {
         return s;
     }
 
+    // Compute Reservation timeslot & TableId String
     public void computeReserveString() {
         String str = "";
         StringBuilder ids = new StringBuilder();
@@ -83,11 +84,13 @@ public class Reservation {
         this.reserveInfo = str;
     }
 
+    // Return only reserved timeslot
     public String getReserveString() {
         computeReserveString();
         return this.reserveInfo;
     }
 
+    // Cancel reservation
     public void cancel() {
         try {
             for (Integer id : tableIDs) {

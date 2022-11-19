@@ -9,6 +9,9 @@ public class CommandAdminRemoveTable implements Commands {
 
     @Override
     public void exe() throws ExTableIdAlreadyInUse, ExTableNotExist {
+
+    	// Delete table with TableId
+    	
         System.out.print("\nPlease input the TableId to delete table: ");
         String input;
         int tableId;

@@ -18,6 +18,18 @@ public class AdminModule implements UserModule {
     public void run(String Id) throws ExUnableToSetOpenCloseTime, ExTableNotExist, ExTableIdAlreadyInUse,
             ExTimeSlotNotReservedYet, ExCustomersIdNotFound, ExTimeSlotAlreadyBeReserved {
 
+        /*
+         * Admin's routine
+         * 1. Set food court's opening and closing time
+         * 2. Check customer's orders
+         * 3. Check customer's reservation status
+         * 4. Add restaurant into allRestaurant list
+         * 5. Remove restaurant from allRestaurant list
+         * 6. Add Table
+         * 7. Remove Table
+         * 8. Log out
+         */
+    	
         int select = 0;
         String input = "";
 
@@ -25,13 +37,14 @@ public class AdminModule implements UserModule {
 
             promptions.promptOptionStart();
 
-            System.out.print("\nPlease select your operations: ");
             try {
+            	System.out.print("\nPlease select your operations: ");
                 input = Main.in.next("\nPlease select your operations: ");
                 select = Integer.parseInt(input);
             } catch (NumberFormatException e) {
                 System.out.println("Error! Wrong input for selection! Please input an integer!");
             }
+            
             do {
                 switch (select) {
                     case 1:
@@ -77,21 +90,4 @@ public class AdminModule implements UserModule {
 
         }
     }
-
-    /*
-     * Admin's routine
-     * 1. Set food court's opening and closing time
-     * 2. Check customer's orders
-     * 3. Check customer's reservation status
-     *
-     * 4,5,6 Deleted
-     * 4. Upgrade customer from VIP state to SuperVIP state
-     * 5. Downgrade customer from SuperVIP to VIP state
-     * 6. Set customer's discount value
-     *
-     * 7. Add restaurant into allRestaurant list
-     * 8. Remove restaurant from allRestaurant list
-     * 9. Add Table
-     * 10. Remove Table
-     */
 }

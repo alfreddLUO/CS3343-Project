@@ -1,6 +1,7 @@
 package GoGoEat;
 
 public class CommandCustomerCheckOut implements Commands {
+	
     private static final TablesManagement tm = TablesManagement.getInstance();
     private Customers customer;
     private String outputString;
@@ -13,10 +14,12 @@ public class CommandCustomerCheckOut implements Commands {
     @Override
     public void exe()
             throws ExUnableToSetOpenCloseTime, ExTableIdAlreadyInUse, ExTableNotExist, ExTimeSlotNotReservedYet {
-        tm.checkOutByCustomer(customer.getOccupiedTableId());
+    
+    	// Checkout by customer themselves
+    	tm.checkOutByCustomer(customer.getOccupiedTableId());
         customer.clearOccupiedTableId();
 
-        // TODO: Modified 16 Nov 23:18
+        // UPDATE: Modified 16 Nov
         System.out.printf("\n%s\n", outputString);
     }
 }

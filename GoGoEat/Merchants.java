@@ -36,10 +36,17 @@ public class Merchants implements UserType {
         return staffUserId;
     }
 
-    // 增加或刪除菜品
+    public Restaurants getRestaurantOwned() {
+        return this.restaurantOwned;
+    }
+   
+    public void getMenu() {
+    	// Print all dish from restaurant's menu
+        restaurantOwned.printMenu();
+    }
+    
+    // Add / Delete / Edit dish 
     public void modifyMenu() {
-
-        int select = 0;
 
         /*
          * 1 Add Dish to Menu
@@ -48,6 +55,7 @@ public class Merchants implements UserType {
          * 4 Cancel Operation (Do nothing)
          */
 
+    	int select = 0;    	
         while (select != 1 && select != 2 && select != 3) {
 
             promptions.promptModifyMenu();
@@ -94,10 +102,12 @@ public class Merchants implements UserType {
         if (dishToEdit == null) {
             System.out.println("Wrong Dish Name! Please try again.");
         } else {
-            System.out.println("\nCommands: ");
-            System.out.println("[1] Edit Dish Name");
-            System.out.println("[2] Edit Dish Price");
-            System.out.println("[3] Cancel");
+        	/*
+        	 *  1. Edit Name
+        	 *  2. Edit Price
+        	 */
+        	
+            promptions.promptEditDish();
 
             System.out.print("\nPlease select your operations: ");
             try {
@@ -115,13 +125,12 @@ public class Merchants implements UserType {
                     editDishPrice(dishToEdit);
                     break;
             }
-
         }
-
     }
 
-    // add dish to menu
     public void addDish() {
+    	// Add dish to menu
+    	
         String dishName;
         double dishPrice = -1;
         String input = "";
@@ -139,19 +148,18 @@ public class Merchants implements UserType {
         addtoMenu(dishName, dishPrice);
     }
 
-    // delete dish from menu
-    // MODIFIED 19 Nov
-    // TODO: Delete according to index not name
+    // UPDATE: MODIFIED 19 Nov
     public void removeDish() {
+        // Delete dish from menu
         String dishName;
-        System.out.print("\nPlease input the name of the dish to remove: ");
-        //dishName = Main.in.nextLine("\nPlease input the name of the dish to remove: ");
- 
-        // TODO: added
-        dishName = Main.in.nextLine("\nPlease input the name of the dish to remove: "); // input multiple dishes
+        System.out.print("\nPlease input the numbering of the dish to remove: ");
+
+        // input multiple dishes
+        dishName = Main.in.nextLine("\nPlease input the numbering of the dish to remove: "); 
         String[] tokens = dishName.split(",");
         ArrayList<Integer> idx = new ArrayList<>();
 
+        // String to integer (index)
         for (int i = 0; i < tokens.length; i++) {
             idx.add(Integer.parseInt(tokens[i]));
         }
@@ -194,48 +202,42 @@ public class Merchants implements UserType {
         System.out.println("Edit Dish Price success.");
     }
 
-    // Extract menu from restaurant by using dishName
     public Dish findDish(String dishName) {
+    	// Extract menu from restaurant by using dishName
         return restaurantOwned.getDishbyName(dishName);
     }
 
-    // Print all dish from restaurant's menu
-    public void getMenu() {
-        restaurantOwned.printMenu();
-    }
-
-    // Payment by merchant
     public void checkOutbyMerchant(Customers customer) {
-
+    	// Payment by merchant
         checkOrder(customer, this.restaurantOwned);
         System.out.println("\nYou have completed payment with cash. Thank you!");
-
     }
 
-    // Before Payment, check order by merchant
-    // TODO: modified 18 Nov 00:21
+    // UPDATE: modified 18 Nov 00:21
     public void checkOrder(Customers customer, Restaurants restaurant) {
-
+        // Before Payment, check order by merchant
+    	
         System.out.println("\nCustomer Name: " + customer.getUsername());
         System.out.println("Customer ID: " + customer.getID());
+        
+        // Check if there is bill for this restaurant
         if (!customer.getBillNumberToRestaurant(restaurantOwned).isEmpty()) {
             String number = customer.getBillNumberToRestaurant(restaurantOwned).keySet().toString();
             System.out.println("Bill no. is/are: " + number);
-        }
-
-        ArrayList<Dish> customerOrder = customer.customerOrdersAccordingToRestaurant(restaurant);
-        if (customerOrder != null) {
-            System.out.println("\nOrdered Dishes: ");
-            for (int i = 0; i < customerOrder.size(); i++) {
-                System.out.println("[" + (i + 1) + "] " + customerOrder.get(i).toString());
+            
+            // Getting customers' orders
+            ArrayList<Dish> customerOrder = customer.customerOrdersAccordingToRestaurant(restaurant);
+            
+            // Orders made
+            if (customerOrder != null) {
+                System.out.println("\nOrdered Dishes: ");
+                for (int i = 0; i < customerOrder.size(); i++) {
+                    System.out.println("[" + (i + 1) + "] " + customerOrder.get(i).toString());
+                }
+            } else {
+            	// No orders made
+                System.out.println("This customer has no orders.");
             }
-        } else {
-            System.out.println("This customer has no orders.");
         }
     }
-
-    public Restaurants getRestaurantOwned() {
-        return this.restaurantOwned;
-    }
-
 }

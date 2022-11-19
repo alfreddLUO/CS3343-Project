@@ -100,9 +100,7 @@ public class Initialization {
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
-        // Testing
-        // tm.arrangeTableAccordingToNumOfPeople(11);
-
+        
         for (int i = 1; i <= 10; i++) {
             tm.appendToAllTableIds(i);
         }

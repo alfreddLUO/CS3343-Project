@@ -44,7 +44,7 @@ public class Customers implements UserType, TimeObserver {
         this.billNumberToRestaurant = new HashMap<>();
     }
 
-    // TODO: added 18 Nov 00:10
+    // UPDATE: added 18 Nov 00:10
     public void updateBillNumberToRestaurant(String billString, Restaurants restaurant) {
         this.billNumberToRestaurant.put(billString, restaurant);
     }
@@ -103,7 +103,7 @@ public class Customers implements UserType, TimeObserver {
         this.pendingOrder.remove(dish);
     }
 
-    // TODO: Modified on 16 Nov 23:11
+    // UPDATE: Modified on 16 Nov 23:11
     public void updatePendingOrder(ArrayList<Dish> dishOrder) {
         this.pendingOrder = dishOrder;
     }
@@ -184,7 +184,7 @@ public class Customers implements UserType, TimeObserver {
         return null;
     }
 
-    // TODO: Updated 18 Nov 00:01
+    // UPDATE: Modified 18 Nov 00:01
     public String getReserveInfo() {
 
         if (reserve.getReserveString() != null) {
@@ -197,7 +197,7 @@ public class Customers implements UserType, TimeObserver {
         return null;
     }
 
-    // TODO: Modified on 16 Nov 12:11
+    // UPDATE: Modified on 16 Nov 12:11
     public String getReserveSuccessInfo() {
         if (reserve.getReserveString() != null) {
             String str = "\nReserve Success.";
@@ -245,7 +245,7 @@ public class Customers implements UserType, TimeObserver {
         this.billno = genBillNo.getNextId();
     }
 
-    // TODO: added 18 Nov 00:10
+    // UPDATE: added 18 Nov 00:10
     public String getBillno() {
         return billno;
     }
@@ -263,9 +263,10 @@ public class Customers implements UserType, TimeObserver {
         return billAmount;
     }
 
-    // update state according to amount
-    // TODO: Modified 16 Nov 23:28
+    // UPDATE: Modified 16 Nov 23:28
     public void updateState() {
+        // update state according to amount
+
         if (this.billAmount >= 88) {
             setState(new CustomerSuperVIPstate());
         } else {
@@ -301,7 +302,6 @@ public class Customers implements UserType, TimeObserver {
             }
 
         }
-
     }
 
     // get ArrayList of customer's official-confirmed orders
@@ -336,12 +336,12 @@ public class Customers implements UserType, TimeObserver {
         }
     }
 
-    // TODO: Modified on 16 Nov 12:11
+    // UPDATE: Modified on 16 Nov 12:11
     public void printOrderofCurrentRound() {
         outputPendingDish("\nYour orders are: ");
     }
 
-    // TODO: Modified on 16 Nov 12:11
+    // UPDATE: Modified on 16 Nov 12:11
     public ArrayList<Dish> getOrderOfCurrentRound() {
         return pendingOrder;
     }

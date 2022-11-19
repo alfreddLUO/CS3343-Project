@@ -3,6 +3,7 @@ package GoGoEat;
 import java.util.ArrayList;
 
 public class Restaurants {
+	
     private String name;
     private ArrayList<Dish> menu = new ArrayList<>();
 
@@ -16,12 +17,13 @@ public class Restaurants {
         return this.name;
     }
 
-    // function
+    // Add dish instance to menu
     public boolean adddishtoMenu(Dish dish) {
         this.menu.add(dish);
         return true;
     }
 
+    // Delete dish instance from menu
     public boolean deletedishfromMenu(Dish dish) {
         if (this.menu.contains(dish)) {
             this.menu.remove(dish);
@@ -31,19 +33,11 @@ public class Restaurants {
         }
     }
 
+    // Return Menu arraylist
     public ArrayList<Dish> getMenu() {
         return this.menu;
     }
-
-    // count the price that a customer should pay
-    public double countPrice(ArrayList<Dish> orders) {
-        double sum = 0;
-        for (Dish order : orders) {
-            sum += order.getdishPrice();
-        }
-        return sum;
-    }
-
+    
     // Print all dish from restaurant's menu
     public void printMenu() {
         System.out.println("\nMenu: ");
@@ -52,6 +46,16 @@ public class Restaurants {
         }
     }
 
+    // Count the ORIGINAL price that a customer should pay
+    public double countPrice(ArrayList<Dish> orders) {
+        double sum = 0;
+        for (Dish order : orders) {
+            sum += order.getdishPrice();
+        }
+        return sum;
+    }
+
+    // Find dish instance by Name
     public Dish getDishbyName(String dName) {
         for (Dish d : menu) {
             if (d.getdishname().equals(dName)) {

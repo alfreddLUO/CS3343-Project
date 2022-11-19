@@ -29,12 +29,6 @@ public class TimeSlot {
         }
     }
 
-    // public TimeSlot(String indexString, int customerID) { // format example: 5 -> indicates 4:00-5:00
-    //     int index = Integer.parseInt(indexString);
-    //     this.start = LocalTime.of(index - 1, 0);
-    //     this.end = LocalTime.of(index - 1, 59);
-    // }
-
     public LocalTime getStart() {
         return start;
     }

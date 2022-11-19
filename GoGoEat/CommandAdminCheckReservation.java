@@ -10,12 +10,16 @@ public class CommandAdminCheckReservation implements Commands {
 
     @Override
     public void exe() throws ExCustomersIdNotFound {
-        System.out.print("\nPlease input the CustomerId to check reservation info: ");
-
+    	
+    	/*
+    	 * 1. Input Customer ID -> Check and get existing customer instance
+    	 * 2. Get Customers' reservation info 
+    	 */
+    	
         try {
+        	System.out.print("\nPlease input the CustomerId to check reservation info: ");
             String customerId = Main.in.next("\nPlease input the CustomerId to check reservation info: ");
-            // Customers customer = database.matchCId(customerId);
-            // result = customer.getReserveInfo();
+
             admin.checkReserveInfo(customerId);
 
         } catch (ExNoReservationFound e) {

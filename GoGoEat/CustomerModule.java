@@ -3,6 +3,29 @@ package GoGoEat;
 import java.util.ArrayList;
 
 public class CustomerModule implements UserModule {
+    /*
+     * RunDown：
+     * 1. Choose Dine-in / reserve after login
+     * 1.1 Dine-in -> Check if seat available
+     * 1.2 Reserve -> Check available time slot
+     *
+     * 2. Order
+     * 2.1 Show restaurant list
+     * 2.2 Choose restaurant
+     * 2.3 Show menu of the restaurant choosed
+     * 2.4 Choose dish from menu (Can select multiple dishes)
+     *
+     * 2.5 Confirm Order
+     * 2.5.1 Cancel -> Add Dish
+     * 2.5.2 Cancel -> Delete Dish
+     * 2.5.3 Confirm (Add pendingOrder into orders array in Customers)
+     *
+     * 2.6 Payment (in customers.checkout())
+     * 2.6.1 Show order
+     * 2.6.2 Calculate total price (According to discount of VIP/SuperVIP)
+     * 2.6.3 Choose payment method
+     * 2.6.4 Goto payment platform to finish payment
+     */
 
     private CustomerModule() {
     }
@@ -21,8 +44,11 @@ public class CustomerModule implements UserModule {
 
     @Override
     public void run(String Id) {
+    	
         try {
+        	// Customer run customerModule
             customer = Database.getInstance().matchCId(Id);
+            
             CustomerModulePromptions promptions = new CustomerModulePromptions(customer);
             String input = "";
             int select = 0;
@@ -59,7 +85,7 @@ public class CustomerModule implements UserModule {
                         customer.callCommand();
                         break;
                     case 4:
-                        // TODO: Modified 16 Nov 23:18
+                        // Update: Modified 16 Nov 23:18
                         String outputString = "You have successfully check out.";
                         Commands cmd4 = new CommandCustomerCheckOut(customer, outputString);
                         customer.setCommand(cmd4);
@@ -76,7 +102,7 @@ public class CustomerModule implements UserModule {
 
     }
 
-    // CustomerState為累積消費總額時用：
+    // Use when CustomerState is Calculating total overall paid price
     public static void clearOrderNPrice() {
         pendingOrder.clear();
         if (customer.customerOrdersAccordingToRestaurant(restaurant) != null) {
@@ -85,31 +111,8 @@ public class CustomerModule implements UserModule {
         clearState();
     }
 
+    // Clear State -> Change state to VIP as default
     public static void clearState() {
         customer.setState(new CustomerVIPstate());
     }
-
-    /*
-     * RunDown：
-     * 1. Choose Dine-in / reserve after login
-     * 1.1 Dine-in -> Check if seat available
-     * 1.2 Reserve -> Check available time slot
-     *
-     * 2. Order
-     * 2.1 Show restaurant list
-     * 2.2 Choose restaurant
-     * 2.3 Show menu of the restaurant choosed
-     * 2.4 Choose dish from menu (Can select multiple dishes)
-     *
-     * 2.5 Confirm Order
-     * 2.5.1 Cancel -> Add Dish
-     * 2.5.2 Cancel -> Delete Dish
-     * 2.5.3 Confirm (Add pendingOrder into orders array in Customers)
-     *
-     * 2.6 Payment (in customers.checkout())
-     * 2.6.1 Show order
-     * 2.6.2 Calculate total price (According to discount of VIP/SuperVIP)
-     * 2.6.3 Choose payment method
-     * 2.6.4 Goto payment platform to finish payment
-     */
 }

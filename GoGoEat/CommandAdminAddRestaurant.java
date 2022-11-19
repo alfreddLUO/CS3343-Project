@@ -1,9 +1,12 @@
 package GoGoEat;
 
 public class CommandAdminAddRestaurant implements Commands{
+	
     private static final Database database = Database.getInstance();
     private static final Admin admin = Admin.getInstance();
+    
     CommandAdminAddRestaurant(){}
+    
     @Override
     public void exe() {
         Restaurants temp = addNewRestaurant();

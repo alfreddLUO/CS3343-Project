@@ -9,8 +9,5 @@ class PaymentModulePromptions implements AbstractModulePromptions{
         System.out.println("[2] WeChat Pay");
         System.out.println("[3] Cash");
     }
-        
-
-        
     
 }

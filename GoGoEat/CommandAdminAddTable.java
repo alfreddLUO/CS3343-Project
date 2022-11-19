@@ -4,8 +4,15 @@ public class CommandAdminAddTable implements Commands{
     
     private static final Admin admin = Admin.getInstance();
     CommandAdminAddTable(){}
+    
     @Override
     public void exe() throws ExTableIdAlreadyInUse {
+    	
+    	/*
+    	 * 1. Input table ID -> check if exists
+    	 * 2. Input table capacity
+    	 */
+    	
         System.out.print("\nPlease input the new tableId: ");
         String input;
         int tableId;

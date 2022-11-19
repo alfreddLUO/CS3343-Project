@@ -365,8 +365,6 @@ public class TablesManagement implements TimeObserver {
     }
 
     public void showReservationTable() {
-        // TODO
-        // debug();
         StringBuilder showReservationTableMsg = new StringBuilder(
                 "\nTable(s) for tomorrow reservation and available time slots: \n");
         ArrayList<Table> all = returnAllTablesList();

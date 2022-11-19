@@ -29,6 +29,7 @@ public class ManualClock {
         return instance;
     }
 
+    // Return time in format yyyy-MM-dd HH:mm
     public String getDateTimeString() {
         return getDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
     }
@@ -45,6 +46,7 @@ public class ManualClock {
         return getDateTime().toLocalDate();
     }
 
+    // Scanner newDay
     public void newDay() {
         System.out.println("Starting new day!");
         currDateTime = currDateTime.plusDays(1);
@@ -55,6 +57,7 @@ public class ManualClock {
         System.out.println("Now is " + getDate().toString());
     }
 
+    // Scanner changeTime
     public void changeTime(String newTime) {
         if (LocalTime.parse(newTime).compareTo(currDateTime.toLocalTime()) < 0) {
             System.out.println("Cannot jump back to past! This is not how time travel works!");
