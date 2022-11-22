@@ -22,7 +22,7 @@ GoGo Eat is a restaurant management system targeting customers, merchants, and a
         * Remove Tables
 
 ## Run program (java executable)
-Execute the following command in terminal: ` java -jar program.jar `
+Execute the following command in terminal: ` java -jar GoGoEat-exe.jar `
 
 ## Run program (source code)
 * Package of library required:
