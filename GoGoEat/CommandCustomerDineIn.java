@@ -95,7 +95,7 @@ public class CommandCustomerDineIn extends CommandCustomer {
                     str = Main.in.next("\nPlease choose your operation: ");
                     select = Integer.parseInt(str);
                 } catch (NumberFormatException e) {
-                    System.out.println("Error! Wrong input for selection! Please input an integer!");
+                    System.out.println("Error! Wrong input for selection! Please input an integer!\n");
                 }
 
                 if (select == 1) {

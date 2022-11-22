@@ -42,25 +42,26 @@ public class MerchantModule implements UserModule {
             try {
                 input = Main.in.next("\nPlease select your operations: ");
                 select = Integer.parseInt(input);
+
+                switch (select) {
+                    case 1:
+                        Commands cmd1 = new CommandMerchantModifyMenu(merchant);
+                        merchant.setCommand(cmd1);
+                        merchant.callCommand();
+                        select = 0;
+                        break;
+                    case 2:
+                        Commands cmd2 = new CommandMerchantCheckOrder(merchant);
+                        merchant.setCommand(cmd2);
+                        merchant.callCommand();
+                        select = 0;
+                        break;
+                    case 3:
+                        break;
+                }
             } catch (NumberFormatException e) {
                 System.out.println("Error! Wrong input for selection! Please input an integer!");
             }
-
-            switch (select) {
-                case 1:
-                    Commands cmd1 = new CommandMerchantModifyMenu(merchant);
-                    merchant.setCommand(cmd1);
-                    merchant.callCommand();
-                    break;
-                case 2:
-                    Commands cmd2 = new CommandMerchantCheckOrder(merchant);
-                    merchant.setCommand(cmd2);
-                    merchant.callCommand();
-                    break;
-                case 3:
-                    break;
-            }
         }
-
     }
 }
