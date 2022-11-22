@@ -34,15 +34,17 @@ public class AdminModule implements UserModule {
         String input = "";
 
         while (select != 8) {
-
+            select = 0;
             prompt.promptOptionStart();
 
-            try {
-                System.out.print("\nPlease select your operations: ");
-                input = Main.in.next("\nPlease select your operations: ");
-                select = Integer.parseInt(input);
-            } catch (NumberFormatException e) {
-                System.out.println("Error! Wrong input for selection! Please input an integer!");
+            while (select == 0) {
+                try {
+                    System.out.print("\nPlease select your operations: ");
+                    input = Main.in.next("\nPlease select your operations: ");
+                    select = Integer.parseInt(input);
+                } catch (NumberFormatException e) {
+                    System.out.println("Error! Wrong input for selection! Please input an integer!");
+                }
             }
 
             do {

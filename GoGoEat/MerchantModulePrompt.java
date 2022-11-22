@@ -1,6 +1,6 @@
 package GoGoEat;
 
-class MerchantModulePrompt implements AbstractModulePrompt {
+class MerchantModulePrompt {
     // constructor
     public MerchantModulePrompt() {
     };

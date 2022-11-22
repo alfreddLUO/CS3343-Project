@@ -1,11 +1,9 @@
 package GoGoEat;
 
-public class CommandMerchantModifyMenu implements Commands {
+public class CommandMerchantModifyMenu extends CommandMerchant {
 
-    private Merchants merchant = null;
-
-    public CommandMerchantModifyMenu(Merchants merchant2) {
-        this.merchant = merchant2;
+    public CommandMerchantModifyMenu(Merchants merchant) {
+        super(merchant);
     }
 
     @Override

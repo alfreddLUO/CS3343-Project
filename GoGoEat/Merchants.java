@@ -3,7 +3,7 @@ package GoGoEat;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class Merchants implements UserType {
+public class Merchants {
 
     private String username;
     private String staffUserId;
@@ -25,12 +25,12 @@ public class Merchants implements UserType {
         command.exe();
     }
 
-    @Override
+    // @Override
     public String getUsername() {
         return username;
     }
 
-    @Override
+    // @Override
     public String getUserId() {
         return staffUserId;
     }
@@ -58,8 +58,13 @@ public class Merchants implements UserType {
 
         System.out.print("Dish Price: ");
 
-        input = Main.in.next("Dish Price: ");
-        dishPrice = Double.parseDouble(input);
+        try {
+            input = Main.in.next("Dish Price: ");
+            dishPrice = Double.parseDouble(input);
+        } catch (NumberFormatException e) {
+            System.out.println("Please input a double.");
+            addDish();
+        }
 
         addtoMenu(dishName, dishPrice);
     }
@@ -76,19 +81,26 @@ public class Merchants implements UserType {
         ArrayList<Integer> idx = new ArrayList<>();
 
         // String to integer (index)
-        for (int i = 0; i < tokens.length; i++) {
-            idx.add(Integer.parseInt(tokens[i]));
-        }
+        try {
 
-        // Add input to dish list pending to order
-        ArrayList<Dish> menuModified = new ArrayList<>(restaurantOwned.getMenu());
+            for (int i = 0; i < tokens.length; i++) {
+                idx.add(Integer.parseInt(tokens[i]));
+            }
 
-        Collections.sort(idx, Collections.reverseOrder());
-        for (int i : idx) {
-            menuModified.remove(i - 1);
+            // Add input to dish list pending to order
+            ArrayList<Dish> menuModified = new ArrayList<>(restaurantOwned.getMenu());
+
+            Collections.sort(idx, Collections.reverseOrder());
+            for (int i : idx) {
+                menuModified.remove(i - 1);
+            }
+
+            restaurantOwned.updateMenu(menuModified);
+            System.out.println("Delete Dish success.");
+
+        } catch (NumberFormatException e) {
+            System.out.println("Please input integer list!");
         }
-        restaurantOwned.updateMenu(menuModified);
-        System.out.println("Delete Dish success.");
 
     }
 

@@ -1,29 +1,29 @@
 package GoGoEat;
 
-public class CommandAdminRemoveRestaurant implements Commands{
-    
-	private static final Database database = Database.getInstance();
-    private static final Admin admin = Admin.getInstance();
-    
-    CommandAdminRemoveRestaurant(){}
-    
+public class CommandAdminRemoveRestaurant extends CommandAdmin {
+
+    CommandAdminRemoveRestaurant() {
+        super();
+    }
+
     @Override
     public void exe() {
         Restaurants temp = removeRestaurant();
-        
-        // Check if restaurant instance exist 
+
+        // Check if restaurant instance exist
         if (temp == null) {
             System.out.println("No such restaurant. Please check again.");
         } else {
-        	// exist -> delete instance from Database
-            admin.deleteRestaurant(temp);
+            // exist -> delete instance from Database
+            deleteRestaurant(temp);
+
+            // Show updated list after deleting
+            database.showListOfRestaurants();
         }
-        
-        // Show updated list after deleting
-        database.showListOfRestaurants();       
     }
-    
-    public Restaurants removeRestaurant() {
+
+    private Restaurants removeRestaurant() {
+        database.outputRestaurant();
 
         String rName = "";
         Restaurants restaurant = null;
@@ -35,6 +35,11 @@ public class CommandAdminRemoveRestaurant implements Commands{
         restaurant = database.matchRestaurant(rName);
 
         return restaurant;
+    }
+
+    private void deleteRestaurant(Restaurants res) {
+        database.removeFromlistOfRestaurants(res);
+        System.out.println("Delete restaurant success.");
     }
 
 }

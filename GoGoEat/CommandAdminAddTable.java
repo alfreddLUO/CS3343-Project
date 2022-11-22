@@ -1,18 +1,19 @@
 package GoGoEat;
 
-public class CommandAdminAddTable implements Commands{
-    
-    private static final Admin admin = Admin.getInstance();
-    CommandAdminAddTable(){}
-    
+public class CommandAdminAddTable extends CommandAdmin {
+
+    CommandAdminAddTable() {
+        super();
+    }
+
     @Override
     public void exe() throws ExTableIdAlreadyInUse {
-    	
-    	/*
-    	 * 1. Input table ID -> check if exists
-    	 * 2. Input table capacity
-    	 */
-    	
+
+        /*
+         * 1. Input table ID -> check if exists
+         * 2. Input table capacity
+         */
+
         System.out.print("\nPlease input the new tableId: ");
         String input;
         int tableId;
@@ -22,12 +23,20 @@ public class CommandAdminAddTable implements Commands{
             System.out.print("\nPlease input the capacity of new table: ");
             input = Main.in.next("\nPlease input the capacity of new table: ");
             int tableCapacity = Integer.parseInt(input);
-            admin.forceAddTable(tableId, tableCapacity);
-            tableId = 0;     
+            forceAddTable(tableId, tableCapacity);
+            tableId = 0;
         } catch (NumberFormatException e) {
             System.out.println("Error! Wrong input for selection! Please input an integer!");
         }
     }
 
+    private void forceAddTable(int tableId, int tableCapacity) throws ExTableIdAlreadyInUse {
+        try {
+            TablesManagement tm = TablesManagement.getInstance();
+            tm.addNewTable(tableId, tableCapacity);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
 
 }

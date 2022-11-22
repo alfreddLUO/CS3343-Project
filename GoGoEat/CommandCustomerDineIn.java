@@ -3,17 +3,10 @@ package GoGoEat;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class CommandCustomerDineIn implements Commands {
-
-    private static final TablesManagement tm = TablesManagement.getInstance();
-    private static final Database database = Database.getInstance();
-
-    private static Customers customer;
-    private Restaurants restaurant = null;
-    private ArrayList<Dish> menu = new ArrayList<>();
+public class CommandCustomerDineIn extends CommandCustomer {
 
     public CommandCustomerDineIn(Customers commandingCustomer) {
-        customer = commandingCustomer;
+        super(commandingCustomer);
     }
 
     @Override
@@ -31,20 +24,22 @@ public class CommandCustomerDineIn implements Commands {
             customer.printOrderofCurrentRound();
 
             // About Payment
-            Payment pay = new Payment(customer, restaurant);
+            Payment pay = new Payment(customer);
             pay.payProcess(customer.getOrderOfCurrentRound());
         }
     }
 
-    public boolean dineInOperation() {
+    private boolean dineInOperation() {
         boolean success = false;
         String str;
 
         // if no reservation found OR has reservation but not time to dine (from
         // reserve) yet
-        if (!customer.checkisReserved() || (customer.checkisReserved() && !customer.isReserveTime())) {
+        if (!customer.checkisReserved()
+                || (customer.checkisReserved() && !customer.isReserveTime())) {
 
             // Show all available table with capacity
+            TablesManagement tm = TablesManagement.getInstance();
             tm.showAvailableTables();
 
             // Input number of people to dine in
@@ -82,7 +77,7 @@ public class CommandCustomerDineIn implements Commands {
 
     }
 
-    public boolean directWalkIn(ArrayList<Integer> result) {
+    private boolean directWalkIn(ArrayList<Integer> result) {
         // Prompt message : 1. dine-in 2. leave
         int select = 0;
         String str = "";
@@ -105,6 +100,7 @@ public class CommandCustomerDineIn implements Commands {
 
                 if (select == 1) {
                     // Walk in
+                    TablesManagement tm = TablesManagement.getInstance();
                     ArrayList<Integer> checkinTableId = tm.setWalkInStatus(result);
 
                     // TODO: Separate into two method
@@ -122,7 +118,7 @@ public class CommandCustomerDineIn implements Commands {
         return success;
     }
 
-    public boolean waitQueue(int numOfPeople, ArrayList<Integer> result) {
+    private boolean waitQueue(int numOfPeople, ArrayList<Integer> result) {
 
         /*
          * If no suitable table arrangement -> Algorithm to compute table assignment
@@ -131,6 +127,7 @@ public class CommandCustomerDineIn implements Commands {
          */
 
         // Compute Recommended Result
+        TablesManagement tm = TablesManagement.getInstance();
         ArrayList<Integer> recommendedResult = tm.recommendedArrangementAccordingToWaitingTime(numOfPeople);
 
         boolean success = false;
@@ -145,7 +142,7 @@ public class CommandCustomerDineIn implements Commands {
         return success;
     }
 
-    public void noRecommendedResultAndQueue(ArrayList<Integer> result) {
+    private void noRecommendedResultAndQueue(ArrayList<Integer> result) {
         // No Recommended Arrangement of Table -> 1. Queue / 2. Leave
         int select = 0;
         String str = "";
@@ -163,14 +160,15 @@ public class CommandCustomerDineIn implements Commands {
             }
 
             if (select == 1) {
-                tm.setWaitingTables(database.getCustomerCid(customer), result);
+                TablesManagement tm = TablesManagement.getInstance();
+                tm.setWaitingTables(super.database.getCustomerCid(customer), result);
             } else if (select == 2) {
                 break;
             }
         } while (select != 1 && select != 2);
     }
 
-    public boolean hasRecommendedResult(ArrayList<Integer> result) {
+    private boolean hasRecommendedResult(ArrayList<Integer> result) {
 
         // Has recommended Arrangement of Table -> 1. Queue / 2. Walkin / 3. Leave
 
@@ -190,8 +188,9 @@ public class CommandCustomerDineIn implements Commands {
                 System.out.println("Error! Wrong input for selection! Please input an integer!");
             }
 
+            TablesManagement tm = TablesManagement.getInstance();
             if (select == 1) {
-                tm.setWaitingTables(database.getCustomerCid(customer), result);
+                tm.setWaitingTables(super.database.getCustomerCid(customer), result);
             } else if (select == 2) {
 
                 // Set table from available to occupied
@@ -209,7 +208,7 @@ public class CommandCustomerDineIn implements Commands {
         return success;
     }
 
-    public boolean reserveWalkIn(ArrayList<Integer> tableIds, TimeSlot ts, String cId) {
+    private boolean reserveWalkIn(ArrayList<Integer> tableIds, TimeSlot ts, String cId) {
 
         // Customer reserved -> Check-in table
 
@@ -219,6 +218,7 @@ public class CommandCustomerDineIn implements Commands {
 
         for (Integer tableId : tableIds) {
             try {
+                TablesManagement tm = TablesManagement.getInstance();
                 tm.reserverCheckIn(tableId, ts, cId);
             } catch (Exception e) {
                 System.out.println(e.getMessage());
@@ -256,7 +256,7 @@ public class CommandCustomerDineIn implements Commands {
 
     }
 
-    public void ordering() {
+    private void ordering() {
         /*
          * CHOOSE RESTAURANTS
          * 1. Show all available restaurants
@@ -272,42 +272,47 @@ public class CommandCustomerDineIn implements Commands {
         customer.clearPendingOrder();
 
         // Show all restaurants
-        database.outputRestaurant();
+        super.database.outputRestaurant();
 
         String input = "";
 
         // Match string input with arraylist to find the restaurant in list
-        do {
-            ArrayList<Restaurants> availableRestaurants = database.getListofRestaurants();
+        while (customer.getRestaurantChosed() == null) {
+            ArrayList<Restaurants> availableRestaurants = super.database.getListofRestaurants();
             System.out.print("\nPlease choose the restaurant to order: ");
             try {
                 input = Main.in.next("\nPlease choose the restaurant to order: ");
                 int idx = Integer.parseInt(input);
-                restaurant = availableRestaurants.get(idx - 1);
-                customer.chooseRestaurant(restaurant);
+                customer.chooseRestaurant(availableRestaurants.get(idx - 1));
             } catch (NumberFormatException e) {
                 System.out.println("Error! Wrong input for selection! Please input an integer!");
+            } catch (IndexOutOfBoundsException e) {
+                System.out.println("Please input the valid restaurant number!!!");
             }
 
-        } while (restaurant == null);
+        }
 
         System.out.println("\nYou have chosed restaurant " + customer.getRestaurantChosed() + ".");
 
         // Show menu of the chosen restaurant
-        menu = restaurant.getMenu();
 
         // Print menu of the restaurant
-        restaurant.printMenu();
+        customer.getRestaurantChosed().printMenu();
 
         // customer ordering -> add to pendingOrder
-        addDishtoPending(
-                "\nPlease choose from the menu of restaurant " + restaurant.toString() + " (separate by a COMMA): ");
+        try {
+            addDishtoPending(
+                    "\nPlease choose from the menu of restaurant " + customer.getRestaurantChosed().toString()
+                            + " (separate by a COMMA): ");
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid input!!");
+        }
 
         // Check if confirm order, if confirm order add into customer orders
         confirmOrder();
     }
 
-    public void confirmOrder() {
+    private void confirmOrder() {
         /*
          * 1. Confirm Order -> Break
          * 2. Not confirm Order
@@ -355,7 +360,7 @@ public class CommandCustomerDineIn implements Commands {
                 } else if (addDel == 1) {
 
                     // Print menu of restaurant choose
-                    restaurant.printMenu();
+                    customer.getRestaurantChosed().printMenu();
 
                     // Add new dish to pending order
                     addDishtoPending("\nInput the dish number to add: (separate by a COMMA): ");
@@ -369,17 +374,17 @@ public class CommandCustomerDineIn implements Commands {
         } while (!confirmOrder);
 
         // Official order
-        customer.updateOrder(restaurant);
+        customer.updateOrder(customer.getRestaurantChosed());
 
         // Generate New Bill number for payment
         customer.setBillNo();
 
         // Pass new billNumber to reference Map: Billno <-> Restaurant
         String billno = customer.getBillno();
-        customer.updateBillNumberToRestaurant(billno, restaurant);
+        customer.updateBillNumberToRestaurant(billno, customer.getRestaurantChosed());
     }
 
-    public void addDishtoPending(String perviousString) {
+    private void addDishtoPending(String perviousString) {
         // Can Input multiple dishes
 
         String strDish;
@@ -397,11 +402,11 @@ public class CommandCustomerDineIn implements Commands {
 
         // Add input to pending order
         for (int i = 0; i < tokens.length; i++) {
-            customer.addPendingOrder(menu.get(idx[i] - 1));
+            customer.addPendingOrder(customer.getRestaurantChosed().getMenu().get(idx[i] - 1));
         }
     }
 
-    public void removeDishfromPending() {
+    private void removeDishfromPending() {
 
         // Output original pending order
         customer.outputPendingDish("\nYour pending orders: ");

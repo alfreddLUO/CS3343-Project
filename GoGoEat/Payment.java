@@ -7,7 +7,7 @@ public class Payment {
     private Customers customer;
     private PaymentMethod paymentMethod;
     private Commands command;
-    private Restaurants restaurantChosed = null;
+
     private PaymentModulePrompt prompt = new PaymentModulePrompt();
 
     private boolean paymentStatus = false;
@@ -16,9 +16,8 @@ public class Payment {
     private double originalPrice = 0;
     private double discountPrice = 0;
 
-    public Payment(Customers customer, Restaurants restaurant) {
+    public Payment(Customers customer) {
         this.customer = customer;
-        this.restaurantChosed = restaurant;
     }
 
     // UPDATE: Modified on 16 Nov added parameter + originalPrice modified
@@ -89,7 +88,7 @@ public class Payment {
                         this.callCommand();
                         break;
                     } else if (choice == 3) {
-                        Commands cmd3 = new CommandPaymentCash(this, discountPrice, restaurantChosed, customer);
+                        Commands cmd3 = new CommandPaymentCash(this, discountPrice, customer);
                         this.setCommand(cmd3);
                         this.callCommand();
                         break;
@@ -107,7 +106,7 @@ public class Payment {
             isNoOrder = true;
 
             // CHECKOUT
-            CommandCustomerCheckOut cmdCheckout = new CommandCustomerCheckOut(customer, outputString);
+            Commands cmdCheckout = new CommandCustomerCheckOut(customer, outputString);
             customer.setCommand(cmdCheckout);
             customer.callCommand();
         }
@@ -124,5 +123,13 @@ public class Payment {
     public void callCommand() throws ExUnableToSetOpenCloseTime, ExTableIdAlreadyInUse, ExTableNotExist,
             ExTimeSlotNotReservedYet, ExCustomersIdNotFound, ExTimeSlotAlreadyBeReserved {
         command.exe();
+    }
+
+    public Restaurants getRestaurantChosed() {
+        return customer.getRestaurantChosed();
+    }
+
+    public Customers getCustomer() {
+        return customer;
     }
 }
