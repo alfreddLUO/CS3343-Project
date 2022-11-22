@@ -23,7 +23,7 @@ public class CommandCustomerReservation extends CommandCustomer {
             if (!reservationOperation())
 
                 // Reservation not complete
-                System.out.println("\nPlease try to reserve again. :-)");
+                System.out.println("\nPlease try to reserve again :-)");
 
             else {
                 System.out.println(customer.getReserveSuccessInfo());

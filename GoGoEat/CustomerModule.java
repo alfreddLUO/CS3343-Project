@@ -58,37 +58,55 @@ public class CustomerModule implements UserModule {
                 try {
                     input = Main.in.next("\nPlease select your operation: ");
                     select = Integer.parseInt(input);
+
+                    switch (select) {
+                        case 1:
+                            // exe when not reserved or reserved and not reserved time
+                            if (!isSitDown()) {
+                                Commands cmd1 = new CommandCustomerDineIn(customer);
+                                customer.setCommand(cmd1);
+                                customer.callCommand();
+                            } else {
+                                System.out.println("Invalid Operation! Please choose from the operation list.");
+                            }
+                            break;
+                        case 2:
+                            if (!checkisReserved()) {
+                                Commands cmd2 = new CommandCustomerReservation(customer);
+                                customer.setCommand(cmd2);
+                                customer.callCommand();
+                            } else {
+                                System.out.println("Invalid Operation! Please choose from the operation list.");
+                            }
+                            break;
+                        case 3:
+                            if (checkisReserved()) {
+                                Commands cmd3 = new CommandCustomerCancelReservation(customer);
+                                customer.setCommand(cmd3);
+                                customer.callCommand();
+                            } else {
+                                System.out.println("Invalid Operation! Please choose from the operation list.");
+                            }
+
+                            break;
+                        case 4:
+                            if (isSitDown()) {
+                                String outputString = "You have successfully check out.";
+                                Commands cmd4 = new CommandCustomerCheckOut(customer, outputString);
+                                customer.setCommand(cmd4);
+                                customer.callCommand();
+                                select = 0;
+                            } else {
+                                System.out.println("Invalid Operation! Please choose from the operation list.");
+                            }
+                            break;
+                        case 5:
+                            break;
+                    }
                 } catch (NumberFormatException e) {
                     System.out.println("Error! Wrong input for selection! Please input an integer!");
                 }
 
-                switch (select) {
-                    case 1:
-                        Commands cmd1 = new CommandCustomerDineIn(customer);
-                        customer.setCommand(cmd1);
-                        customer.callCommand();
-                        break;
-                    case 2:
-                        Commands cmd2 = new CommandCustomerReservation(customer);
-                        customer.setCommand(cmd2);
-                        customer.callCommand();
-                        break;
-                    case 3:
-                        Commands cmd3 = new CommandCustomerCancelReservation(customer);
-                        customer.setCommand(cmd3);
-                        customer.callCommand();
-                        break;
-                    case 4:
-                        // Update: Modified 16 Nov 23:18
-                        String outputString = "You have successfully check out.";
-                        Commands cmd4 = new CommandCustomerCheckOut(customer, outputString);
-                        customer.setCommand(cmd4);
-                        customer.callCommand();
-                        select = 0;
-                        break;
-                    case 5:
-                        break;
-                }
             }
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -97,7 +115,7 @@ public class CustomerModule implements UserModule {
     }
 
     public boolean isSitDown() {
-        return customer.getOccupiedTableId().isEmpty();
+        return !customer.getOccupiedTableId().isEmpty();
     }
 
     public boolean checkisReserved() {

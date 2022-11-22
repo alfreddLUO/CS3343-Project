@@ -16,7 +16,7 @@ class CustomerModulePrompt {
         // Check if customer is sit-down
 
         // Not Sit down
-        if (cm.isSitDown()) {
+        if (!cm.isSitDown()) {
 
             // Check if customer has reserved
             if (cm.checkisReserved()) {
