@@ -1,6 +1,6 @@
 package GoGoEat;
 
-public class AdminModulePrompt implements AbstractModulePrompt {
+public class AdminModulePrompt {
 
     public AdminModulePrompt() {
     };

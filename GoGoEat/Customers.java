@@ -9,18 +9,16 @@ import java.util.Map.Entry;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
-public class Customers implements UserType, TimeObserver {
+public class Customers implements TimeObserver {
 
     private static LocalDate currDate = LocalDate.now();
     private static LocalTime currTime;
-    private static final TablesManagement tm = TablesManagement.getInstance();
 
     private String username;
     protected String password;
     private String CId;
     private String billno;
     private double billAmount;
-    private double discount;
     protected CustomerState customerState;
 
     private Reservation reserve;
@@ -30,7 +28,9 @@ public class Customers implements UserType, TimeObserver {
     private String reservationDayString = "tomorrow";
     // private Table occupiedtable;
 
+    // TODO:
     private Restaurants restaurantChosed;
+
     private HashMap<String, Restaurants> billNumberToRestaurant = null;
     private Multimap<Dish, Restaurants> DishToRestaurant = null;
     private Commands command;
@@ -76,16 +76,12 @@ public class Customers implements UserType, TimeObserver {
         return this.customerState;
     }
 
-    public void setdiscount(double discount) {
-        this.discount = discount;
-    }
-
-    @Override
+    // @Override
     public String getUsername() {
         return username;
     }
 
-    @Override
+    // @Override
     public String getUserId() {
         return CId;
     }
@@ -132,17 +128,8 @@ public class Customers implements UserType, TimeObserver {
     }
 
     // Reserve
-    public void setReserve(String timeslotString, ArrayList<Integer> desiredTableIds) {
-        try {
-            this.reserve = new Reservation(CId, timeslotString, desiredTableIds, currDate.plusDays(1));
-        } catch (ExTimeFormatInvalid e) {
-            System.out.println(e.getMessage());
-        } catch (ExTimeSlotInvalid e) {
-            System.out.println(e.getMessage());
-            this.clearReservation();
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
+    public void setReserve(Reservation r) {
+        this.reserve = r;
     }
 
     public ArrayList<Integer> getReservedTableIDs() {
@@ -211,21 +198,18 @@ public class Customers implements UserType, TimeObserver {
         return (reserve != null);
     }
 
-    // public Reservation getReserve() {
-    // return reserve;
-    // }
+    public Reservation getReservation() {
+        return reserve;
+    }
 
     public TimeSlot getReservationTimeSlot() {
         return this.reserve.getReservedTimeSlot();
     }
 
-    public void cancelReservation() throws ExTableNotExist, ExTimeSlotNotReservedYet {
-        this.reserve.cancel();
-    }
-
     public boolean isReserveTime() {
         boolean isTime = false;
 
+        TablesManagement tm = TablesManagement.getInstance();
         ArrayList<Table> tables = tm.getReservedTablesfromId(reserve.getReservedTableIDs());
 
         for (Table t : tables) {
@@ -302,6 +286,20 @@ public class Customers implements UserType, TimeObserver {
             }
 
         }
+    }
+
+    // Use when CustomerState is Calculating total overall paid price
+    public void clearOrderNPrice() {
+        pendingOrder.clear();
+        if (customerOrdersAccordingToRestaurant(getRestaurantChosed()) != null) {
+            customerOrdersAccordingToRestaurant(getRestaurantChosed()).clear();
+        }
+        clearState();
+    }
+
+    // Clear State -> Change state to VIP as default
+    public void clearState() {
+        setState(new CustomerVIPstate());
     }
 
     // get ArrayList of customer's official-confirmed orders

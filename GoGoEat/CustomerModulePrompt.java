@@ -1,6 +1,6 @@
 package GoGoEat;
 
-class CustomerModulePrompt implements AbstractModulePrompt {
+class CustomerModulePrompt {
     private CustomerModule cm;
 
     // constructor

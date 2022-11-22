@@ -17,9 +17,10 @@ public class AccountManagement {
     // Username -> Password mapping
     protected static HashMap<String, String> usernamesandPasswords = new HashMap<>();// username->password
 
-    private final Database database = Database.getInstance();
+    private static final Database database = Database.getInstance();
     private GenerateId genCId = GenerateCustomerId.getInstance();
     private GenerateId genMId = GenerateMerchantId.getInstance();
+    private Commands command;
 
     protected AccountManagement() {
     }
@@ -224,7 +225,7 @@ public class AccountManagement {
         System.out.print("\n");
     }
 
-    public void printMerchantOfTheRestaurant(Restaurants restaurant) {
+    public static void printMerchantOfTheRestaurant(Restaurants restaurant) {
 
         /*
          * Print all active accounts with numbering
@@ -259,4 +260,14 @@ public class AccountManagement {
         }
         return null;
     }
+
+    public void setCommand(Commands command) {
+        this.command = command;
+    }
+
+    public void callCommand() throws ExUnableToSetOpenCloseTime, ExTableIdAlreadyInUse, ExTableNotExist,
+            ExTimeSlotNotReservedYet, ExCustomersIdNotFound, ExTimeSlotAlreadyBeReserved {
+        command.exe();
+    }
+
 }

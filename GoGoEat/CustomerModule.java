@@ -1,7 +1,5 @@
 package GoGoEat;
 
-import java.util.ArrayList;
-
 public class CustomerModule implements UserModule {
     /*
      * RunDown：
@@ -38,10 +36,6 @@ public class CustomerModule implements UserModule {
 
     private static Customers customer = null;
 
-    static ArrayList<Dish> pendingOrder = new ArrayList<>();
-    static ArrayList<Dish> menu = new ArrayList<>();
-    static Restaurants restaurant = null;
-
     @Override
     public void run(String Id) {
 
@@ -54,7 +48,7 @@ public class CustomerModule implements UserModule {
             int select = 0;
 
             // if customerState -> calculate total consumption -> disable below line：
-            clearOrderNPrice();
+            customer.clearOrderNPrice();
 
             while (select != 5) {
 
@@ -100,20 +94,6 @@ public class CustomerModule implements UserModule {
             System.out.println(e.getMessage());
         }
 
-    }
-
-    // Use when CustomerState is Calculating total overall paid price
-    public static void clearOrderNPrice() {
-        pendingOrder.clear();
-        if (customer.customerOrdersAccordingToRestaurant(restaurant) != null) {
-            customer.customerOrdersAccordingToRestaurant(restaurant).clear();
-        }
-        clearState();
-    }
-
-    // Clear State -> Change state to VIP as default
-    public static void clearState() {
-        customer.setState(new CustomerVIPstate());
     }
 
     public boolean isSitDown() {

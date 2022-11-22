@@ -10,6 +10,23 @@ public class TablesManagement implements TimeObserver {
     private static LocalDate currDate;
     private static LocalTime currTime;
 
+    // Singleton Pattern
+    private static final TablesManagement instance = new TablesManagement();
+
+    public static TablesManagement getInstance() {
+        return instance;
+    }
+
+    private TablesManagement() {
+        allTableIds = new ArrayList<Integer>();
+        reservedTables = new ArrayList<Table>();
+        availableTables = new ArrayList<Table>();
+        occupiedTables = new ArrayList<Table>();
+        tableCapacityTypeList = new ArrayList<Integer>();
+        waitingCustomers = new ArrayList<String>();
+        Collections.sort(tableCapacityTypeList, Collections.reverseOrder());
+    }
+
     @Override
     public void timeUpdate(LocalTime newTime) {
         currTime = newTime;
@@ -43,7 +60,6 @@ public class TablesManagement implements TimeObserver {
             }
         }
         occupiedTables.removeAll(temp);
-
     }
 
     public void updateStatusAccordingToDate() {
@@ -57,21 +73,30 @@ public class TablesManagement implements TimeObserver {
         for (Table t : returnAllTablesList()) {
             t.startNewDay();
         }
-
     }
 
-    // 存放已有桌子的table id
+    // Store all table id
     private ArrayList<Integer> allTableIds;
-    // 三个arraylist available（可用的）, reserved（被预定了的但是还没来）, occupied（占用的）,
-    // available里面包括 没被预定的桌子且没被占用，和预定了但是在时间范围前没来的桌子
+
+    /*
+     * Three ArrayList:
+     * 1. available - Not occupied nor reserved
+     * 2. reserved - being reserved but customer hasnt come
+     * 3. occupied - Sit down and dining
+     */
     private ArrayList<Table> availableTables;
-    // reserved是被预定的了的且在时间范围内的桌子
     private ArrayList<Table> reservedTables;
-    // occupied是现在已经被占用的桌子
     private ArrayList<Table> occupiedTables;
-    // 放正在等的桌子的customer； 注意customer里面应该有一个list存放起等待的桌子和occupy的桌子
+
+    /*
+     * Store Customers that is waiting for table
+     * NOTE: There should also be a list in customer storing waiting table and
+     * occupied table
+     */
     private ArrayList<String> waitingCustomers;
-    // 存放桌型的列表，按从大到小的顺序排列 e.g. 10, 8, 4,2
+
+    // List to store table capacity, order by capacity from large to small
+    // 8, 4, 2
     private ArrayList<Integer> tableCapacityTypeList;
 
     public ArrayList<Table> getReservedTablesfromId(ArrayList<Integer> ids) {
@@ -97,27 +122,12 @@ public class TablesManagement implements TimeObserver {
     public void appendToAvailableTables(Table table) {
         availableTables.add(table);
     }
-    // !!!!!!!!!!!!!!!!!!!!!
-    // 注意以下的table Arrangement results之类的list全部是按桌型的大小顺序存放的
-    // 比如现在有两张八人桌， 七张四人桌， 九张二人桌
-    // 则arraylist的数字应该是 2，7，9（index 从0到2）
 
-    // sigleton pattern
-    private static final TablesManagement instance = new TablesManagement();
-
-    public static TablesManagement getInstance() {
-        return instance;
-    }
-
-    private TablesManagement() {
-        allTableIds = new ArrayList<Integer>();
-        reservedTables = new ArrayList<Table>();
-        availableTables = new ArrayList<Table>();
-        occupiedTables = new ArrayList<Table>();
-        tableCapacityTypeList = new ArrayList<Integer>();
-        waitingCustomers = new ArrayList<String>();
-        Collections.sort(tableCapacityTypeList, Collections.reverseOrder());
-    }
+    /*
+     * NOTE: The Below List of table arrangement result arrange by capacity
+     * e.g. Now has 2-[8-seat], 7-[4-seat], 9-[2-seat]
+     * then integer in arraylist should be 2, 7, 9 (index from 0 to 2)
+     */
 
     public ArrayList<Integer> initializeTableArrangementList() {
         ArrayList<Integer> tableArrangementResults = new ArrayList<Integer>();
@@ -127,21 +137,27 @@ public class TablesManagement implements TimeObserver {
         return tableArrangementResults;
     }
 
-    // arrange table according to people num
-    // Simple logic: minimize the number of tables but seat all people. In the
-    // meantime, people should sit at the "most appropriate" table
-    // For testing： assume now table types: 15，12， 8，4，2 five table types, then:
-    // 1.simplest: 1 people - [1] 2-seats table
-    // 2.2 people -> [1] 2-seats table
-    // 3.3 people -> [1] 4-seats table
-    // 4.5 people -> [1] 8-seats table
-    // 5.9 people -> [1] 12-seats table
-    // 6.17 people -> [1] 15-seats table + [1] 2-seats table
-    // 7.19 people -> [1] 15-seats table + [1] 4-seats table
-    // 8.23 people -> [1] 15-seats table + [1] 8-seats table
-    // The tableArrangements stores the num of tables according to table types
-    // index=0: stores the num of tables with the max table capacity
-    // index=max: stores the num of tables with the minimum table capacity
+    /*
+     * Arrange table according to people num
+     * Simple logic:
+     * - minimize the number of tables but seat all people.
+     * - In the meantime, people should sit at the "most appropriate" table
+     * 
+     * For testing： assume now table types: 15，12， 8，4，2 five table types, then:
+     * 1.simplest: 1 people - [1] 2-seats table
+     * 2.2 people -> [1] 2-seats table
+     * 3.3 people -> [1] 4-seats table
+     * 4.5 people -> [1] 8-seats table
+     * 5.9 people -> [1] 12-seats table
+     * 6.17 people -> [1] 15-seats table + [1] 2-seats table
+     * 7.19 people -> [1] 15-seats table + [1] 4-seats table
+     * 8.23 people -> [1] 15-seats table + [1] 8-seats table
+     * 
+     * The tableArrangements stores the num of tables according to table types
+     * index=0: stores the num of tables with the max table capacity
+     * index=max: stores the num of tables with the minimum table capacity
+     */
+
     public ArrayList<Integer> arrangeTableAccordingToNumOfPeople(int peopleNum) throws ExPeopleNumExceedTotalCapacity {
         if (peopleNum <= returnTotalCapcityOfTables()) {
             int tmpPeopleNum = peopleNum;
@@ -167,7 +183,8 @@ public class TablesManagement implements TimeObserver {
                     tmpResults += addingTableNum;
                     tmpPeopleNum = tmpPeopleNum - tableCapacity * addingTableNum;
                     if (tableCapacity >= tmpPeopleNum
-                            && tmpPeopleNum > tableCapacityTypeList.get(i + 1)) {
+                            && tmpPeopleNum > tableCapacityTypeList.get(i + 1)
+                            && tmpResults < returnTableNumWithTableCapacity(tableCapacity)) {
                         tmpResults += 1;
                         tmpPeopleNum = 0;
                     }
@@ -187,21 +204,32 @@ public class TablesManagement implements TimeObserver {
         throw new ExPeopleNumExceedTotalCapacity(returnTotalCapcityOfTables());
     }
 
-    // Precondition: the previous table arrangement results is not all available
-    // Arrange the tables acoording to the available table and still based on the
-    // purpose of minimizing the table num:
-    // two situations：
-    // 1.All the available tables with capacity less than people num add up to not
-    // enough to sit on, that is, return null
-    // Test: When available tables: one for two, one for four, one for eight; But
-    // eighteen people came; return null
-    // 2.可以坐的情况：最后返回的是一个array list存放不同桌型安排的数量
-    // Test: When available tables: one for two, one for four, one for eight;
-    // Fourteen people came; return the corresponding array list
-    // 如果之前自动的安排不能直接入座则启用该算法
-    // 这算法：
-    // 1. 把available的table list按降序排列，然后从第一个小于当前桌子人数的桌子开始，依次放入，若能放完则output出结果
-    // 2. 若不能放完，则output没有优化结果
+    /*
+     * Precondition:
+     * - The previous table arrangement results is not all available
+     * - Arrange the tables acoording to the available table and still based on the
+     * purpose of minimizing the table num:
+     * 
+     * Two situations：
+     * 1. All the available tables with capacity less than people num add up to not
+     * enough to sit on, that is, return null
+     * 
+     * Test 1:
+     * When available tables: one for two, one for four, one for eight;
+     * But eighteen people came; return null
+     * 
+     * 2. When able to sit in: The returned value will be an ArrayList storing the
+     * number of table assigned of different capacity
+     * 
+     * Test: When available tables: one for two, one for four, one for eight;
+     * Fourteen people came; return the corresponding array list
+     * 
+     * 如果之前自动的安排不能直接入座则启用该算法
+     * 这算法：
+     * 1. 把available的table list按降序排列，然后从第一个小于当前桌子人数的桌子开始，依次放入，若能放完则output出结果
+     * 2. 若不能放完，则output没有优化结果
+     */
+
     public ArrayList<Integer> recommendedArrangementAccordingToWaitingTime(int peopleNum) {
         Collections.sort(availableTables);
         int tmpPeopleNum = peopleNum;
@@ -237,13 +265,17 @@ public class TablesManagement implements TimeObserver {
 
     }
 
-    // determine: whether the table arrangement results is available now
-    // 1.Yes: return true；
-    // 2.No: return false
-    // Testing:
-    // need to know the current available tables
-    // Then you may create a arraylist as table arrangemnet results, and put it into
-    // argument
+    /*
+     * Determine: whether the table arrangement results is available now
+     * 1.Yes: return true；
+     * 2.No: return false
+     *
+     * Testing:
+     * - Need to know the current available tables
+     * - Then you may create a arraylist as table arrangemnet results,
+     * and put it into the argument
+     */
+
     public boolean canDirectlyDineIn(ArrayList<Integer> tableArrangementResults) {
         boolean canDirectlyWalkIn = true;
         StringBuilder waitingTablesListMessage = new StringBuilder(
@@ -267,10 +299,13 @@ public class TablesManagement implements TimeObserver {
 
     }
 
-    // Usage: when the 用于当根据人数计算桌子或推荐算法中某一个可行时，且顾客选择入座，则用此函数入座
-    // 测试：自己建一个arraylist存放对应桌型的安排数量 作为argument；
-    // 1.首先看return的结果是不是对的：可以顺利入座true，不可以顺利入座false
-    // 2.当可以顺利入座这种情况发生时，执行完该函数后，去get available tables list看对应的table是否变成了occupied
+    /*
+     * Usage: when the 用于当根据人数计算桌子或推荐算法中某一个可行时，且顾客选择入座，则用此函数入座
+     * 测试：自己建一个arraylist存放对应桌型的安排数量 作为argument；
+     * 1.首先看return的结果是不是对的：可以顺利入座true，不可以顺利入座false
+     * 2.当可以顺利入座这种情况发生时，执行完该函数后，去get available tables list看对应的table是否变成了occupied
+     */
+
     public ArrayList<Integer> setWalkInStatus(ArrayList<Integer> tableArrangement) {
         ArrayList<Integer> checkedInTableIds = new ArrayList<Integer>();
         for (Integer tableCapacity : tableCapacityTypeList) {
@@ -282,8 +317,6 @@ public class TablesManagement implements TimeObserver {
                 for (Table t : copyOfAvailableTables) {
                     if (t.getTableCapacity() == tableCapacity) {
                         tmpCount++;
-                        // 把这个table放进customer占用的arraylist里去
-                        // c.occupyTable(t);
                         checkedInTableIds.add(t.getTableId());
                         setTableFromAvailableToOccupiedStatus(t.getTableId());
                         if (tmpCount == needOfThisTableCapcity) {
@@ -297,8 +330,10 @@ public class TablesManagement implements TimeObserver {
         return checkedInTableIds;
     }
 
-    // According to table arrangements, put the table that are available into
-    // customer's occupied, and store the remaining into wairing list
+    /*
+     * According to table arrangements, put the table that are available into
+     * customer's occupied, and store the remaining into wairing list
+     */
     public ArrayList<Integer> setWaitingTables(String cId, ArrayList<Integer> tableArrangement) {
         ArrayList<Integer> waitingTablesNumList = new ArrayList<Integer>();
         ArrayList<Integer> checkedInTableIds = new ArrayList<Integer>();
@@ -327,7 +362,7 @@ public class TablesManagement implements TimeObserver {
                 if (tmpCount < needOfThisTableCapcity) {
                     int waitingCount = needOfThisTableCapcity - tmpCount;
                     waitingTablesNumList.set(index, waitingCount);
-                    waitingTablesListMessage.append(String.format(" [%d] [%d-Seats] Table ", waitingCount,
+                    waitingTablesListMessage.append(String.format("[%d] [%d-Seats] Table\n", waitingCount,
                             tableCapacityType));
                 } else {
                     waitingTablesNumList.set(index, 0);
@@ -339,21 +374,6 @@ public class TablesManagement implements TimeObserver {
         System.out.println(waitingTablesListMessage);
         return waitingTablesNumList;
     }
-    // 展示各自table的课预定时间段
-    // public String showReservationTable() {
-    // StringBuilder showReservationTableMsg = new StringBuilder(
-    // "\nTable(s) for tomorrow reservation and available time slots: \n");
-    // Collections.sort(availableTables, Collections.reverseOrder());
-    // for (Table t : availableTables) {
-    // TimeSlots tmrReservationTimeslots = t.getTmrReservationTimeSlot();
-    // showReservationTableMsg.append(String.format(
-    // "%d-Seats Table with ID of %d is available tmr for the timeslots: %s \n",
-    // t.getTableCapacity(),
-    // t.getTableId(), tmrReservationTimeslots.getAvailableSlots()));
-    // }
-    // System.out.println(showReservationTableMsg);
-    // return new String(showReservationTableMsg);
-    // }
 
     public void debug() {
         System.out.println("availableTables:\n");
@@ -384,6 +404,20 @@ public class TablesManagement implements TimeObserver {
         System.out.println(showReservationTableMsg);
     }
 
+    // Show list of all tables
+    public void showAllTables() {
+        StringBuilder showReservationTableMsg = new StringBuilder(
+                "\nList of all Tables: \n");
+        ArrayList<Table> all = returnAllTablesList();
+        Collections.sort(all, Collections.reverseOrder());
+        for (Table t : all) {
+            showReservationTableMsg.append(String.format(
+                    "%d-Seats Table | ID: %d\n", t.getTableCapacity(),
+                    t.getTableId()));
+        }
+        System.out.println(showReservationTableMsg);
+    }
+
     // show the available num of each table type
     public String showAvailableTables() {
         StringBuilder showAvailableTableMsg = new StringBuilder("\nBelow is the available tables: \n");
@@ -396,10 +430,11 @@ public class TablesManagement implements TimeObserver {
         return showAvailableTableMsg.toString();
     }
 
-    // admin可以添加新的桌子：1.该桌型之前就存在直接加桌子 2.该桌型之前不存在，加桌型和桌子
-    // 测试
-    // 15,12,8,4,2
-    // 16
+    /*
+     * Admin can add new Table：
+     * 1.If the capacity of the new table already exist -> Add directly
+     * 2.If the capacity did not exist -> Add capacity then Table
+     */
     public void addNewTable(int tableId, int tableCapacity) throws ExTableIdAlreadyInUse {
         if (checkTableIdIsAreadyInUsed(tableId) == false) {
             allTableIds.add(tableId);
@@ -427,9 +462,12 @@ public class TablesManagement implements TimeObserver {
         Collections.sort(tableCapacityTypeList, Collections.reverseOrder());
     }
 
-    // admin删除旧桌子: 1.桌子是available的直接delete就ok 2.桌子不在available
-    // list里可能是因为根本不available或根本没有这张桌子，统一print不能删除
-    // 测试：1.桌子本身available 2.桌子不available 3.桌子根本就没有
+    /*
+     * Admin Remove table:
+     * 1. If the status of the table is available -> Delete directly
+     * 2. Table is not in availableTable list -> Cannot delete
+     * (Could be table not exist or table unavailable)
+     */
     public void removeTable(int tableId) throws ExTableNotExist, ExUnableToRemoveTable {
         Table t = returnTableAccordingToTableId(tableId);
         if (t != null) {
@@ -455,31 +493,45 @@ public class TablesManagement implements TimeObserver {
 
     }
 
-    // 把table从available变为reserved
+    // Change table from available to reserved
     public void setTableFromAvailableToReservedStatus(int tableId) {
         Table t = returnTableAccordingToTableId(tableId);
         availableTables.remove(t);
         reservedTables.add(t);
     }
 
-    // 把table从available变为occupied
+    // Change table from occupied to reserved
+    public void setTableFromOccupiedToReserved(int tableId) {
+        Table t = returnTableAccordingToTableId(tableId);
+        occupiedTables.remove(t);
+        reservedTables.add(t);
+    }
+
+    // Change table from available to occupied
     public void setTableFromAvailableToOccupiedStatus(int tableId) {
         Table t = returnTableAccordingToTableId(tableId);
         availableTables.remove(t);
         occupiedTables.add(t);
     }
 
-    // 把table从reserved变为occupied
+    // Change table from reserved to occupied
     public void setTableFromReservedToOccupiedStatus(int tableId) {
         Table t = returnTableAccordingToTableId(tableId);
         reservedTables.remove(t);
         occupiedTables.add(t);
     }
 
-    // 把table从occupied变为available
+    // Change table from occupied to available
     public void setTableFromOccupiedToAvailable(int tableId) {
         Table t = returnTableAccordingToTableId(tableId);
         occupiedTables.remove(t);
+        availableTables.add(t);
+    }
+
+    // Change table from reserved to available
+    public void setTableFromReservedToAvailable(int tableId) {
+        Table t = returnTableAccordingToTableId(tableId);
+        reservedTables.remove(t);
         availableTables.add(t);
     }
 
@@ -503,21 +555,7 @@ public class TablesManagement implements TimeObserver {
         return tableCapacityTypeList;
     }
 
-    // 把table从occupied变为reserved
-    public void setTableFromOccupiedToReserved(int tableId) {
-        Table t = returnTableAccordingToTableId(tableId);
-        occupiedTables.remove(t);
-        reservedTables.add(t);
-    }
-
-    // 把table从reserved变成available
-    public void setTableFromReservedToAvailable(int tableId) {
-        Table t = returnTableAccordingToTableId(tableId);
-        reservedTables.remove(t);
-        availableTables.add(t);
-    }
-
-    // check 该table ID是否已经加进去了
+    // Check if the tableID has been added
     public boolean checkTableIdIsAreadyInUsed(int tableId) {
         for (int i : allTableIds) {
             if (i == tableId) {
@@ -526,8 +564,6 @@ public class TablesManagement implements TimeObserver {
         }
         return false;
     }
-
-    // 会call customer里的checkWhetherThisIsNeeded(int tableCapacity, int tableId)
 
     public void removeWaitingCustomer(Customers c) {
         waitingCustomers.remove(c);
@@ -554,7 +590,7 @@ public class TablesManagement implements TimeObserver {
         return allTablesList;
     }
 
-    // 返回对应capacity的table数量
+    // Return number of table corresponding to the capacity
     public int returnTableNumWithTableCapacity(int tableCapacity) {
         ArrayList<Table> allTablesList = returnAllTablesList();
         int num = 0;
@@ -566,7 +602,11 @@ public class TablesManagement implements TimeObserver {
         return num;
     }
 
-    // 预定桌子；把预定时间添加到对应桌子的明日timeslots里
+    /*
+     * Reserve Table
+     * Add the reservation timeslot to the tmrReservationTimeslot
+     * of each of the table
+     */
     public Boolean reserveTableAccordingToTimeslot(int tableId, TimeSlot timeslot)
             throws ExTableNotExist, ExTimeSlotAlreadyBeReserved {
         Table table = returnTableAccordingToTableId(tableId);
@@ -583,7 +623,7 @@ public class TablesManagement implements TimeObserver {
         return true;
     }
 
-    // 如名字所写,取消对应桌子的预定时间段子
+    // Cancel the reservation of the corresponding table
     public void cancelReservationAccordingToTimeslot(int tableId, TimeSlot timeslot)
             throws ExTableNotExist, ExTimeSlotNotReservedYet {
         Table t = returnTableAccordingToTableId(tableId);
@@ -596,7 +636,7 @@ public class TablesManagement implements TimeObserver {
         }
         t.updatetmrTimeslots(tmrTimeSlots);
 
-        System.out.println(t.getTmrReservationTimeSlot().getAvailableSlots());
+        // System.out.println(t.getTmrReservationTimeSlot().getAvailableSlots());
     }
 
     public int returnAvailableTableNumWithCapacity(int tableCapacityType) {
@@ -616,7 +656,7 @@ public class TablesManagement implements TimeObserver {
             Table t = returnTableAccordingToTableId(tId);
             int capacityIndex = tableCapacityTypeList.indexOf(t.getTableCapacity());
             for (String id : waitingCustomers) {
-                // get waitingNumList中的第i個
+                // get ith in waitingNumList
                 Customers customer;
                 try {
                     customer = database.matchCId(id);
@@ -680,8 +720,6 @@ public class TablesManagement implements TimeObserver {
         temp = getReservationStartEndInDayOfTables(occupiedTables, temp[0], temp[1]);
         start = temp[0];
         end = temp[1];
-
-        // System.out.println("#debug: " + start.toString() + " - " + end.toString());
 
         String input[] = timeString.split("-");
         String open = input[0];

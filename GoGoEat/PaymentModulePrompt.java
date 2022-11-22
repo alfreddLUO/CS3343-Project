@@ -1,8 +1,7 @@
 package GoGoEat;
 
-class PaymentModulePrompt implements AbstractModulePrompt {
+class PaymentModulePrompt {
 
-    @Override
     public void promptOptionStart() {
         System.out.println("\nCommands: ");
         System.out.println("[1] Alipay");
