@@ -13,12 +13,12 @@ public class CommandPaymentAlipay extends CommandPayment {
         PayFactory payFactory = new AlipayFactory();
 
         PaymentMethod paymentMethod = payFactory.getPay();
-
+        PaymentString paymentString =new PayAlipayString();
         boolean result = paymentMethod.pay(discountPrice);
 
         if (result) {
             payment.setPaymentStatus(result);
-            System.out.println("\nYou have completed payment with " + paymentMethod.toString() + ". Thank you!");
+            System.out.println("\nYou have completed payment with " + paymentString.getPayString() + ". Thank you!");
         }
     }
 }

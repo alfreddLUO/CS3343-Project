@@ -7,8 +7,5 @@ public class PayCash implements PaymentMethod {
         return true;
     }
 
-    @Override
-    public String toString() {
-        return "Cash";
-    }
+
 }

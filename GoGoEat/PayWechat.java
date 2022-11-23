@@ -8,8 +8,5 @@ public class PayWechat implements PaymentMethod {
         return true;
     }
 
-    @Override
-    public String toString() {
-        return "WeChat Pay";
-    }
+
 }

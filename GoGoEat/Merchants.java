@@ -138,7 +138,7 @@ public class Merchants {
     public void checkOutbyMerchant(Customers customer) {
         // Payment by merchant
         checkOrder(customer, this.restaurantOwned);
-        System.out.println("\nYou have completed payment with cash. Thank you!");
+       
     }
 
     // UPDATE: modified 18 Nov 00:21
