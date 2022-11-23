@@ -159,49 +159,9 @@ public class TablesManagement implements TimeObserver {
      */
 
     public ArrayList<Integer> arrangeTableAccordingToNumOfPeople(int peopleNum) throws ExPeopleNumExceedTotalCapacity {
-        if (peopleNum <= returnTotalCapcityOfTables()) {
-            int tmpPeopleNum = peopleNum;
-            StringBuilder arrangementResultMessage = new StringBuilder("\nYour arranged tables are: \n");
-            // Store the number of tables of the corresponding table type of that index
-            ArrayList<Integer> tableArrangementResults = new ArrayList<Integer>();
-            tableArrangementResults.addAll(initializeTableArrangementList());
-            for (int i = 0; i < tableCapacityTypeList.size(); i++) {
-                int tmpResults = 0;
-                int tableCapacity = tableCapacityTypeList.get(i);
-                // This happens when the last table type comes, it should store all the
-                // remaining people
-                if (i == tableCapacityTypeList.size() - 1) {
-                    tmpResults = (tmpPeopleNum % tableCapacity == 0) ? (tmpPeopleNum / tableCapacity)
-                            : ((tmpPeopleNum / tableCapacity) + 1);
-                } else {
-                    // minimize the table num ， e.g. if exists table type of 2，4，8； 7 people -> [1]
-                    // 8-seats tables
-                    int addingTableNum = (tmpPeopleNum
-                            / tableCapacity <= returnTableNumWithTableCapacity(tableCapacity))
-                                    ? (tmpPeopleNum / tableCapacity)
-                                    : returnTableNumWithTableCapacity(tableCapacity);
-                    tmpResults += addingTableNum;
-                    tmpPeopleNum = tmpPeopleNum - tableCapacity * addingTableNum;
-                    if (tableCapacity >= tmpPeopleNum
-                            && tmpPeopleNum > tableCapacityTypeList.get(i + 1)
-                            && tmpResults < returnTableNumWithTableCapacity(tableCapacity)) {
-                        tmpResults += 1;
-                        tmpPeopleNum = 0;
-                    }
-                }
-                if (tmpResults > 0) {
-                    arrangementResultMessage
-                            .append(String.format("[%d] [%d-Seats] Tables \n", tmpResults, tableCapacity));
-                }
-                tableArrangementResults.set(i, tmpResults);
-                if (tmpPeopleNum == 0) {
-                    break;
-                }
-            }
-            System.out.println(arrangementResultMessage);
-            return tableArrangementResults;
-        }
-        throw new ExPeopleNumExceedTotalCapacity(returnTotalCapcityOfTables());
+        DefaultTableArrangementAlgorithm defaultAlgorithm = DefaultTableArrangementAlgorithm.getInstance();
+        return defaultAlgorithm.getTableArrangementResult(peopleNum, availableTables, tableCapacityTypeList,
+                returnAllTablesList());
     }
 
     /*
@@ -231,37 +191,9 @@ public class TablesManagement implements TimeObserver {
      */
 
     public ArrayList<Integer> recommendedArrangementAccordingToWaitingTime(int peopleNum) {
-        Collections.sort(availableTables);
-        int tmpPeopleNum = peopleNum;
-        ArrayList<Integer> tableArrangementResults = new ArrayList<Integer>();
-        tableArrangementResults.addAll(initializeTableArrangementList());
-        for (Table t : availableTables) {
-            if (t.getTableCapacity() < peopleNum) {
-                int tCapacity = t.getTableCapacity();
-                int capacityIndex = tableCapacityTypeList.indexOf(tCapacity);
-                int num = tableArrangementResults.get(capacityIndex);
-                tableArrangementResults.set(capacityIndex, num + 1);
-                tmpPeopleNum = tmpPeopleNum - tCapacity;
-                if (tmpPeopleNum <= 0) {
-                    break;
-                }
-            }
-        }
-        if (tmpPeopleNum > 0) {
-            System.out.println("No Optimized Recommended Arrangements!");
-            return null;
-        } else {
-            StringBuilder recommendedArrangementMsg = new StringBuilder("The Optimized Recommended Arrangements are: ");
-            for (int i = 0; i < tableArrangementResults.size(); i++) {
-                if (tableArrangementResults.get(i) > 0) {
-                    int tCapacity = tableCapacityTypeList.get(i);
-                    recommendedArrangementMsg
-                            .append(String.format("\n[%d] [%d-seats] ", tableArrangementResults.get(i), tCapacity));
-                }
-            }
-            System.out.println(recommendedArrangementMsg);
-            return tableArrangementResults;
-        }
+        RecommendedTableArrangementAlgorithm recommendedAlgorithm = RecommendedTableArrangementAlgorithm.getInstance();
+        return recommendedAlgorithm.getTableArrangementResult(peopleNum, availableTables, tableCapacityTypeList,
+                returnAllTablesList());
 
     }
 
