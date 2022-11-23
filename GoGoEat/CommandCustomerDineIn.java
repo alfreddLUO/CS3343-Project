@@ -51,7 +51,8 @@ public class CommandCustomerDineIn extends CommandCustomer {
                 numOfPeople = Integer.parseInt(str);
 
                 // Get result of suggested table of capacity to sit in
-                result = tm.arrangeTableAccordingToNumOfPeople(numOfPeople);
+                tm.toDefaultAlgo();
+                result = tm.getTableArrangement(numOfPeople);
 
                 if (tm.canDirectlyDineIn(result)) {
                     // Directly Sit in and eat
@@ -103,7 +104,6 @@ public class CommandCustomerDineIn extends CommandCustomer {
                     TablesManagement tm = TablesManagement.getInstance();
                     ArrayList<Integer> checkinTableId = tm.setWalkInStatus(result);
 
-                    // TODO: Separate into two method
                     addCheckInInfo(checkinTableId);
                     success = true;
                 } else if (select == 2) {
@@ -128,18 +128,24 @@ public class CommandCustomerDineIn extends CommandCustomer {
 
         // Compute Recommended Result
         TablesManagement tm = TablesManagement.getInstance();
-        ArrayList<Integer> recommendedResult = tm.recommendedArrangementAccordingToWaitingTime(numOfPeople);
+        tm.toRecommendAlgo();
+        ArrayList<Integer> recommendedResult;
+        try {
+            recommendedResult = tm.getTableArrangement(numOfPeople);
+            boolean success = false;
 
-        boolean success = false;
-
-        if (recommendedResult == null) {
-            // Queue / Leave
-            noRecommendedResultAndQueue(result);
-        } else {
-            // Walk in / Queue / Leave
-            success = hasRecommendedResult(result);
+            if (recommendedResult == null) {
+                // Queue / Leave
+                noRecommendedResultAndQueue(result);
+            } else {
+                // Walk in / Queue / Leave
+                success = hasRecommendedResult(result);
+            }
+            return success;
+        } catch (ExPeopleNumExceedTotalCapacity e) {
+            System.out.println(e.getMessage());
         }
-        return success;
+        return false;
     }
 
     private void noRecommendedResultAndQueue(ArrayList<Integer> result) {

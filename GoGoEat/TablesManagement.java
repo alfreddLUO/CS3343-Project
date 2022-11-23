@@ -9,11 +9,13 @@ import java.util.Collections;
 public class TablesManagement implements TimeObserver {
     private static LocalDate currDate;
     private static LocalTime currTime;
+    private TableArrangementAlgorithm algorithm;
 
     // Singleton Pattern
     private static final TablesManagement instance = new TablesManagement();
 
     public static TablesManagement getInstance() {
+
         return instance;
     }
 
@@ -25,6 +27,7 @@ public class TablesManagement implements TimeObserver {
         tableCapacityTypeList = new ArrayList<Integer>();
         waitingCustomers = new ArrayList<String>();
         Collections.sort(tableCapacityTypeList, Collections.reverseOrder());
+        this.algorithm = DefaultTableArrangementAlgorithm.getInstance();
     }
 
     @Override
@@ -158,9 +161,8 @@ public class TablesManagement implements TimeObserver {
      * index=max: stores the num of tables with the minimum table capacity
      */
 
-    public ArrayList<Integer> arrangeTableAccordingToNumOfPeople(int peopleNum) throws ExPeopleNumExceedTotalCapacity {
-        DefaultTableArrangementAlgorithm defaultAlgorithm = DefaultTableArrangementAlgorithm.getInstance();
-        return defaultAlgorithm.getTableArrangementResult(peopleNum, availableTables, tableCapacityTypeList,
+    public ArrayList<Integer> getTableArrangement(int peopleNum) throws ExPeopleNumExceedTotalCapacity {
+        return algorithm.getTableArrangementResult(peopleNum, availableTables, tableCapacityTypeList,
                 returnAllTablesList());
     }
 
@@ -189,13 +191,6 @@ public class TablesManagement implements TimeObserver {
      * 1. 把available的table list按降序排列，然后从第一个小于当前桌子人数的桌子开始，依次放入，若能放完则output出结果
      * 2. 若不能放完，则output没有优化结果
      */
-
-    public ArrayList<Integer> recommendedArrangementAccordingToWaitingTime(int peopleNum) {
-        RecommendedTableArrangementAlgorithm recommendedAlgorithm = RecommendedTableArrangementAlgorithm.getInstance();
-        return recommendedAlgorithm.getTableArrangementResult(peopleNum, availableTables, tableCapacityTypeList,
-                returnAllTablesList());
-
-    }
 
     /*
      * Determine: whether the table arrangement results is available now
@@ -675,5 +670,13 @@ public class TablesManagement implements TimeObserver {
             throw new ExTimeFormatInvalid();
         }
 
+    }
+
+    public void toRecommendAlgo() {
+        algorithm = RecommendedTableArrangementAlgorithm.getInstance();
+    }
+
+    public void toDefaultAlgo() {
+        algorithm = DefaultTableArrangementAlgorithm.getInstance();
     }
 }
