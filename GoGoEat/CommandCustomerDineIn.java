@@ -235,7 +235,6 @@ public class CommandCustomerDineIn extends CommandCustomer {
         return success;
     }
 
-    // TODO: CID传进来了没用到
     public static void addCheckInInfo(ArrayList<Integer> checkInTable) {
 
         /*
@@ -243,9 +242,6 @@ public class CommandCustomerDineIn extends CommandCustomer {
          * 2. Add Check-in table into customer's occupiedtable
          * 3. Add waiting table into customer's waitTableNumList
          */
-
-        // TODO: 为什么comment掉了??
-        // Customers customer = Main.matchCId(CId);
 
         for (int i : checkInTable) {
             customer.addTableId(i);
@@ -259,7 +255,6 @@ public class CommandCustomerDineIn extends CommandCustomer {
                 customer.addTableNumList(i);
             }
         }
-
     }
 
     private void ordering() {
