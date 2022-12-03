@@ -2,7 +2,7 @@ package GoGoEat;
 
 public class CommandAdminRemoveRestaurant extends CommandAdmin {
 
-    CommandAdminRemoveRestaurant() {
+    protected CommandAdminRemoveRestaurant() {
         super();
     }
 
@@ -37,7 +37,7 @@ public class CommandAdminRemoveRestaurant extends CommandAdmin {
         return restaurant;
     }
 
-    private void deleteRestaurant(Restaurants res) {
+    protected void deleteRestaurant(Restaurants res) {
         database.removeFromlistOfRestaurants(res);
         System.out.println("Delete restaurant success.");
     }
