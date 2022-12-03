@@ -2,7 +2,7 @@ package GoGoEat;
 
 public class CommandPaymentWeChatPay extends CommandPayment {
 
-    public CommandPaymentWeChatPay(Payment payment, double discountPrice) {
+    protected CommandPaymentWeChatPay(Payment payment, double discountPrice) {
         super(payment, discountPrice);
     }
 
@@ -12,7 +12,7 @@ public class CommandPaymentWeChatPay extends CommandPayment {
 
         PayFactory payFactory = new WechatPayFactory();
         PaymentMethod paymentMethod = payFactory.getPay();
-        PaymentString paymentString=new PayWeChatString();
+        PaymentString paymentString = new PayWeChatString();
         boolean result = paymentMethod.pay(discountPrice);
 
         if (result) {

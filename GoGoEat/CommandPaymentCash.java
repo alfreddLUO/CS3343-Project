@@ -2,7 +2,7 @@ package GoGoEat;
 
 public class CommandPaymentCash extends CommandPayment {
 
-    public CommandPaymentCash(Payment payment, double discountPrice, Customers customer) {
+    protected CommandPaymentCash(Payment payment, double discountPrice, Customers customer) {
         super(payment, discountPrice);
     }
 
@@ -37,10 +37,11 @@ public class CommandPaymentCash extends CommandPayment {
             merchant = database.matchMId(staffUserName);
 
             if (merchant.getRestaurantOwned() == payment.getRestaurantChosed()) {
-                PayCashString payCashString=new PayCashString();
+                PayCashString payCashString = new PayCashString();
                 // Check out by the merchant
                 merchant.checkOutbyMerchant(payment.getCustomer());
-                System.out.println("\nYou have completed payment with "+ payCashString.getPayString()+". Thank you!");
+                System.out
+                        .println("\nYou have completed payment with " + payCashString.getPayString() + ". Thank you!");
 
             } else {
                 System.out.println("No merchant found! Please try again.");

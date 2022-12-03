@@ -5,7 +5,7 @@ import java.util.Collections;
 
 public class CommandCustomerDineIn extends CommandCustomer {
 
-    public CommandCustomerDineIn(Customers commandingCustomer) {
+    protected CommandCustomerDineIn(Customers commandingCustomer) {
         super(commandingCustomer);
     }
 

@@ -2,7 +2,7 @@ package GoGoEat;
 
 public class CommandAdminCheckCustomerOrder extends CommandAdmin {
 
-    CommandAdminCheckCustomerOrder() {
+    protected CommandAdminCheckCustomerOrder() {
         super();
     }
 

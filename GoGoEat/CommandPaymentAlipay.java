@@ -2,7 +2,7 @@ package GoGoEat;
 
 public class CommandPaymentAlipay extends CommandPayment {
 
-    public CommandPaymentAlipay(Payment payment, double discountPrice) {
+    protected CommandPaymentAlipay(Payment payment, double discountPrice) {
         super(payment, discountPrice);
     }
 
@@ -13,7 +13,7 @@ public class CommandPaymentAlipay extends CommandPayment {
         PayFactory payFactory = new AlipayFactory();
 
         PaymentMethod paymentMethod = payFactory.getPay();
-        PaymentString paymentString =new PayAlipayString();
+        PaymentString paymentString = new PayAlipayString();
         boolean result = paymentMethod.pay(discountPrice);
 
         if (result) {

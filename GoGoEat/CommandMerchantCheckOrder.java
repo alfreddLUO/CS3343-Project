@@ -2,7 +2,7 @@ package GoGoEat;
 
 public class CommandMerchantCheckOrder extends CommandMerchant {
 
-    public CommandMerchantCheckOrder(Merchants merchant) {
+    protected CommandMerchantCheckOrder(Merchants merchant) {
         super(merchant);
     }
 

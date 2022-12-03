@@ -2,7 +2,7 @@ package GoGoEat;
 
 public class CommandAdminRemoveTable extends CommandAdmin {
 
-    CommandAdminRemoveTable() {
+    protected CommandAdminRemoveTable() {
         super();
     }
 
@@ -26,7 +26,7 @@ public class CommandAdminRemoveTable extends CommandAdmin {
     }
 
     // deleteTable -> Abort if Table reserved/occupied or not exist
-    private void forceDeleteTable(int tableId) throws ExTableNotExist {
+    protected void forceDeleteTable(int tableId) throws ExTableNotExist {
         try {
             TablesManagement tm = TablesManagement.getInstance();
             tm.removeTable(tableId);

@@ -2,7 +2,7 @@ package GoGoEat;
 
 public class CommandAdminSetOpenCloseHour extends CommandAdmin {
 
-    CommandAdminSetOpenCloseHour() {
+    protected CommandAdminSetOpenCloseHour() {
         super();
     }
 
@@ -26,7 +26,7 @@ public class CommandAdminSetOpenCloseHour extends CommandAdmin {
     }
 
     // Set food court open and close (start of reservation and end of reservation)
-    private boolean forceSetOpenAndClosingTime(String timeString) {
+    protected boolean forceSetOpenAndClosingTime(String timeString) {
 
         // format: xx:xx-xx:xx
         Boolean setOpenCloseTime = false;

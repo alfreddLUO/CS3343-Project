@@ -2,7 +2,7 @@ package GoGoEat;
 
 public class CommandAdminAddTable extends CommandAdmin {
 
-    CommandAdminAddTable() {
+    protected CommandAdminAddTable() {
         super();
     }
 
@@ -30,7 +30,7 @@ public class CommandAdminAddTable extends CommandAdmin {
         }
     }
 
-    private void forceAddTable(int tableId, int tableCapacity) throws ExTableIdAlreadyInUse {
+    protected void forceAddTable(int tableId, int tableCapacity) throws ExTableIdAlreadyInUse {
         try {
             TablesManagement tm = TablesManagement.getInstance();
             tm.addNewTable(tableId, tableCapacity);

@@ -4,7 +4,7 @@ public class CommandAccountManagementLogin extends CommandAccountManagement {
 
     UserModule module = null;
 
-    CommandAccountManagementLogin() {
+    protected CommandAccountManagementLogin() {
         super();
     }
 
@@ -16,7 +16,7 @@ public class CommandAccountManagementLogin extends CommandAccountManagement {
     }
 
     // Login, get userId then return boolean
-    public boolean login() throws ExTableNotExist, ExTimeSlotAlreadyBeReserved, ExTimeSlotNotReservedYet,
+    protected boolean login() throws ExTableNotExist, ExTimeSlotAlreadyBeReserved, ExTimeSlotNotReservedYet,
             ExUnableToSetOpenCloseTime, ExTableIdAlreadyInUse, ExCustomersIdNotFound {
 
         String input = "", username = "", password = "";

@@ -3,7 +3,7 @@ package GoGoEat;
 import java.util.InputMismatchException;
 
 public class CommandAccountManagementRegister extends CommandAccountManagement {
-    CommandAccountManagementRegister() {
+    protected CommandAccountManagementRegister() {
         super();
     }
 
@@ -13,7 +13,7 @@ public class CommandAccountManagementRegister extends CommandAccountManagement {
         super.success = register();
     }
 
-    public boolean registerCustomer() {
+    protected boolean registerCustomer() {
         String username = null, password = null;
         try {
             System.out.print("\nPlease input the username: ");
@@ -37,7 +37,7 @@ public class CommandAccountManagementRegister extends CommandAccountManagement {
 
     }
 
-    public boolean confirmToRegister(String username, String password) {
+    protected boolean confirmToRegister(String username, String password) {
         boolean select = false;
         String input = null;
 
@@ -54,7 +54,7 @@ public class CommandAccountManagementRegister extends CommandAccountManagement {
         return select;
     }
 
-    public boolean registerMerchant() {
+    protected boolean registerMerchant() {
         String username, password, rName;
 
         System.out.print("\nPlease input the username: ");
@@ -77,7 +77,7 @@ public class CommandAccountManagementRegister extends CommandAccountManagement {
         return false;
     }
 
-    public boolean register() {
+    protected boolean register() {
 
         String input = "";
         int select = 0;

@@ -2,7 +2,7 @@ package GoGoEat;
 
 public class CommandAdminCheckReservation extends CommandAdmin {
 
-    CommandAdminCheckReservation() {
+    protected CommandAdminCheckReservation() {
         super();
     }
 
@@ -26,7 +26,7 @@ public class CommandAdminCheckReservation extends CommandAdmin {
 
     }
 
-    private String checkReserveInfo(String cid) throws ExNoReservationFound {
+    protected String checkReserveInfo(String cid) throws ExNoReservationFound {
 
         /*
          * 1. Pass CID into method to check if there is a matching instance of customer

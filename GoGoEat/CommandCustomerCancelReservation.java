@@ -2,7 +2,7 @@ package GoGoEat;
 
 public class CommandCustomerCancelReservation extends CommandCustomer {
 
-    public CommandCustomerCancelReservation(Customers customer) {
+    protected CommandCustomerCancelReservation(Customers customer) {
         super(customer);
     }
 

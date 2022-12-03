@@ -2,7 +2,7 @@ package GoGoEat;
 
 public class CommandAccountManagementDelete extends CommandAccountManagement {
 
-    CommandAccountManagementDelete() {
+    protected CommandAccountManagementDelete() {
         super();
     }
 
@@ -11,7 +11,7 @@ public class CommandAccountManagementDelete extends CommandAccountManagement {
         super.success = deleteAcc();
     }
 
-    public boolean deleteAcc() {
+    protected boolean deleteAcc() {
 
         String username = "", input = "";
 
