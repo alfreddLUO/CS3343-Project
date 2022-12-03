@@ -26,9 +26,7 @@ public class Customers implements TimeObserver {
     private ArrayList<Integer> waitingtableNumList = new ArrayList<>();
     private ArrayList<Dish> pendingOrder = new ArrayList<>();
     private String reservationDayString = "tomorrow";
-    // private Table occupiedtable;
 
-    // TODO:
     private Restaurants restaurantChosed;
 
     private HashMap<String, Restaurants> billNumberToRestaurant = null;

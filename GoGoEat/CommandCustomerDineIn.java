@@ -202,7 +202,6 @@ public class CommandCustomerDineIn extends CommandCustomer {
                 // Set table from available to occupied
                 ArrayList<Integer> checkinTableId = tm.setWalkInStatus(result);
 
-                // TODO: Separate into two method
                 addCheckInInfo(checkinTableId);
 
                 success = true;
