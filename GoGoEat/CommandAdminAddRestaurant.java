@@ -2,7 +2,7 @@ package GoGoEat;
 
 public class CommandAdminAddRestaurant extends CommandAdmin {
 
-    CommandAdminAddRestaurant() {
+    protected CommandAdminAddRestaurant() {
         super();
     }
 
@@ -20,7 +20,7 @@ public class CommandAdminAddRestaurant extends CommandAdmin {
     }
 
     // Add Restaurants by passing instance
-    private void addRestaurant(Restaurants res) {
+    protected void addRestaurant(Restaurants res) {
         database.addTolistOfRestaurants(res);
         System.out.println("Add new restaurant success.");
     }
