@@ -144,27 +144,22 @@ public class AccountManagement {
 
     // Delete Account -> Delete from both usernameandPasswords and allaccounts
     public boolean deleteaccountinUserNameAndAccount(String username) {
+        if (username == "admin") {
+            System.out.println("\nCannot delete admin account!");
+            return false;
+        }
         if (AccountManagement.usernamesandPasswords.containsKey(username)) {
             AccountManagement.usernamesandPasswords.remove(username);
 
             // Delete from allaccounts
-            return deleteaccountinUserNameAndCustomerid(username);
-
+            if (AccountManagement.allaccounts.containsKey(username)) {
+                AccountManagement.allaccounts.remove(username);
+                return true;
+            }
         } else {
             System.out.println("\nPlease enter the correct username.");
-            return false;
         }
-    }
-
-    // Delete from allaccounts
-    public boolean deleteaccountinUserNameAndCustomerid(String username) {
-        if (AccountManagement.allaccounts.containsKey(username)) {
-            AccountManagement.allaccounts.remove(username);
-            return true;
-        } else {
-            System.out.println("\nPlease enter the correct username.");
-            return false;
-        }
+        return false;
     }
 
     // Put the generated UserId and username into allaccounts
