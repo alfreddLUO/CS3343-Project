@@ -66,8 +66,15 @@ public class CommandAccountManagementRegister extends CommandAccountManagement {
         System.out.print("\nPlease input the name of the Restaurant: ");
         rName = Main.in.next("\nPlease input the name of the Restaurant: ");
 
-        database.registerRestaurant(rName);
-        return accManager.registerMerchant(username, password, database.matchRestaurant(rName));
+        if (username != null && password != null) {
+            if (confirmToRegister(username, password)) {
+                if (rName != null) {
+                    database.registerRestaurant(rName);
+                    return accManager.registerMerchant(username, password, database.matchRestaurant(rName));
+                }
+            }
+        }
+        return false;
     }
 
     public boolean register() {
