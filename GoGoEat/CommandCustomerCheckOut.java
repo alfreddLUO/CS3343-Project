@@ -18,7 +18,6 @@ public class CommandCustomerCheckOut extends CommandCustomer {
         tm.checkOutByCustomer(customer.getOccupiedTableId());
         customer.clearOccupiedTableId();
 
-        // UPDATE: Modified 16 Nov
         System.out.printf("\n%s\n", outputString);
     }
 }

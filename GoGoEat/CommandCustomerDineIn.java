@@ -422,7 +422,6 @@ public class CommandCustomerDineIn extends CommandCustomer {
                 idx.add(Integer.parseInt(tokens[i]));
             }
 
-            // UPDATE: Modified on 16 Nov
             ArrayList<Dish> dishModified = new ArrayList<>(customer.getOrderOfCurrentRound());
             Collections.sort(idx, Collections.reverseOrder());
             for (int i : idx) {

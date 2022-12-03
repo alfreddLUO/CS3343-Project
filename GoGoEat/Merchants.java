@@ -69,7 +69,6 @@ public class Merchants {
         addtoMenu(dishName, dishPrice);
     }
 
-    // UPDATE: MODIFIED 19 Nov
     public void removeDish() {
         // Delete dish from menu
         String dishName;
@@ -138,10 +137,9 @@ public class Merchants {
     public void checkOutbyMerchant(Customers customer) {
         // Payment by merchant
         checkOrder(customer, this.restaurantOwned);
-       
+
     }
 
-    // UPDATE: modified 18 Nov 00:21
     public void checkOrder(Customers customer, Restaurants restaurant) {
         // Before Payment, check order by merchant
 

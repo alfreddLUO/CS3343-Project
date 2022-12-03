@@ -20,7 +20,6 @@ public class Payment {
         this.customer = customer;
     }
 
-    // UPDATE: Modified on 16 Nov added parameter + originalPrice modified
     public double getPrice(ArrayList<Dish> orders) {
 
         /*
@@ -101,7 +100,6 @@ public class Payment {
                     || paymentMethod == null);
 
         } else {
-            // UPDATE: Modified on 16 Nov
             String outputString = "\nThere is no order made. Thank you.\nYou have successfully check out.\n";
             isNoOrder = true;
 

@@ -42,7 +42,6 @@ public class Customers implements TimeObserver {
         this.billNumberToRestaurant = new HashMap<>();
     }
 
-    // UPDATE: added 18 Nov 00:10
     public void updateBillNumberToRestaurant(String billString, Restaurants restaurant) {
         this.billNumberToRestaurant.put(billString, restaurant);
     }
@@ -97,7 +96,6 @@ public class Customers implements TimeObserver {
         this.pendingOrder.remove(dish);
     }
 
-    // UPDATE: Modified on 16 Nov 23:11
     public void updatePendingOrder(ArrayList<Dish> dishOrder) {
         this.pendingOrder = dishOrder;
     }
@@ -169,7 +167,6 @@ public class Customers implements TimeObserver {
         return null;
     }
 
-    // UPDATE: Modified 18 Nov 00:01
     public String getReserveInfo() {
 
         if (reserve.getReserveString() != null) {
@@ -182,7 +179,6 @@ public class Customers implements TimeObserver {
         return null;
     }
 
-    // UPDATE: Modified on 16 Nov 12:11
     public String getReserveSuccessInfo() {
         if (reserve.getReserveString() != null) {
             String str = "\nReserve Success.";
@@ -227,7 +223,6 @@ public class Customers implements TimeObserver {
         this.billno = genBillNo.getNextId();
     }
 
-    // UPDATE: added 18 Nov 00:10
     public String getBillno() {
         return billno;
     }
@@ -245,7 +240,6 @@ public class Customers implements TimeObserver {
         return billAmount;
     }
 
-    // UPDATE: Modified 16 Nov 23:28
     public void updateState() {
         // update state according to amount
 
@@ -332,12 +326,10 @@ public class Customers implements TimeObserver {
         }
     }
 
-    // UPDATE: Modified on 16 Nov 12:11
     public void printOrderofCurrentRound() {
         outputPendingDish("\nYour orders are: ");
     }
 
-    // UPDATE: Modified on 16 Nov 12:11
     public ArrayList<Dish> getOrderOfCurrentRound() {
         return pendingOrder;
     }
