@@ -236,20 +236,18 @@ public class CommandCustomerDineIn extends CommandCustomer {
     }
 
     public static void addCheckInInfo(ArrayList<Integer> checkInTable) {
-
         /*
-         * 1. Find Customer Instance
-         * 2. Add Check-in table into customer's occupiedtable
-         * 3. Add waiting table into customer's waitTableNumList
+         * Add Check-in table into customer's occupiedtable
          */
-
         for (int i : checkInTable) {
             customer.addTableId(i);
         }
-
     }
 
     public static void addWaitingInfo(ArrayList<Integer> waitingTableNumList) {
+        /*
+         * Add waiting table into customer's waitTableNumList
+         */
         if (waitingTableNumList != null) {
             for (int i : waitingTableNumList) {
                 customer.addTableNumList(i);
