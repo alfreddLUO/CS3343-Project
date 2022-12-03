@@ -8,7 +8,7 @@ public class CommandAdminRemoveRestaurant extends CommandAdmin {
 
     @Override
     public void exe() {
-        Restaurants temp = removeRestaurant();
+        Restaurants temp = findRestaurantToRemove();
 
         // Check if restaurant instance exist
         if (temp == null) {
@@ -22,7 +22,7 @@ public class CommandAdminRemoveRestaurant extends CommandAdmin {
         }
     }
 
-    private Restaurants removeRestaurant() {
+    private Restaurants findRestaurantToRemove() {
         database.outputRestaurant();
 
         String rName = "";
