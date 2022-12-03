@@ -1,11 +1,9 @@
 package GoGoEat;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.ArrayList;
 
 public class Reservation {
-    private Boolean active; // become false when cancel reservation or sit to reserved tables.
     private String customerID;
     private ArrayList<Integer> tableIDs = new ArrayList<>();
     private static final TablesManagement tm = TablesManagement.getInstance();
@@ -27,7 +25,6 @@ public class Reservation {
 
         String[] tsString = timeSlotString.split("-");
         timeSlot = new TimeSlot(tsString[0], tsString[1], customerID);
-        this.active = true;
         this.date = date;
 
         reserve(desiredTableIDs, timeSlot);
@@ -96,7 +93,6 @@ public class Reservation {
             for (Integer id : tableIDs) {
                 tm.cancelReservationAccordingToTimeslot(id, timeSlot);
             }
-            active = false;
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -109,11 +105,9 @@ public class Reservation {
     public int checkValid(LocalDate currDate) {
         if (currDate.compareTo(date) == 0) {
             return 0;
-        } 
-        else if (currDate.plusDays(1).compareTo(date) == 0) {
+        } else if (currDate.plusDays(1).compareTo(date) == 0) {
             return 1;
-        }
-        else {
+        } else {
             return -1;
         }
     }
