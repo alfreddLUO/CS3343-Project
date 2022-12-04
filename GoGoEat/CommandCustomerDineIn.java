@@ -78,7 +78,7 @@ public class CommandCustomerDineIn extends CommandCustomer {
 
     }
 
-    private boolean directWalkIn(ArrayList<Integer> result) {
+    protected boolean directWalkIn(ArrayList<Integer> result) {
         // Prompt message : 1. dine-in 2. leave
         int select = 0;
         String str = "";
