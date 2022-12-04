@@ -29,7 +29,7 @@ public class CommandCustomerDineIn extends CommandCustomer {
         }
     }
 
-    private boolean dineInOperation() {
+    protected boolean dineInOperation() {
         boolean success = false;
         String str;
 
