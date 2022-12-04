@@ -30,6 +30,14 @@ public class TablesManagement implements TimeObserver {
         this.algorithm = DefaultTableArrangementAlgorithm.getInstance();
     }
 
+    public void clear() {
+        allTableIds.clear();
+        reservedTables.clear();
+        availableTables.clear();
+        occupiedTables.clear();
+        tableCapacityTypeList.clear();
+    }
+
     @Override
     public void timeUpdate(LocalTime newTime) {
         currTime = newTime;

@@ -40,6 +40,15 @@ public class Initialization {
     static Dish PorkMixian = new Dish("Pork-Mixian", 34.9);
     static Dish LettuceMixian = new Dish("Lettuce-Mixian", 29.9);
 
+    public void reset() {
+        database.removeFromlistOfRestaurants(PepperLunch);
+        database.removeFromlistOfRestaurants(TamJai);
+        database.removeFromlistOfRestaurants(McDonalds);
+        database.removeFromlistOfRestaurants(KFC);
+        TablesManagement.getInstance().clear();
+
+    }
+
     public void initiateRestaurants() {
         database.addTolistOfRestaurants(PepperLunch);
         database.addTolistOfRestaurants(TamJai);
@@ -100,7 +109,7 @@ public class Initialization {
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
-        
+
         for (int i = 1; i <= 10; i++) {
             tm.appendToAllTableIds(i);
         }
