@@ -65,7 +65,6 @@ public class TablesManagement implements TimeObserver {
 
         for (Table t : occupiedTables) {
             if (t.toBeReserved(currTime) == 0) {
-                // (unsolved) notify customers to check out
                 temp.add(t);
                 reservedTables.add(t);
             }
@@ -626,7 +625,6 @@ public class TablesManagement implements TimeObserver {
         customer.addOccupiedTable(t.getTableId());
         // setTableFromAvailableToOccupiedStatus(tableId); - bug
         setTableFromReservedToOccupiedStatus(tableId);
-
     }
 
     public LocalTime[] getReservationStartEndInDayOfTables(ArrayList<Table> tables, LocalTime start, LocalTime end) {
