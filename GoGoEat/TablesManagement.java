@@ -309,21 +309,6 @@ public class TablesManagement implements TimeObserver {
         return waitingTablesNumList;
     }
 
-    public void debug() {
-        System.out.println("availableTables:\n");
-        for (Table t : availableTables) {
-            System.out.println(t.getId());
-        }
-        System.out.println("reservedTables:\n");
-        for (Table t : reservedTables) {
-            System.out.println(t.getId());
-        }
-        System.out.println("occupiedTables:\n");
-        for (Table t : occupiedTables) {
-            System.out.println(t.getId());
-        }
-    }
-
     public void showReservationTable() {
         StringBuilder showReservationTableMsg = new StringBuilder(
                 "\nTable(s) for tomorrow reservation and available time slots: \n");
