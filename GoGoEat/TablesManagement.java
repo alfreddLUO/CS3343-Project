@@ -305,7 +305,7 @@ public class TablesManagement implements TimeObserver {
         return waitingTablesNumList;
     }
 
-    public void showReservationTable() {
+    public String showReservationTable() {
         StringBuilder showReservationTableMsg = new StringBuilder(
                 "\nTable(s) for tomorrow reservation and available time slots: \n");
         ArrayList<Table> all = returnAllTablesList();
@@ -317,6 +317,7 @@ public class TablesManagement implements TimeObserver {
                     t.getTableId(), tmrReservationTimeslots.getAvailableSlots()));
         }
         System.out.println(showReservationTableMsg);
+        return showReservationTableMsg.toString();
     }
 
     // Show list of all tables
