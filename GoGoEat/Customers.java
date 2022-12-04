@@ -358,4 +358,7 @@ public class Customers implements TimeObserver {
         }
     }
 
+    public boolean isDishToRestaurant(Multimap<Dish, Restaurants> dToR) {
+        return DishToRestaurant.equals(dToR);
+    }
 }
