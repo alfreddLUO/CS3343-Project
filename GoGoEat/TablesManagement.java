@@ -654,4 +654,8 @@ public class TablesManagement implements TimeObserver {
     public void toDefaultAlgo() {
         algorithm = DefaultTableArrangementAlgorithm.getInstance();
     }
+
+    public boolean waitingCustomersContains(String c) {
+        return waitingCustomers.contains(c);
+    }
 }
