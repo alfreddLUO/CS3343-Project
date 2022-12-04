@@ -4,11 +4,6 @@ public class Dish {
     private String dishname;
     private double dishprice;
 
-    public Dish(String dishname) {
-        this.dishname = dishname;
-
-    }
-
     public Dish(String dishname, double dishprice) {
         this.dishname = dishname;
         this.dishprice = dishprice;

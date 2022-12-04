@@ -129,10 +129,6 @@ public class TablesManagement implements TimeObserver {
         allTableIds.add(id);
     }
 
-    public void appendToAvailableTables(Table table) {
-        availableTables.add(table);
-    }
-
     /*
      * NOTE: The Below List of table arrangement result arrange by capacity
      * e.g. Now has 2-[8-seat], 7-[4-seat], 9-[2-seat]
@@ -466,14 +462,6 @@ public class TablesManagement implements TimeObserver {
         return occupiedTables;
     }
 
-    public ArrayList<Integer> getAllTableIds() {
-        return allTableIds;
-    }
-
-    public ArrayList<Integer> getTableCapcityTypList() {
-        return tableCapacityTypeList;
-    }
-
     // Check if the tableID has been added
     public boolean checkTableIdIsAreadyInUsed(int tableId) {
         for (int i : allTableIds) {
@@ -482,10 +470,6 @@ public class TablesManagement implements TimeObserver {
             }
         }
         return false;
-    }
-
-    public void removeWaitingCustomer(Customers c) {
-        waitingCustomers.remove(c);
     }
 
     public Table returnTableAccordingToTableId(int tableId) {
