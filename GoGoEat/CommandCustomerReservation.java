@@ -70,7 +70,7 @@ public class CommandCustomerReservation extends CommandCustomer {
 
     }
 
-    private Reservation setReserve(String CId, String timeslotString, ArrayList<Integer> desiredTableIds,
+    public Reservation setReserve(String CId, String timeslotString, ArrayList<Integer> desiredTableIds,
             LocalDate currDate) {
         try {
             return new Reservation(CId, timeslotString, desiredTableIds, currDate.plusDays(1));
