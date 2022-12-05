@@ -71,34 +71,39 @@ public class Merchants {
 
     public void removeDish() {
         // Delete dish from menu
-        String dishName;
-        System.out.print("\nPlease input the numbering of the dish to remove: ");
+        if (restaurantOwned.getMenu().isEmpty() == false) {
+            String dishName;
+            System.out.print("\nPlease input the numbering of the dish to remove: ");
 
-        // input multiple dishes
-        dishName = Main.in.nextLine("\nPlease input the numbering of the dish to remove: ");
-        String[] tokens = dishName.split(",");
-        ArrayList<Integer> idx = new ArrayList<>();
+            // input multiple dishes
+            dishName = Main.in.nextLine("\nPlease input the numbering of the dish to remove: ");
+            String[] tokens = dishName.split(",");
+            ArrayList<Integer> idx = new ArrayList<>();
 
-        // String to integer (index)
-        try {
+            // String to integer (index)
+            try {
 
-            for (int i = 0; i < tokens.length; i++) {
-                idx.add(Integer.parseInt(tokens[i]));
+                for (int i = 0; i < tokens.length; i++) {
+                    idx.add(Integer.parseInt(tokens[i]));
+                }
+
+                // Add input to dish list pending to order
+                ArrayList<Dish> menuModified = new ArrayList<>(restaurantOwned.getMenu());
+
+                Collections.sort(idx, Collections.reverseOrder());
+                for (int i : idx) {
+                    menuModified.remove(i - 1);
+                }
+
+                restaurantOwned.updateMenu(menuModified);
+                System.out.println("Delete Dish success.");
+
+            } catch (NumberFormatException e) {
+                System.out.println("Please input integer list!");
             }
 
-            // Add input to dish list pending to order
-            ArrayList<Dish> menuModified = new ArrayList<>(restaurantOwned.getMenu());
-
-            Collections.sort(idx, Collections.reverseOrder());
-            for (int i : idx) {
-                menuModified.remove(i - 1);
-            }
-
-            restaurantOwned.updateMenu(menuModified);
-            System.out.println("Delete Dish success.");
-
-        } catch (NumberFormatException e) {
-            System.out.println("Please input integer list!");
+        } else {
+            System.out.println("Error! Menu is empty!");
         }
 
     }
