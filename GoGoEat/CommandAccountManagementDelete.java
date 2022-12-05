@@ -2,7 +2,7 @@ package GoGoEat;
 
 public class CommandAccountManagementDelete extends CommandAccountManagement {
 
-    protected CommandAccountManagementDelete() {
+    public CommandAccountManagementDelete() {
         super();
     }
 

@@ -2,7 +2,7 @@ package GoGoEat;
 
 public class CommandPaymentCash extends CommandPayment {
 
-    protected CommandPaymentCash(Payment payment, double discountPrice, Customers customer) {
+    public CommandPaymentCash(Payment payment, double discountPrice, Customers customer) {
         super(payment, discountPrice);
     }
 

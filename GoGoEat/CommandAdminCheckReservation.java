@@ -2,7 +2,7 @@ package GoGoEat;
 
 public class CommandAdminCheckReservation extends CommandAdmin {
 
-    protected CommandAdminCheckReservation() {
+    public CommandAdminCheckReservation() {
         super();
     }
 

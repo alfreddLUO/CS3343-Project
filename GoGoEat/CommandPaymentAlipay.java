@@ -2,7 +2,7 @@ package GoGoEat;
 
 public class CommandPaymentAlipay extends CommandPayment {
 
-    protected CommandPaymentAlipay(Payment payment, double discountPrice) {
+    public CommandPaymentAlipay(Payment payment, double discountPrice) {
         super(payment, discountPrice);
     }
 

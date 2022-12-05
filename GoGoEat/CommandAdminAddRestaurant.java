@@ -2,7 +2,7 @@ package GoGoEat;
 
 public class CommandAdminAddRestaurant extends CommandAdmin {
 
-    protected CommandAdminAddRestaurant() {
+    public CommandAdminAddRestaurant() {
         super();
     }
 

@@ -3,7 +3,7 @@ package GoGoEat;
 import java.util.InputMismatchException;
 
 public class CommandAccountManagementRegister extends CommandAccountManagement {
-    protected CommandAccountManagementRegister() {
+    public CommandAccountManagementRegister() {
         super();
     }
 

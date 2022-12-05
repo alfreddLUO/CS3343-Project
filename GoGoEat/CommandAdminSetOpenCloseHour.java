@@ -2,7 +2,7 @@ package GoGoEat;
 
 public class CommandAdminSetOpenCloseHour extends CommandAdmin {
 
-    protected CommandAdminSetOpenCloseHour() {
+    public CommandAdminSetOpenCloseHour() {
         super();
     }
 

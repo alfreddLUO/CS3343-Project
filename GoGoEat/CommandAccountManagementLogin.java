@@ -4,7 +4,7 @@ public class CommandAccountManagementLogin extends CommandAccountManagement {
 
     UserModule module = null;
 
-    protected CommandAccountManagementLogin() {
+    public CommandAccountManagementLogin() {
         super();
     }
 

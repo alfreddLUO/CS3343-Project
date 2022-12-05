@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 public class CommandCustomerReservation extends CommandCustomer {
 
-    protected CommandCustomerReservation(Customers customer) {
+    public CommandCustomerReservation(Customers customer) {
         super(customer);
     }
 

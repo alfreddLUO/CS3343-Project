@@ -2,7 +2,7 @@ package GoGoEat;
 
 public class CommandPaymentWeChatPay extends CommandPayment {
 
-    protected CommandPaymentWeChatPay(Payment payment, double discountPrice) {
+    public CommandPaymentWeChatPay(Payment payment, double discountPrice) {
         super(payment, discountPrice);
     }
 

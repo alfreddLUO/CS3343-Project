@@ -6,7 +6,7 @@ public abstract class CommandAccountManagement implements Commands {
     protected AccountManagement accManager;
     protected boolean success;
 
-    public CommandAccountManagement() {
+    protected CommandAccountManagement() {
         this.database = Database.getInstance();
         this.accManager = AccountManagement.getInstance();
     }
