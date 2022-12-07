@@ -33,7 +33,10 @@ public class CommandMerchantModifyMenu extends CommandMerchant {
             if (select == 4) {
                 break;
             } else if (select == 1 || select == 2 || select == 3) {
-                merchant.getMenu();
+                if (!merchant.getRestaurantOwned().getMenu().isEmpty()) {
+                    merchant.getMenu();
+                }
+
                 if (select == 1) {
                     merchant.addDish();
                 } else if (select == 2) {
